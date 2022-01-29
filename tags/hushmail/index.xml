@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hushmail on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/hushmail/</link><description>Recent content in Hushmail on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 07 Mar 2014 22:41:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/hushmail/index.xml" rel="self" type="application/rss+xml"/><item><title>There's life without Google. Or iCloud. Or Facebook.</title><link>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</link><pubDate>Fri, 07 Mar 2014 22:41:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</guid><description>
+&lt;p>&lt;a href="https://threema.ch/en/">&lt;img src="appicon128.png" alt="Threema, the secure Whatsapp alternative">
+&lt;/a>Regular readers of this blog already know that I am &lt;a href="http://rolfje.wordpress.com/2011/07/03/1355/">not using dropbox&lt;/a>, and I was an Evernote user, but recently decided it became to dangerous and &lt;a href="http://rolfje.wordpress.com/?s=evernote">replaced it with my own scripts&lt;/a>. I had an interesting discussion on Twitter which made me decide to show you how I run my digital life without the help of Google, Facebook, Dropbox, Whatsapp or iCloud, and still be able to have all the functionality these services offer.&lt;/p>
+&lt;p>The search was hard and sometimes I need to reconsider some of the choices, but the last few years the selection of products was very stable and the setup has worked flawlessly. Searching for a secure replacement for Whatsapp or Google? It's in here.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tbody >
+&lt;tr >
+Original
+The Safer Alternative:
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Whatsapp
+&lt;/td>
+&lt;td >[**Threema**](https://threema.ch/en/). Hands-down the best safe messaging service. Easy to use, group chats, image and video transfers. Under the hood it always uses true end-to-end encryption, and does not store any data about you or contacts your addressbook while still being able to find your friends. Threema costs a mere €1,70 for the iPhone and €1,60 for Android, and is very clear about their revenue model. Sending a message is free of charge. No I don't use Telegram.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mail
+&lt;/td>
+&lt;td >**[Hushmail](https://www.hushmail.com/services/hushmail/)**. A Canadian email provider which at least claims it respects your privacy and is not bound to American legislation. I use their [Premium service](https://www.hushmail.com/premium/) which costs $35 a year. A bargain.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Search
+&lt;/td>
+&lt;td >**[DuckDuckGo](https://duckduckgo.com)**. Although there are some sceptics out there who argue that there is no way to verify how duckduckgo is any different than Google's search engine, I still think it is a better alternative. One of the most important ones is that they don't ["bubble"](http://dontbubble.us) you. Image searching is not possible yet. so I do fall back to Google for that every now and than, but only in a separate, private browser session with cleared cookies.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Maps
+&lt;/td>
+&lt;td >The Apple [**Maps**](http://appleinsider.com/articles/13/06/26/new-maps-app-in-os-x-mavericks-extends-tools-for-reporting-fixing-errors) app, or if you don't have a Mac or need to search online: [Mapquest](http://www.mapquest.com) provides a good alternative to Google maps. Not the prettiest interface, but any product other than a Google product gives them less data to harvest on me. Always remember: If you're not paying for the product, you're the product.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Calendar, Contacts
+&lt;/td>
+&lt;td >[**Owncloud**](http://owncloud.org). In my case, I have bought a $40 Raspberry Pi which is beautifully running Owncloud to sync Calendars over SSL between my iPhone and all my Macs. It requires a bit of Linux skills and isn't really safe "out of the box", but can be made pretty airtight. **Remember to close all ports and only access Owncloud over**** SSL** (most tutorials wrongly teach you otherwise), and don't expect high performance from the Raspberry when it comes to rendering browser pages. I've added a little script that sends backups to my file server via SMB.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >File synching (Dropbox)
+&lt;/td>
+&lt;td >[**SpiderOak**](https://spideroak.com/signup/referral/4b01a22f64d398afbd846637080bd2b4/). A true zero-knowledge encrypted file storage. With the new ["Hive" feature](https://spideroak.com/hive/) it behaves exactly like Dropbox, but has additional features like a backup service. Choose a safe password and store it somewhere secure, because Spideroak can not recover your password or your files if you loose it. I started with the 2GB free for life account, but it soon grew to a 50GB account. Great stuff, very reliable, safe.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Evernote
+&lt;/td>
+&lt;td >**[SpiderNote](http://rolfje.wordpress.com/2014/03/02/replace-evernote-with-spidernote/)**. It may be a bit cobbled together, but as an old Evernote fan I needed a good alternative and it should be able to sync between all my Macs. So I save my notes in a SpiderOak folder and search them with Spotlight. Not as fancy as Evernote, but the price (risk) of storing my data unencrypted on an American server became too high. **
+**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Facebook
+&lt;/td>
+&lt;td >[**Twitter**](https://twitter.com/rolfje#). I hate to dissapoint you, but Facebook is free of charge and they store your entire digital life. What do you think is Facebook's product precisely? Also, I see that you have 86.355 "friends" on Facebook. I hate to disappoint you but those are called "random strangers". Even if your account is *cough* private (except for Mark $uckeberg). I like to talk to people too, that's why I have this blog, and for the smaller chit-chat I use Twitter. My real friends are on Threema, or, if need be, I talk to them. It's very old-fashioned. I drive over and meet them in person. And sometimes they even come to my house. I know, crazy right? Old school.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >LinkedIn
+&lt;/td>
+&lt;td >None. I could hold the same rant for Facebook and LinkedIn alike. They're not there for you. You're there for them. I did make the mistake of creating a LinkedIn account a long time ago because people said "you need this". After quite a few mails from LinkedIn requesting me to endorse people, update my profile or water their plants, I realized that I was working for them, not the other way around. I cancelled and deleted my account. Guess what? I'm still alive and well. If you're a developer, you're better off by gaining community based reputation on sites like **[Stackoverflow](https://stackoverflow.com/users/21134/rolf)**.
+&lt;/td>
+&lt;/tr>
+&lt;tr valign="top" >
+&lt;td >Local Backups
+&lt;/td>
+&lt;td >**[Encrypted TimeMachine](http://support.apple.com/kb/PH11102)** and Time Capsule volumes. My local drives are also full-disk encrypted using Apple's built-in [FileVault 2](http://support.apple.com/kb/HT4790?viewlocale=en_US&amp;locale=en_US). There is a Mac Mini file server in the house which holds all familiy photos  so that we can view them on the TV for example. The photos are on a read-only fileshare and are backed up using Time Machine locally.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Remote/Offsite Backups
+&lt;/td>
+&lt;td >[**Crashplan Free**](https://www.code42.com/store/), sending the data on the TimeMachine drive on the fileserver to another fileserver at my parents' house. His fileserver backs up on my machine and vice-versa. One house can completely burn down and we still have all data, without it ever being uploaded to some unencrypted company server.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Why not Telegram?**
+A few words of advice on using Telegram: Whatever they tell you, the data is *not* (properly) encrypted and it is easy to tell: The data is [stored in their "cloud"](http://unhandledexpression.com/2013/12/17/telegram-stand-back-we-know-maths/) and provided to you on all your devices. Even worse: They are [showing your data to "potential friends"](http://mcleaver.blogspot.nl/2014/02/telegram-verses-whatsapp.html?m=1) who [do not have you in their contact](https://twitter.com/GVerbaan/status/436909531625697280) lists or may have never heard of you. They upload your complete address book to their servers. They also know the [geolocation of your phone](http://blog.hackapp.com/2013/12/telegram-secret-chat-geolocation-leak.html). Unencrypted. They have your data, and show it by leaking it. They can fix the leaks and tell you it's safe, but they still have your data. It's also fishy that they clearly [have money to pimp their server farm](https://twitter.com/telegram/status/437745646007631872), even when the app and the messages are free of charge. Who do you think is the product here?
+&lt;p>&lt;a href="https://www.netmess.org/only-threema-rated-uncritical-telegram-rated-critical-for-privacy/">&lt;img src="telegram.png" alt=""Come in to the dark side. We have privacy"">
+&lt;/a>&lt;/p></description></item></channel></rss>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Electronics on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/categories/electronics/</link><description>Recent content in Electronics on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 17 Jan 2020 22:00:21 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/categories/electronics/index.xml" rel="self" type="application/rss+xml"/><item><title>Reading an ISKRA AM550 P1 Port with a Pi</title><link>https://realrolfje.github.io/rolfje.com/2020/01/18/reading-an-iskra-am550-p1-port-with-a-pi/</link><pubDate>Fri, 17 Jan 2020 22:00:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2020/01/18/reading-an-iskra-am550-p1-port-with-a-pi/</guid><description>
+&lt;p>&lt;figure class="float_right">&lt;a href="https://en.wikipedia.org/wiki/Smart_meter">&lt;img src="iskra-am550-gprs-meter.jpg" width="120"/>&lt;/a>
+&lt;/figure>
+Although I am the guy with a soldering iron and a bit of software development experience, I am not a fan of the &amp;quot;internet of things&amp;quot;, &amp;quot;smart meters&amp;quot; or smart anything really. Not because I don't like technology, but because of the potential security and privacy problems it brings with it. That said, because of some unfortunate events I now have a smart meter my home. So when life gives you lemons, you make Pi!&lt;/p>
+&lt;p>I've got an &lt;a href="http://www.iskraemeco.com/en/portfolio/electricity-meters/residential-smart-meters/am550/">AM550 Smart meter&lt;/a> with a P1 port. Seeing all the online content and suggestions about reading your smart meter, I decided to have an hour of fun trying to read the P1 data. Here's how I did it:&lt;/p>
+&lt;!-- more -->
+&lt;p>The P1 port on the AM550 sends serial data, but the signal is inverted. It is possible to invert that in software, but it is a kludge that requires some &lt;a href="https://en.wikipedia.org/wiki/Bit_banging">bit banging&lt;/a>. Bringing the data in the right polarity and connecting it to the Rx serial input on the GPIO port is the cheapest and fastest way to go if you happen to have an RJ11 connenctor, a PNP transistor and a few resistors lying around. Here are my notes on how I wired the P1 to the Raspberry:&lt;/p>
+&lt;p>&lt;a href="schematic-am550.jpg">&lt;img src="schematic-am550.jpg?w=450" alt="">
+&lt;/a>&lt;/p>
+&lt;p>All that was left is reading the data from the serial port. Pin 10 maps to GPIO15 and happens to also be the Rx pin on the Raspberry Pi's internal Serial adapter, which is available as a device at /dev/ttyAMA0 (I did not choose this pin by accident ;-). I wrote a simple Python script to read the serial port so I could change it to produce munin graphs later:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="ln"> 1&lt;/span>&lt;span class="kn">import&lt;/span> &lt;span class="nn">serial&lt;/span>
+&lt;span class="ln"> 2&lt;/span>&lt;span class="n">ser&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">serial&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">Serial&lt;/span>&lt;span class="p">(&lt;/span>
+&lt;span class="ln"> 3&lt;/span> &lt;span class="n">port&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;/dev/ttyAMA0&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="ln"> 4&lt;/span> &lt;span class="n">baudrate&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">115200&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="ln"> 5&lt;/span> &lt;span class="n">parity&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">serial&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">PARITY_NONE&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="ln"> 6&lt;/span> &lt;span class="n">stopbits&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">serial&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">STOPBITS_ONE&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="ln"> 7&lt;/span> &lt;span class="n">bytesize&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">serial&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">EIGHTBITS&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;span class="ln"> 8&lt;/span> &lt;span class="n">timeout&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>
+&lt;span class="ln"> 9&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="ln">10&lt;/span>&lt;span class="k">while&lt;/span> &lt;span class="kc">True&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;span class="ln">11&lt;/span> &lt;span class="nb">print&lt;/span> &lt;span class="n">ser&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">readline&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>When running this program, you should see a whole blob of text scroll by about every second or so. It is readable ASCII and can be parsed by many libraries out there. I tried a few but they were sometimes buggy, or sometimes overengineered and requiring a lot of external resources. So I wrote my own, very crude, parsing. It is not like the meter will be updated every week with new software and ssl certificates.&lt;/p>
+&lt;p>There are actually only a few lines in the output that interest me:&lt;/p>
+&lt;ul>
+&lt;li>Lines starting with &lt;strong>1-0:1.7&lt;/strong> contain the current power usage in Watts&lt;/li>
+&lt;li>Lines starting with &lt;strong>1-0:1.8.1&lt;/strong> are the T1 (low tariff) meter reading in Watt-hours.&lt;/li>
+&lt;li>Lines starting with &lt;strong>1-0:1.8.2&lt;/strong> are the T2 (high tariff) meter reading in Watt-hours.&lt;/li>
+&lt;/ul>
+&lt;p>A few lines of additional python gave me three separate munin plugins to produce the graphs I wanted. Here is a nice one showing the power usage of last week, split between high and low tariff.&lt;/p>
+&lt;p>&lt;a href="smartmeter_totals_am550-week.png">&lt;img src="smartmeter_totals_am550-week.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>This nice graph also shows one of the problems with smart meters: Given enough resolution, you can see at which times devices and lights are switched on. This can provide some interesting patterns, and enables anybody with access to your meter data to determine when you are home or on vacation. Of course there are some tricks to create constant or confusing usage patterns, I'm sure you'll come up with something smart now that you can see the graphs.&lt;/p>
+&lt;p>You can find all three munin plugins in my &lt;a href="https://github.com/realrolfje/munin-plugins">munin-plugin repository&lt;/a>, in the &amp;quot;plugin&amp;quot; folder. There may also be other interesting stuff there for you munin enthausiasts.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>1N4148 diode as RF switch</title><link>https://realrolfje.github.io/rolfje.com/2018/02/24/1n4148-diode-as-rf-switch/</link><pubDate>Sat, 24 Feb 2018 12:00:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/02/24/1n4148-diode-as-rf-switch/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/hgll-XTqcS4">&lt;img src="1n4148.jpg" alt="1N4148.jpg">
+&lt;/a>For a recent experiment I was using &lt;a href="http://www.datasheetarchive.com/BA389-datasheet.html">BA389 PIN diodes&lt;/a> to switch low power RF signals. I was asked why I didn't use an ordinary &lt;a href="https://en.wikipedia.org/wiki/1N4148_signal_diode">1N4148&lt;/a> for that. Since I didn't know what an 1N4148 would do when used like that, and I also didn't really know what a BA389 actually does, I decided to do some measurements.&lt;!-- more -->&lt;/p>
+&lt;p>&lt;strong>Aren't diodes rectifiers?&lt;/strong>
+Yes and no. The most basic operation of a diode is to pass current in one way, and block it in the other. But when the diode passes DC current, the internal capacitance lowers, and RF resistance will drop to around 1 Ohm. If you can separate the DC and RF currents, you can switch RF with DC. Most, if not all modern transceivers use PIN diodes to switch the antenna between the internal transmitter and receiver components.&lt;/p>
+&lt;p>&lt;strong>PIN or PN diode?&lt;/strong>
+A &lt;a href="https://en.wikipedia.org/wiki/P%E2%80%93n_diode">P/N diode&lt;/a> like the 1N4148 only has P and N doped regions. A &lt;a href="https://en.wikipedia.org/wiki/PIN_diode">P/I/N diode&lt;/a> has three semiconductor regions with different doping. The I region in a PIN diode makes it a bad/slow rectifier but it a great RF switch, see the provided wikipedia link for more info.&lt;/p>
+&lt;p>Enough talk. Let's go. In this case I want to know how a PIN diode like the BA389 compares to an 1N4148 when used for switching RF signals on 145 MHz and 435 MHz. I decided to use my &lt;a href="http://miniradiosolutions.com/54-2/">MiniVNA Tiny&lt;/a> and the following circuit to do the measurements:&lt;/p>
+&lt;p>&lt;img src="screen-shot-2018-02-23-at-17-31-36.png" alt="Screen Shot 2018-02-23 at 17.31.36">&lt;/p>
+&lt;p>The output of the MiniVNA Tiny is connected to a 10 dB attenuator, reducing the -6 dBm (0.251 mW) output of the VNA to -16 dBm (0.025 mW) hoping to reduce signal leaking around the diode (less signal, less leakage). The output of the attenuator is connected to the AC input on the left side of the schematic.&lt;/p>
+&lt;p>The input of the MiniVNA Tiny is connected to the output of the schematic. Yes, the RF travels through the diode the &amp;quot;wrong way&amp;quot;, against the DC current. This is not an error.&lt;/p>
+&lt;p>The DC input of the circuit is connected to a variable resistor, a multimeter and a power supply to be able to vary the current through the diode (DUT) from 0.001 mA to 20 mA.&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Test setup](img_6758.jpg?w=250)
+](img_6758.jpg)
+&lt;/td>
+&lt;td >[![test circuit](img_6767.jpg?w=150)
+](img_6767.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The coils are 0.35 mm copper wound 15 turns around a 3 mm drillbit. The capacitors are SMD to keep everything as short as possible. I also added some extra shielding to separate the in and outputs better.
+&lt;p>Before measuring diodes I callibrated the whole setup by having vnaJ measure the &amp;quot;OPEN&amp;quot; characteristics with everything connected but with the diode removed. Then, I soldered a wire in place of the diode and had vnaJ measure the &amp;quot;CLOSED&amp;quot; characteristics. I saved this callibration dataset and used it throughout all other measurements.&lt;/p>
+&lt;p>Then, I soldered a 1N4148 in place and measured RF Transmission Loss for a number of currents between 0 and 15 mA. Then I did the same for the BA389. After a bit of fiddling with Excel I produced the following graph of the results:&lt;/p>
+&lt;p>[&lt;img src="screen-shot-2018-02-23-at-21-39-15.png" alt="Screen Shot 2018-02-23 at 21.39.15 .png">&lt;/p>
+&lt;p>](screen-shot-2018-02-23-at-21-39-15.png)&lt;/p>
+&lt;p>&lt;strong>The verdict:&lt;/strong>
+The results are actually not that bad for the 1N4148. It shows behaviour and comparable linearity to the BA389 PIN diode. The attenuation of the 1N4148 leaves to be desired: -25,5 dB attenuation compared to -30.3 dB of the BA389 on 145 MHz. On 435 MHz the difference is a bit bigger: -14.1 dB vs -20.1 dB for the BA389. All in all, the 1N4148 is roughly 6 dB more &amp;quot;leaky&amp;quot; than the BA389.&lt;/p>
+&lt;p>So a 1N4148 actually works as an RF switch, if you are on lower frequencies and don't mind that it only attenuates -25,5 dB. If you need high performance RF switching with high isolation, particularly at frequencies above 200 MHz or so I think you're better off selecting a proper PIN diode.&lt;/p>
+&lt;p>Here are the 1N4148 and the BA389 graphs from the MiniVNA Tiny. The graph for the 1N4148 is an earlier one where I didn't have the extra shields. The dip in the 200MHz range is caused by the measurement jig itself. Mind the vertical scales, they don't match. Blue line is Transmission Loss:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![VNA_180222_174935.jpg](vna_180222_174935.jpg)
+](vna_180222_174935.jpg)
+&lt;/td>
+&lt;td >[![VNA_180223_150657.jpg](vna_180223_150657.jpg)
+](vna_180223_150657.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item></channel></rss>

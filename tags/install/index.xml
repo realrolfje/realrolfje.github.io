@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>install on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/install/</link><description>Recent content in install on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 23 Apr 2010 20:40:10 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/install/index.xml" rel="self" type="application/rss+xml"/><item><title>Installing Wubi 9.10</title><link>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</link><pubDate>Fri, 23 Apr 2010 20:40:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</guid><description>
+&lt;p>&lt;a href="schermafbeelding-2010-04-23-om-22-20-17.png">&lt;img src="schermafbeelding-2010-04-23-om-22-20-17.png?w=150" alt="Why I HATE Linux">
+&lt;/a>Ok, fist of all: DO NOT DOWNLOAD WUBI 9.10 as it contains a serious GRUB2 problem which will give you some headaches if you're new to Linux. Why I'm saying this? I just ran into this GRUB2 problem while installing the new Wubi 9.10. Here's what I did:&lt;/p>
+&lt;pre>&lt;code> 1. Downloaded Wubi 9.10 windows installer and ran it.
+2. Installer downloads stuff, and boots into Ubuntu installer
+3. After reboot, GRUB screen comes up with a loud beep and a prompt. Great.
+&lt;/code>&lt;/pre>
+&lt;p>Some googling finds a lot of Linux voodoo talking l33tspe4king nerds, but it did contain some info with which I managed to get things working:&lt;/p>
+&lt;!-- more -->At the GRUB2 screen,  issue the following _(italic)_ commands (things in red you have to figure out yourself, sorry. _&lt;tab>_ means press the tab key for autocompletion.):
+&lt;p>X=0 and Y=1 in most cases (Wubi install on C:)
+grub&amp;gt;&lt;em>ls (hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_&lt;/p>
+&lt;p>The long HEX string at the end of the line you get back is the UUID, you'll need that later.&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>insmod ntfs&lt;/em>
+grub&amp;gt;&lt;em>set root=(hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_
+grub&amp;gt;_search --no-floppy --fs-uuid --set _&lt;em>UUID&lt;/em>
+grub&amp;gt;&lt;em>loopback loop0 /ubuntu/disks/root.disk&lt;/em>
+grub&amp;gt;&lt;em>set root=(loop0)&lt;/em>&lt;/p>
+&lt;p>if X was 0:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sda__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>if X was 1:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sdb__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>initrd /boot/initrd.img&lt;/em>_&lt;tab>_
+grub&amp;gt;&lt;em>boot&lt;/em>&lt;/p>
+&lt;p>You should now see the normal Ubuntu. Log in with the user information you entered in the windows wubi installer, and start the update manager. This will get your GRUB2 installation updated (partly). When the update manager asks you to reboot, say &amp;quot;restart later&amp;quot;. Open a terminal and type in &amp;quot;&lt;strong>&lt;em>sudo update-grub2&lt;/em>&lt;/strong>” (don't forget, or you'll have to do the whole typing exercise, above,  again.&lt;/p>
+&lt;p>I hope this helps. The grub commands in this blogpost are originally posted by felixcorrales, &lt;a href="https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/477104/comments/76">here&lt;/a>, and the installer/reboot information is my own doing.&lt;/p></description></item></channel></rss>

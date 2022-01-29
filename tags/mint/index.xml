@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mint on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/mint/</link><description>Recent content in Mint on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 28 Nov 2011 21:09:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/mint/index.xml" rel="self" type="application/rss+xml"/><item><title>Strange fix for SMB problems in Linux</title><link>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</link><pubDate>Mon, 28 Nov 2011 21:09:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</guid><description>
+&lt;p>&lt;a href="http://lunduke.com/?p=429">&lt;img src="images.jpeg" alt="Linux Sucks.">
+&lt;/a>Last week, the upgrade to Ubuntu 11 severely broke all carefully selected menu colors, graphics settings and icon sets. I gave up the fight after a few hours of effortless restoration work and switched to Linux Mint 11.&lt;/p>
+&lt;p>While setting up my machine and restoring the links to the company Windows file servers I could not connect. The password window would re-appear without any feedback. The fix was even stranger than the problem.&lt;/p>
+&lt;!-- more -->To analyze this strange problem, [@sastuvel](http://twitter.com/#!/sastuvel) took the keys and tried the following on the command prompt:
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+$ smbclient //server/Share$ -U DOMAIN\rolf -d 2
+rlimit_max: increasing rlimit_max (1024) to minimum Windows
+ limit (16384)
+added interface eth0 ip=fe80::5e26:aff:fe12:5a23%eth0
+bcast=fe80::ffff:ffff:ffff:ffff%eth0
+netmask=ffff:ffff:ffff:ffff::
+added interface eth0 ip=172.17.100.74 bcast=172.17.255.255
+netmask=255.255.0.0
+Enter DOMAIN\rolf's password:
+tdb(unnamed): tdb_open_ex: could not open file
+/var/run/samba/gencache.tdb:
+Permission denied
+session setup failed: NT_STATUS_MORE_PROCESSING_REQUIRED
+did you forget to run kinit?
+[/sourcecode]&lt;/p>
+&lt;p>Of course we did run kinit and everything was up and running. No level of debug logging came up with something useful. After staring at this problem of a while I noticed that my hostname was &lt;em>&amp;quot;rolf-Latitude-E6510&amp;quot;&lt;/em>, which seemed a bit long. In a strange last resort voodo-chicken action I edited &lt;em>/etc/hostname&lt;/em> to change it to &lt;em>&amp;quot;dellmint&amp;quot;&lt;/em> and rebooted the machine.&lt;/p>
+&lt;p>Strangely, this solved the problem. So if you're running Linux (Mint) and have strange problems mounting SMB shares, check your hostname and change it to something simple and short. It might help.&lt;/p>
+&lt;p>And while you're at it, you can also install &lt;a href="http://www.webupd8.org/2011/02/touchpad-indicator-now-automatically.html">touchpad indicator&lt;/a> to disable your touchpad when you plug in your mouse. Why this isn't standard in every Linux distribution baffles me just as much as the blinking wifi indicator.&lt;/p></description></item></channel></rss>

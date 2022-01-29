@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Workshop on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/categories/workshop/</link><description>Recent content in Workshop on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 19 Jun 2016 21:47:36 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/categories/workshop/index.xml" rel="self" type="application/rss+xml"/><item><title>Designing a Fox-hunt antenna</title><link>https://realrolfje.github.io/rolfje.com/2016/06/19/designing-a-fox-hunt-antenna/</link><pubDate>Sun, 19 Jun 2016 21:47:36 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2016/06/19/designing-a-fox-hunt-antenna/</guid><description>
+&lt;p>&lt;a href="3d-radiation-pattern.png">&lt;img src="3d-radiation-pattern.png" alt="3d radiation pattern">
+&lt;/a>Many years ago, I used to do some &lt;a href="https://youtu.be/rrNXyv134bE">radio fox hunting with cars&lt;/a>. Usually these hunts are at night to make it more exciting, and can be great fun. As I got older I lost interest and moved on to other things. But last year, I decided to have a go at a &lt;a href="http://www.ballonvossenjacht.nl">popular balloon fox hunt&lt;/a> on 144MHz. This is quite a large scale &lt;a href="https://www.youtube.com/watch?v=_QrDOEXb_ss">and professionally organized fox hunt&lt;/a> by Dutch Radio Amateurs.&lt;!-- more -->&lt;/p>
+&lt;p>Because of the totally different setup and frequency I decided to join a few recreational 144MHz (2 meter) fox hunts to get the hang of it. If you like to play with radios and walk in the woods, &lt;a href="https://www.youtube.com/watch?v=KDN8w7awAkQ">this is your thing&lt;/a>. Lots of small transmitters hidden in the bushes on random frequencies for you to find.&lt;/p>
+&lt;p>Last year I used a borrowed receiver and antenna, and this year I decided to build a &lt;a href="http://www.peildoos.nl/?page_id=128">Foxbox receiver kit&lt;/a>.&lt;/p>
+&lt;p>After building the receiver, the age-old discussion among radio amateurs began: What antenna to use? I had a discussion with Remco who just designed his own &lt;a href="http://remco.org/index.php/2015/02/26/145-mhz-2m-moxon-pt-2/">Moxon antenna&lt;/a> using the &lt;a href="http://www.qsl.net/4nec2/">4nec2 antenna modeler and optimizer&lt;/a>. He convinced me to use this software in order to prevent building a lot of failing antennas and not being sure why they fail. So that's what I did.&lt;/p>
+&lt;p>The 4nec2 software comes with a bunch of example antennas for you to play around with. The antenna I borrowed last year was a 2 element antenna based on a &lt;a href="https://en.wikipedia.org/wiki/Log-periodic_antenna">Log Periodic Dipole Array antenna&lt;/a>. It worked fine and I had fun with it so I decided to model an antenna like that. (Also because I'm hard-headed and just copying Remco's Moxon would not lead to interesting discussions).&lt;/p>
+&lt;p>&lt;strong>Step 1: Getting basic dimensions of an LPDA&lt;/strong>
+The first thing I needed is a basic, ballpark approximation of a working LPDA antenna for 144MHz so I could get used to the 4nec2 modeling software. I used &lt;a href="http://hamwaves.com/lpda/en/">ON4AA's Log-Periodic Dipole Array calculator&lt;/a> to get an idea of the basic dimensions.&lt;/p>
+&lt;p>I noticed that the length of the first and largest element of the antenna is always 1041 mm, no matter what taper or relative spacing I chose as input. Good news, because that means that the antenna only has a few parameters to change when optimizing in 4nec2, see below.&lt;/p>
+&lt;p>&lt;strong>Step 2: Getting the design into 4nec2&lt;/strong>
+So here is where the struggle starts. As I am a Mac user and the 4nec2 software is Windows only, I installed it on a Linux Mint virtual machine running under Wine without problems. The terminal window will log errors but you have to put your OCD aside for a moment and ignore those.&lt;/p>
+&lt;p>For the LPDA antenna itself the struggle was not that bad, as I found an example file and was able to change that around to learn how 4nec2 works. I'll spare you the details. Just remember that you want to use the new NEC editor (Main Window, Settings → NEC Editor (new)).&lt;/p>
+&lt;p>&lt;a href="1-editor.png">&lt;img src="1-editor.png" alt="4nec2 Editor">
+&lt;/a>&lt;/p>
+&lt;p>Here you see the two wires of my LPDA antenna. As you can see, each line has a start (X1,Y1,Z1) and end point (X2,Y2,Z2) in 3D space. Ignore the funny formulas in the screenshot for now. A counter intuitive thing for me was that lines are made out of &amp;quot;segments&amp;quot;. 4nec2 cryptically complains about too few and too much segments, and you have to choose a number accordingly.&lt;/p>
+&lt;p>Another important thing to learn about 4nec2 is that you don't &amp;quot;connect&amp;quot; a source to your antenna. Rather, you choose a segment of a line which will then act as a current or voltage source (current source is the recommended default). This is why if you want to have your feed point in the middle of a wire, you need to choose an odd number of segments. In my design, both wires are 61 segments, and the feed point on both wires is on segment 31 (the middle segment of each wire).&lt;/p>
+&lt;p>Connecting the two wires of the antenna is done using a transmission line, with a twist (literally). We connect segment 31 of both wires with a transmission line, and chose a &lt;em>negative impedance&lt;/em>. This causes the transmission line to &amp;quot;twist&amp;quot; in your geometry window, and you should see something like this:&lt;/p>
+&lt;p>&lt;a href="2-geometry.png">&lt;img src="2-geometry.png" alt="LPDA Geometry">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 3: Changing the NEC file for optimization&lt;/strong>
+4nec2 contains an optimizer which can optimize certain characteristics of your antenna by iterating values. If you hard-coded the X,Y and Z values of the lines, the optimizer can not change the design. To be able to use the optimizer, I chose to have variables for the length of the boom (L), length of the driving/smallest element (D), length of the reflecting/longest element (R) and impedance of the transmission line (TRI). This explains the funny values for the X,Y,Z coordinates in my file. The variables can be found on the &amp;quot;Symbols&amp;quot; tab of the NEC editor.&lt;/p>
+&lt;p>&lt;strong>Step 4: Optimize!&lt;/strong>
+Close the Editor window, and in the main window, select Calculate -&amp;gt; Start Optimizer. The optimizer parameters can be a bit confusing. Choose the &amp;quot;Optimize&amp;quot; function in the drop-down top left, and leave the Option set to &amp;quot;default&amp;quot;. Below the text &amp;quot;Weighting factors in %&amp;quot; you'll see 7 text fields. Set them all to 0, except for &amp;quot;F/B&amp;quot;, the Front-to-back ratio. That should be set to 100, As we are only interested in maximum directivity.&lt;/p>
+&lt;p>&lt;a href="3-optimizer.png">&lt;img src="3-optimizer.png?w=450" alt="Optimizer">
+&lt;/a>&lt;/p>
+&lt;p>Now that we have told 4nec2 what we want (max F/B), we need to tell the optimizer which variables it can play with. In this simple design, you could select all variables by clicking on them, which moves them to the &amp;quot;selected&amp;quot; column. I tried, this does not lead to practical results and takes a bit of time depending on the speed of the computer. All open geometry or 3D view windows will live-update with the calculations. This looks really cool but things go faster if you close them.&lt;/p>
+&lt;p>&lt;a href="3a-optimized-radiation.png">&lt;img src="3a-optimized-radiation.png" alt="Optimized radiation">
+&lt;/a>&lt;/p>
+&lt;p>After a bit of playing with the optimizer, I got to the following radiation pattern:&lt;/p>
+&lt;p>&lt;a href="4-radiation-pattern.png">&lt;img src="4-radiation-pattern.png" alt="4. radiation pattern">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 5. Build and field test.&lt;/strong>
+At this point, the software will have tried tens, if not hundreds of different antenna variations you didn't have to physically build. But now that we are &amp;quot;certain&amp;quot;, we can build the antenna. The boom is aluminum profile, the radials are made of measuring tape so they can be folded, and the handle is a broomstick:&lt;/p>
+&lt;p>&lt;a href="5-antenne.jpg">&lt;img src="5-antenne.jpg" alt="Antenna">
+&lt;/a>&lt;/p>
+&lt;p>I've spent extra effort to make sure the dimensions are as close to the simulation as possible, to maximize the chance that it actually works as designed.&lt;/p>
+&lt;p>I did a field test together with my dad, where we used a Baofeng handheld (yes &lt;a href="https://rolfje.wordpress.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/">that one&lt;/a>) as a &amp;quot;fox&amp;quot;, taking turns in hiding it for the each other. The tests went &amp;quot;sort of okay&amp;quot;, but I noticed that it sometimes felt as if there was not one peak straight in front of the antenna, but rather two peaks left and right. This got me worrying about the accuracy of the build or the simulation. I even started doubting impact of impedance mismatch and cable length. When we got home however, I checked and saw that the 4nec2 software actually predicted this in a different diagram:&lt;/p>
+&lt;p>&lt;a href="6-vertical-radiation.png">&lt;img src="6-vertical-radiation.png" alt="Vertical radiation">
+&lt;/a>&lt;/p>
+&lt;p>It turns out, that if the antenna is held horizontally, and the transmitter antenna is a vertical, the whole system behaves exactly as simulated, with the antenna being almost &amp;quot;deaf&amp;quot; right in front of the boom. Solution: Turn the antenna vertical or horizontal while hunting to find the maximum signal. We noticed that without being able to see the radio, I could exactly match the angle of the vertical antenna. My dad hid the fox in a tree at 45 degrees, and without seeing or knowing it I matched the angle of the antenna perfectly.&lt;/p>
+&lt;p>&lt;strong>Step 6. Game on!&lt;/strong>
+Just today I tried the whole setup in an actual fox hunt with 24 foxes (yes that many). I was very pleased with the performance of the antenna, and I found 14 of the foxes. With a bit of practice and experience, I'm sure I can improve to find more foxes next time around.&lt;/p>
+&lt;p>And last but not least, here is the 4nec2 file for you to play around with:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; padlinenumbers=&amp;quot;false&amp;quot;]
+CM Log Periodic Dipole Array for 2m fox hunting
+CE
+SY L=180 'Boom length
+SY D=963 'Driver length
+SY R=1041 'Reflector length
+SY TRI=70 'Transmission line impedance
+GW 1 61 0 -R/2 0 0 R/2 0 10
+GW 2 61 L -D/2 0 L D/2 0 10
+GS 0 0 0.001
+GE 0
+GN -1
+EK
+EX 6 2 31 0 1 0 0
+TL 1 31 2 31 -TRI 0 0 0 0 0
+FR 0 20 0 0 144 0.1
+EN
+[/sourcecode]&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Print posters on a regular printer with Excel.</title><link>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</link><pubDate>Thu, 15 May 2014 20:24:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=_wwVRJ4_Ayk">&lt;img src="ts-50-rx-tx-board-banner.jpg" alt="TS-50-RX-TX-board-banner">
+&lt;/a>&lt;/p>
+&lt;p>I recently needed to print out a big schematic diagram of the RX/TX board of a Kenwood TS50 Transceiver. This did not fit on a single piece of paper. Instead of downloading all kinds of crappy tools or uploading the image to some &amp;quot;free&amp;quot; site which is going to use it for whatever they think justifies their definition of &amp;quot;free&amp;quot;, I found out you can do this in Excel. Here's how:&lt;/p>
+&lt;pre>&lt;code> 1. Make sure the image you want to print out as a poster has a decent resolution
+2. Open Excel (maybe this will work in LibreOffice too, I haven't tested, let me know)
+3. Drag the image into a new worksheet so that it is top-left of the sheet.
+4. Open the &amp;quot;Print preview&amp;quot; (the little icon in the bottom left of the window)
+5. Resize the image so that it covers more than one page, up to the number of pages you'd like the poster to be. Your screen should now look somewhat like this:
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="screen-shot-2014-05-15-at-21-58-23.png">&lt;img src="screen-shot-2014-05-15-at-21-58-23.png" alt="Screen Shot 2014-05-15 at 21.58.23">
+&lt;/a>
+6. Optional: Adjust the page margins.
+7. Print.&lt;/p>
+&lt;p>After this, you'll be gluing the pages together, but I think you already figured that out beforehand.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Catnip Watering System</title><link>https://realrolfje.github.io/rolfje.com/2011/12/04/catnip-watering-system/</link><pubDate>Sun, 04 Dec 2011 20:04:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/12/04/catnip-watering-system/</guid><description>
+&lt;p>Here's a one minute how-to on growing catnip without having to water your plants every day.&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=6jyqNzNeQeE]&lt;/p></description></item><item><title>Aeroccino Motor Replaced</title><link>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</link><pubDate>Tue, 16 Aug 2011 18:56:51 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</guid><description>
+&lt;p>Months ago, I got this broken Aeroccino milk frother for free. This week I fiddled with it for a few hours, and got it to work:&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=kNEqWH3ILDc]&lt;/p>
+&lt;!-- more -->... and this is how you get it apart. First carefully pull out the button on the front:
+&lt;p>&lt;a href="aeroccino-button-remove-1.png">&lt;img src="aeroccino-button-remove-1.png" alt="Removing the front button">
+&lt;/a>&lt;/p>
+&lt;p>And then remove the rubber plugs to get to the screws at the bottom.&lt;/p>
+&lt;p>&lt;a href="aeroccino-bottom-screws.png">&lt;img src="aeroccino-bottom-screws.png?w=300" alt="Remove rubber plugs to get to the screws">
+&lt;/a>&lt;/p>
+&lt;p>You're on your own from here. Be careful not to break any wires when you pull it apart, and take pictures along the way so you know how to put it back together.&lt;/p></description></item><item><title>Zūmo Mount for Triumph Speed Triple</title><link>https://realrolfje.github.io/rolfje.com/2009/12/30/zumo-mount-for-triumph-speed-triple/</link><pubDate>Tue, 29 Dec 2009 23:57:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/12/30/zumo-mount-for-triumph-speed-triple/</guid><description>
+&lt;p>&lt;a href="img_8498.jpg">&lt;img src="img_8498.jpg?w=150" alt="">
+&lt;/a>The RAM mount coming with the Garmin zūmo's are fine, but I wanted something more elegant to go with my Triumph Speed Triple. This article contains a detailed description of building your own mount for the &lt;a href="https://buy.garmin.com/shop/shop.do?cID=135&amp;amp;pID=15000">Garmin zūmo 660&lt;/a>. I mounted the zūmo on my Speed Triple, but the mount is universal enough to be center-mounted on any bike which has riser-mounted handlebars.&lt;/p>
+&lt;p>No guarantees ofcourse, you're on your own from here. Bring your tools and read on.&lt;/p>
+&lt;p>&lt;a href="img_8529.jpg">&lt;img src="img_8529.jpg" alt="">
+&lt;/a>&lt;strong>WARNING: When I tried to cut one of these rubbers in half, the bottom disk came loose. It was not as securely glued to the rubber as the top disk. When pulling the zūmo on the mount it does not come off, but if you want to be sure order the Garmin 550 mount rubbers (described in article below).&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>&lt;!-- more -->Stuff you need to buy:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * [![](img_8444.jpg?w=150)
+&lt;/code>&lt;/pre>
+&lt;p>](img_8444.jpg)A scythe &amp;quot;Harddisk Stabilizer II&amp;quot;. For more info, see &lt;a href="http://www.scythe.co.jp">www.scythe.co.jp&lt;/a>. I got mine at &lt;a href="http://www.ikbenstil.nl">www.ikbenstil.nl&lt;/a>. Buy two of these if you can spare the money, because you're likely to screw one up. Please note that you can also order ready-made M4 dampers at &lt;a href="http://snelbalie.gps.nl/">Waypoint&lt;/a>, but I did not know that at the time, and they are not listed on their shop page.
+* a sheet of rubber or an old tyre inner tubing
+* A (stainless steel) brace which can fit the handle bars and the rubber at the thickest part. The standard Garmin mount brace is not long enough, I found a perfectly fitting brace sold as some drywall pipe mount (&lt;a href="http://www.23hq.com/rolfje/photo/5236931">wandputting&lt;/a>).
+* two stainless steel self-locking nuts fitting the brace, in my case M6.
+* 10x10 aluminum U profile rod, about 50mm length for the counter bracket on the brace
+* eight stainless steel M4x15 bolts, with at least four washers.
+* 2mm thick aluminum sheet, at least 53x80mm
+* at least 30x30mm wood beam, of about 1 meter in length
+* wood screws (trust me on these last two items)
+* small bottle of mild threadlock (I used &lt;a href="http://www.loctitesolutions.com/index.php?FOLDERID=12096&amp;amp;PHPSESSID=277a20d2714a013c7235e12cade3653e">loctite 243&lt;/a>)
+* some &lt;a href="http://www.wd40.com/">WD40&lt;/a> (you should have that in your shop, next to the &lt;a href="http://www.ducttapeguys.com/">duct tape&lt;/a>)&lt;/p>
+&lt;p>**
+Tools you need to have:**&lt;/p>
+&lt;hr>
+&lt;pre>&lt;code> * sharp (new) 3.2mm HSS drill bit and preferably a bench-press drill
+* standard set of steel drill bits (1mm to 10mm, whatever you have handy)
+* sharp 15mm wood drill but (this needs to be exact)
+* M4 inner thread cutter
+* firmly attached [bench vise](http://en.wikipedia.org/wiki/Vise)
+* a set of [metal files](http://en.wikipedia.org/wiki/File_(tool))
+* a hacksaw
+* a wood saw
+* a freezer (or rent a small space in that for 24 hours :-)
+* an old blanket or towel
+&lt;/code>&lt;/pre>
+&lt;p>**
+Things you need to do:**&lt;/p>
+&lt;p>The rubber dampers in the harddisk stabilizer have the wrong hole in one end, and a &lt;a href="http://www.23hq.com/rolfje/photo/5237044?album_id=5237009">piece of thread in the other.&lt;/a> To be able to cut new M4 thread, we need to drill through the steel and the rubber. Drilling rubber is usually a problem, but not if we do some careful preparations.&lt;/p>
+&lt;p>&lt;a href="img_8453.jpg">&lt;img src="img_8453.jpg?w=112" alt="">
+&lt;/a>Take the 30x30 wood beam, and cut off four pieces of about 7 to 10 cm length. Drill a 15mm hole in each of them. Then, saw it in half with the wood saw. Be carefull to mark the wood pieces, as they need to fit perfectly back together later on. Drill two small holes in one half of the four clamps, so you can screw it back together perfectly, as if it was 1 piece.&lt;/p>
+&lt;p>Take the rubber dampers from the scythe harddisk stabilizer, put them in the 15mm holes and screw the clamps back together. With the hacksaw, saw off the thread coming out of one end of the damper, and file it so that the metal is &lt;a href="http://www.23hq.com/rolfje/photo/5237061?album_id=5237009">perfectly flat&lt;/a>.&lt;/p>
+&lt;p>Check that the rubber dampers fit the wooden clamps, screw them together pretty tight, and put the four (or eight) assemblies in the freezer for at least 24 hours.&lt;/p>
+&lt;p>To protect the paint on your gastank, put an old blanket or towel on it. This will keep you from scratching the tank in the next steps. Extra advantage is that you can put small nuts and washers on your tank without them rolling away.&lt;/p>
+&lt;p>&lt;a href="img_8483.jpg">&lt;img src="img_8483.jpg?w=150" alt="">
+&lt;/a>While waiting for the rubbers to cool off, you can prepare the aluminum parts. Take the 10x10 aluminum frame, and drill two holes in it so that the M6 brace fits through it. Mark the perfect middle between the two holes, and use a half-round steel file to file it down so that it fits the handlebars perfectly.&lt;/p>
+&lt;p>Be careful to file perpendicular to the aluminum, and re-check your work often. The U profile sits flush against the handlebars, while being perpendicular to them when looking from the riders position. Don't file too deep, allow for some room between the aluminum plate and the handlebars, so that the &lt;a href="http://www.23hq.com/rolfje/photo/5237030?album_id=5237009">screw heads don't touch the bars&lt;/a>.&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2009-12-29-om-13-54-41.jpg">&lt;img src="schermafbeelding-2009-12-29-om-13-54-41.jpg?w=248" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Next, take the aluminum sheet and make it look like the drawing I made here (this is the shortest sentence in this post, resulting in the most work for the reader).&lt;/p>
+&lt;p>Prepare the benchpress drill by mounting the 3.2mm drill bit. After the rubber dampers in the wood clamps have been in the freezer, take one out and take it to the workshop as fast as you can, make sure to keep it cold.&lt;/p>
+&lt;p>On the flat side of the rubber damper (the side where you filed off the thread), drill a hole through the steel, but try not to drill into the rubber too much.&lt;/p>
+&lt;p>Flip the clamp over, and drill through the original threaded hole, all the way through the rubber. If your benchpress drill is straight, you &lt;a href="http://www.23hq.com/rolfje/photo/5237076?album_id=5237009">should come out through the hole&lt;/a> you just drilled in the in the other steel plate.&lt;/p>
+&lt;p>Repeat the whole process for each damper. Minimize the time they are out of the freezer. After you've drilled all dampers, they can warm up again by leaving them in the workshop.&lt;/p>
+&lt;p>&lt;a href="img_8466.jpg">&lt;img src="img_8466.jpg?w=112" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Take the dampers out of the wooden clamps. You don't need the clamps anymore, give them to a friend so he can make this cool mount, too.&lt;/p>
+&lt;p>Put one of the rubber dampers in the bench vise and use a small drop of WD40 and the M4 thread cutter to cut thread into the 3.2mm holes. Do this on both sides, make sure that you break the cuttings (one turn forward, then 2/3 back, repeat). Repeat this for all dampers.&lt;/p>
+&lt;p>&lt;strong>Mount up!
+You should now have all pieces to mount. Test the fitting of the mount before you use threadlock (loctite) on any of the parts. Because of the construction, there is an order in which you need to assemble the parts, let me take you through it:&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="img_8485.jpg">&lt;img src="img_8485.jpg" alt="">
+&lt;/a>Mount the rubbers on the zūmo mount, but do not fasten the screws. Attach the aluminum plate to the other side, also not fastening the screws.&lt;/p>
+&lt;p>Now, tighten the screws on the zumo mount first, then tighten the screws on the aluminim plate. This will make sure that the dampers will align perfectly later on. Take one screw out of the aluminum plate, apply threadlock and a washer, and re-tighten it. Repeat for the other three screws in the aluminum plate.&lt;/p>
+&lt;p>After you've done all four screws attaching the dampers to the aluminum plate, take the Garmin zūmo mount off. You should now have an aluminum plate with four dampers firmly attached to it.&lt;/p>
+&lt;p>&lt;a href="img_8490.jpg">&lt;img src="img_8490.jpg?w=150" alt="">
+&lt;/a>Cut the rubber slab to the correct width and length so that it protects your handlebars from scratches by the mount. Use the brace, the aluminum U profile, two washers and two self-locking nuts to attach the aluminum plate to the handlebars.&lt;/p>
+&lt;p>When compfortable with the position, tighten the bolts and &lt;a href="http://www.23hq.com/rolfje/photo/5237129?album_id=5237009">attach the zūmo mount&lt;/a> to the rubber dampers, using threadlock. Everything should match up perfectly, don't force anything.&lt;/p>
+&lt;p>And there you have it, all done! More pictures of the whole process are available &lt;a href="http://www.23hq.com/rolfje/album/5237009">here&lt;/a>.&lt;/p>
+&lt;p>&lt;a href="img_84991.jpg">&lt;img src="img_84991.jpg" alt="">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Please note:&lt;/strong> At the time of writing I did not thouroghly test the durability and strength of this mount and it's dampers. Mounting the zūmo like this is totally at your own risk, so please be careful. If you're not sure about the dampers, buy ready-made ones fit for this purpose. Your GPS supplier should be able to get a hold of a set.&lt;/p></description></item><item><title>Packing bags on a Speed Triple</title><link>https://realrolfje.github.io/rolfje.com/2009/04/18/packing-bags-on-a-speed-triple/</link><pubDate>Sat, 18 Apr 2009 13:53:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/04/18/packing-bags-on-a-speed-triple/</guid><description>
+&lt;p>&lt;a href="img_1798.jpg">&lt;img src="img_1798.jpg" alt="my Triumph Speed Triple">
+&lt;/a>As you may know, I traded in my Honda Sevenfifty for a nice Triumph Speed Triple. While waiting for the bike to be delivered, I tried to fiend out how I can take my hefty 4-star ART chainlock on this bike. Apparently, nobody uses chainlocks on their bikes because I could find no information at all about transporting chainlocks.&lt;/p>
+&lt;!-- more -->Ofcourse you can put the chainlock around your body, or in a backpack, but neither of these solutions are without risk. Particularly wearing a chainlock around your neck is pretty dangerous when you fall. You might expect that bike manufacturers would leave some room under the seat to transport a lock. But if you have a Speed Triple, you know how little room there is under the seat.
+&lt;p> 
+&lt;a href="img_1932.jpg">&lt;img src="img_1932.jpg?w=200" alt="Speed Triple storage... None.">
+&lt;/a>    &lt;a href="img_1934.jpg">&lt;img src="img_1934.jpg?w=200" alt="No room in the seat itself... But look! Loops!">
+&lt;/a>&lt;/p>
+&lt;p>As you can see in these pictures, there is not even enough room to put a pair of summer gloves or a simple disclock under the seat. There is a small compartment at the rear, but my insurance requires me to have an SCM approved alarm, which takes up the remaining space under the seat (the box with the yellow sticker in the top left picture).&lt;/p>
+&lt;p>&lt;a href="img_1945.jpg">&lt;img src="img_1945.jpg" alt="Loops sticking out">
+&lt;/a>    &lt;a href="img_1942.jpg">&lt;img src="img_1942.jpg" alt="img_1942">
+&lt;/a>&lt;/p>
+&lt;p>To my surprise, Triumph did add a cool feature to the seat itself: loops! Lift the seat, fold the loops out, and put the seat back. Now you can put a backpack on your buddyseat, and strap it to the bike without damaging or even touching any painted parts.&lt;/p></description></item><item><title>Replace your mousecable</title><link>https://realrolfje.github.io/rolfje.com/2008/11/04/replace-your-mousecable/</link><pubDate>Mon, 03 Nov 2008 23:00:37 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/11/04/replace-your-mousecable/</guid><description>
+&lt;p>&lt;img src="img_0513.jpg" alt="">
+I recently tried to purchase a Logitech LS1 mouse from Logitech. After not hearing from them for 3 weeks, I ordered the same mouse at Dynabyte and got it within 5 days. Suddenly Logitech woke up and sent me another LS1 mouse. Because they don't react to mails or calls, I had a spare LS1 to play around with.&lt;/p>
+&lt;p>I decided to replace the long, rigid cable with a short supple one. Here's how you can do that, too.&lt;/p>
+&lt;!-- more -->[![](img_0511.jpg?w=59)
+&lt;p>](img_0511.jpg)Logitech makes mice, and sometimes nice ones. The trouble is that most mice are for PC users, who have their PC sitting on the floor, far away from the desk. So mouse cables are long, too. Logitech likes to use very ridgid cables for their mice, which sometimes means that the cable will actually have so much &amp;quot;spring&amp;quot; that it will push your mouse back.&lt;/p>
+&lt;p>Normally I'm behind a laptop, so my mousecable can easily be as short as 30cm, and has to be as supple as the wires on your original iPod headphones. Luck has it, that you can actually change the cable on the Logitech LS1 mouse quite easily, with some patience and a soldering iron.&lt;/p>
+&lt;pre>&lt;code> 1. [![](img_0517.jpg?w=110)
+&lt;/code>&lt;/pre>
+&lt;p>](img_0517.jpg)Remove the slidepad-stickers to reveal 3 little black screws at the bottom.
+2. Open up the mouse.
+3. Unplug the white plug and remove the mousecable. The colors on my model were wired &lt;a href="http://pinouts.ru/Slots/USB_pinout.shtml">according to the USB standard&lt;/a>. The leftmost black connects to the housing, the second black is GND, red is VCC, white is D- and green is D+.  
+4. Re-use the old plug to solder your own cable onto. I used a very thin mousecable of a very cheap mouse I had lying around, but you can use any supple USB cable you like as long as you get the connections right.
+5. &lt;a href="img_0519.jpg">&lt;img src="img_0519.jpg?w=128" alt="">
+&lt;/a>Plug the new cable back in, and use a little tie-wrap to keep the cable in place in case you pull it.
+6. Put it all back together.&lt;/p>
+&lt;p>For the observant reader: No, I did not connect the outer housing to ground, you studied the pictures very well. The new cable only had 4 leads. But given the shorter cable, it works fine without interference. &lt;/p>
+&lt;p>&lt;a href="img_05241.jpg">&lt;img src="img_05241.jpg?w=300" alt="">
+&lt;/a>&lt;/p>
+&lt;p>And finally the mouse with the old and the new cable. See the difference? The old cable almost looks like a sewer pipe compared to the new thinner cable. &lt;/p>
+&lt;p>If you'll excuse me, I'm going to replace the other LS1 mouse with a white USB cable to match my mac :-)&lt;/p>
+&lt;p>Oh and don't order your Logitech mouse directly from Logitech, their webshop is crappy, and their customer support is impossible to reach.&lt;/p></description></item><item><title>Lathe Spindle rebuild, part 1</title><link>https://realrolfje.github.io/rolfje.com/2007/08/28/lathe-spindle-rebuild-part-1/</link><pubDate>Tue, 28 Aug 2007 18:15:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/08/28/lathe-spindle-rebuild-part-1/</guid><description>
+&lt;p>&lt;a href="o_img_7615.jpg">&lt;img src="o_img_7615.thumbnail.jpg" alt="o_img_7615.jpg">
+&lt;/a>Past few weeks I noticed that the spindle bearings of my lathe were becomming warmer than I liked, particularly when working with higher rpm. Last weekend I decided to take the spindle out, clean the old grease out, and rebuilding it. It turned out to be more work than I expected. The tight fit of the pully made me use the hammer-and-wood trick on the spindle, which I did not like. After a few hours of tapping and fiddling, the pully came of. The spindle gear and the left hand bearing were no fun job either.&lt;/p>
+&lt;p>Anyway, the whole thing is apart now, and I cleaned out all the grease. I test-fitted the spindle sundaynight, but I can feel a slight &amp;quot;bump&amp;quot; when turning it, I think the grease must have picked up some dirt, most likely a wood chip from the bench. So I have to take it apart again, it has to be perfectly smooth.&lt;/p>
+&lt;p>After I re-fit the spindle, I have to adjust it with my micrometer to have a play of between 0.004 and 0.005 mm, no more, and no less, while being able to turn it by hand. Sounds like an interesting excercise which will take up more than a few minutes :-)&lt;/p>
+&lt;p>&lt;a href="o_img_7613.jpg">&lt;img src="o_img_7613.thumbnail.jpg" alt="o_img_7613.jpg">
+&lt;/a>&lt;a href="o_img_7617.jpg">&lt;img src="o_img_7617.jpg" alt="o_img_7617.jpg">
+&lt;/a>&lt;a href="o_img_7618.jpg">&lt;img src="o_img_7618.thumbnail.jpg" alt="o_img_7618.jpg">
+&lt;/a>&lt;a href="o_img_7620.jpg">&lt;img src="o_img_7620.thumbnail.jpg" alt="o_img_7620.jpg">
+&lt;/a>&lt;/p></description></item><item><title>Free Beanbag!</title><link>https://realrolfje.github.io/rolfje.com/2006/07/21/free-beanbag/</link><pubDate>Fri, 21 Jul 2006 15:11:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/07/21/free-beanbag/</guid><description>
+&lt;p>When you are using a (digital) camera and need to place it on an uneven surface to keep it still long enough for your long shutter speeds, or you want to make a shot on the release timer (or both), you'll need a tripod, or a &lt;a href="http://www.shortcourses.com/equipment/tripods/beanbag.jpg">beanbag&lt;/a>. A beanbag is an ideal option, you can tuck it into your backpack, take it everywhere you need and it fits all camera's.&lt;/p>
+&lt;p>Sure, you can buy a beanbag from a nice company like &lt;a href="http://www.wildlifewatchingsupplies.co.uk/">this&lt;/a>, and spend about 30 euro's or more. But, If you've got a needle, thread, a T-shirt or linnen bag, and some rice, you can make one for free!&lt;/p>
+&lt;!-- more -->![Beanbag materials](o_img_8641.jpg)
+&lt;p>Start by sacrificing your linnen bag or t-shirt, cutting out two square pieces of about 23x23cm (or larger if you want to support a larger camera/lens combination). As you can see here, I saved me some sewing because I used the corner of a linnen bag. Now I only had to stich up 2 sides of the &amp;quot;pillow&amp;quot;.&lt;/p>
+&lt;p>Put the two pieces on top of eachother and sew them together. Don't worry about being close to the edges, leave plenty of room there, because you will turn it inside-out later on. To be able to turn it inside-out and fill it with rice (or other forms of &amp;quot;beads&amp;quot;), leave about 7cm on one edge un-sewed. I also recommend to leave the hole in the middle of an edge. This way you'll have 4 nice sharp corners on the bag lateron.&lt;/p>
+&lt;p>Turn the bag inside out. Now the edges look nicer, don't they? Roll up a piece of A4 paper and put it in the hole of your bag, and make it into a funnel. Poor the beads (rice, dries peas or beans, or fatboy filling) into the funnel. Make sure you don't fill the bag totally, because then it will not be flexible enough. I used about 1kg of rice for mine.&lt;/p>
+&lt;p>&lt;img src="o_img_8647.jpg" alt="Beanbag finished">
+Close the bag by sewing the last opening. This takes some attention, this is the part of your sewing which could be visible. You can see where I closed the bag at the bottom right of the picture with the Powershot on it.&lt;/p>
+&lt;p>The beanbag I made supports my Canon EOS 350D perfectly. There are a few improvements on my list after making it. My next beanbag will:&lt;/p>
+&lt;pre>&lt;code> * be made of a black t-shirt so it's less reflecting
+* be filled with [fatboy filling](http://www.serenityhealth.com/bean_filler.html) to prevent problems when getting the bag wet (rice stinks :-)
+* be slightly bigger
+* will contain a zipper or velcro on the opening so I can (re)fill it
+&lt;/code>&lt;/pre>
+&lt;p>Now make one of your own and go and use the 30 euro's you just saved to buy nice UV lens filters. :-)&lt;/p>
+&lt;p>&lt;img src="o_img_8648.jpg" alt="Beanbag with Canon A20">&lt;/p>
+&lt;p>&lt;img src="o_img_5926.jpg" alt="Beanbag with Canon 350D">&lt;/p></description></item><item><title>Pully party</title><link>https://realrolfje.github.io/rolfje.com/2006/04/01/pully-party/</link><pubDate>Sat, 01 Apr 2006 16:26:55 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/04/01/pully-party/</guid><description>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/2587050">&lt;img src="http://www.23hq.com/23666/2587050_8321757241e43e6a43fa7f8a6d8f378e_mblog.jpg" alt="">
+&lt;/a>Party today! The rotor puller I ordered last month finally arrived after being in transit for over a MONTH, &amp;quot;thank you&amp;quot; United States Parcel Services! They probably sent somebody to swim accros the ocean with my parcel on his back. Judging by the shipping costs, the swimmer had enough food luxury during his trip. I really hope that Pit Posse selects a different shipping company for international orders soon. I took the torch and heated the rotor until water drops put on it boiled, to soften the retainer (lock tight) between the axle and the rotor. Then I re-tightened the rotor puller, smacked it with a hammer, re-tightened it, and so forth. The fifth hit did it, the rotor popped out. As you can see in the first picture, I had a fire extinguisher close by, because oil and fire do not play well together. I also used gloves so I could grab hot metal parts if needed, and I used aluminum plates to protect the magnet from direct heat of the torch.&lt;/p>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/2587048">&lt;img src="http://www.23hq.com/23666/2587048_6266ede2067c9de1331717266c355588_mblog.jpg" alt="">
+&lt;/a>Kawasaki KLR wrenching fanatics will notice the missing balancer chain tensioner (or &amp;quot;doohickey&amp;quot;, as they are sometimes called). Don't worry, it's still in one piece, I took it off to straighten it. It was bent and worn by the holding bolt, and I don't want the bolt to sit or crawl to it's former spot.&lt;/p>
+&lt;p>I also checked the valve fittings by putting petroleum in the head. They do not seem to be leaking, and show now signs of abnormal wear. Next week I will be checking the old oil for metal splinters, and putting it all together.&lt;/p></description></item><item><title>How to replace the headlights on a Citroen Xsara</title><link>https://realrolfje.github.io/rolfje.com/2006/03/11/how-to-replace-the-headlights-on-a-citroen-xsara/</link><pubDate>Sat, 11 Mar 2006 19:43:06 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/03/11/how-to-replace-the-headlights-on-a-citroen-xsara/</guid><description>
+&lt;p>Recently my left headlight broke. I thought I'd change it quickly, but after half an hour of fiddling I decided to ask my dealer to do it for me, while I was looking. That was not a bad idea. It turned out to be not so straightforward after all, and you actually need tools (which you don't get when buying the car) to do this! This lead me to write a &amp;quot;small&amp;quot; article on how to replace the headlights of a Citroen Xsara. Enjoy.&lt;/p>
+&lt;!-- more -->[![My Citroen Xsara 1.4 Hdi](r_citroen-xsara-break-14-hdi.thumbnail.jpg)
+&lt;p>](r_citroen-xsara-break-14-hdi.jpg)** The Car**
+This is my Citroen Xsara break 1.4 HDi. No, that's not the picasso model, you've seen that right. I think car manufacturers need to stop naming a complete line of cars with just one name. Nobody knows what car you are driving, even if you tell them. Good examples are the Citroen Xsara and the Renault Megane. But that's not what this article is about.&lt;/p>
+&lt;p>Recently my left headlight broke. I thought I'd change it quickly, but after half an hour of fiddling I decided to ask my dealer to do it for me, while I was looking. That was not a bad idea. It turned out to be not so straightforward after all, and you actually need tools to do this! You will need a 10mm wrench and a screwdriver. If you have thick fingers, I'd recommend a pair of pliers as well.&lt;/p>
+&lt;p>I wrote the whole procedure down here, for other Xsara owners to read. It can save you a costly trip to the garage, or a trip without headlights in a very dark area. The left headlight is the hardest to replace, the right headlight can be done without tools (although still a bit hard to reach).&lt;/p>
+&lt;p>(Click on the images to zoom in)&lt;/p>
+&lt;p>&lt;a href="r_citroen-headlight-booklet-picture.jpg">&lt;img src="r_citroen-headlight-booklet-picture.thumbnail.jpg" alt="Headlight from the manual">
+&lt;/a>&lt;strong>1. Check the manual&lt;/strong>
+The first thing you need to do (if you care for a laugh) is check the manual on &amp;quot;changing lights&amp;quot;. You will find a nice picture of the back of the headlight unit, with arrows pointing to the different lights. Surely this is to motivate you to do it yourself, but they kindly &amp;quot;forgot&amp;quot; to include the 9 missing steps to even get to the rear of the headlight unit.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-cover-arrow.jpg">&lt;img src="r_citroen-remove-cover-arrow.thumbnail.jpg" alt="Left Engine Cover clips">
+&lt;/a>&lt;strong>2. Remove left engine cover&lt;/strong>
+Open up the hood (or stop reading here if you can't ;-). You will see some plastic engine covers. Yes, those are the same covers you need to remove on the right side to fill up your windshield wiper fluid. The first sign the designer must have been a complete and utter idiot.&lt;/p>
+&lt;p>For the left headlight, remove the left engine cover (that's the right one if you are facing the front bumper ;-). Turn the little knobs 90 degrees counter clockwise and carefully lift up the plastic. The knobs are very flimsy, be careful not to break them.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-tube-arrows.jpg">&lt;img src="r_citroen-remove-air-intake-tube-arrows.thumbnail.jpg" alt="Aire Intake Tube">
+&lt;/a>&lt;strong>3. Remove air intake tube&lt;/strong>
+The air intake tube is connected to a plastic box behind the headlight, with a bajonet lock. Turn the top of the tube slightly towards you, and then pull it out of the plastic box.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-box-screw-arrow.jpg">&lt;img src="r_citroen-remove-air-intake-box-screw-arrow.thumbnail.jpg" alt="air intake box nut">
+&lt;/a>&lt;strong>4. Remove air intake box nut&lt;/strong>
+Below where the air intake tube was, you will find a 10mm nut hodling the bottom of the air intake box. Use a 10mm wrench to undo it. Be careful not to drop it into the engine compartment.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-peg.jpg">&lt;img src="r_citroen-remove-air-intake-peg.thumbnail.jpg" alt="Remove air intake box peg">
+&lt;/a>&lt;a href="r_citroen-air-intake-peg.jpg">&lt;img src="r_citroen-air-intake-peg.thumbnail.jpg" alt="The peg after removal">
+&lt;/a>&lt;strong>5. Remove air intake box peg&lt;/strong>
+The top of the air intake box is held by a plastic peg. To pull the center pin out, you'll need to lift the pin with a screwdriver (look carefully at the picture). It should not take much force to take it out, please be carefull with this piece of plastic. I think Citroen will charge a pretty unfair amount of money to replace it should you've broken or lost it.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-abs-plug-cover-arrow.jpg">&lt;img src="r_citroen-remove-abs-plug-cover-arrow.thumbnail.jpg" alt="ABS plug cover">
+&lt;/a>&lt;strong>6. Remove ABS plug cover&lt;/strong>
+Allways wanted to know what that aluminum box is with those steel lines comming out the top? Well that's your anti-blocking system unit, and you're about to disconnect it. First, you need to remove the cover which protects the plug from moisture. You better change your headlights while it is not raining, because chances are that your ABS will stop working if you get the connector to corrode.&lt;/p>
+&lt;p>&lt;a href="r_citroen-unlock-abs-plug-arrows.jpg">&lt;img src="r_citroen-unlock-abs-plug-arrows.thumbnail.jpg" alt="Unlock and remove ABS plug">
+&lt;/a>&lt;strong>7. Unlock and remove ABS plug&lt;/strong>
+Pull out the red handle. The ABS connector plug should almost immediately loosen, and removing the connector should take absolutely &lt;em>no force&lt;/em>. If it sticks, you probably didn't pull out the red handle enough. Carefully look at the picture.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-rear-headlight-cover-arrow.jpg">&lt;img src="r_citroen-remove-rear-headlight-cover-arrow.thumbnail.jpg" alt="headlight cover">
+&lt;/a>&lt;strong>8. Remove rear headlight cover&lt;/strong>
+The lamp cover is a simple plastic lid. Just pull it away from the headlight unit.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>&lt;a href="r_citroen-unplug-main-headlight-arrow.jpg">&lt;img src="r_citroen-unplug-main-headlight-arrow.thumbnail.jpg" alt="Unplug headlight">
+&lt;/a>&lt;strong>9. Unplug headlight&lt;/strong>
+Remove the grey and brown wired plug from the rear of the lamp.
+.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>&lt;a href="r_citroen-lamp-clip.jpg">&lt;img src="r_citroen-lamp-clip.thumbnail.jpg" alt="How to remove the clip">
+&lt;/a>&lt;strong>10. Remove lamp clip&lt;/strong>
+With a flashlight, you can see that the lamp is held in place by a clip. This clip has two handles at the top of the lamp. Push them towards the headlight unit, and then outward. The lamp can now be taken out. Please take note on it's orientation when taking it out, there is only one way of putting it back in without damaging your headlight unit or blinding oncomming traffic.&lt;/p>
+&lt;p>&lt;a href="r_citroen-headlight-h7-out.jpg">&lt;img src="r_citroen-headlight-h7-out.thumbnail.jpg" alt="The H7 Lamp out of it’s reflector">
+&lt;/a>&lt;strong>11. Replace lamp&lt;/strong>
+Replace the lamp with a H7 type lamp, again note the orientation of the lamp. Don't touch the glass with your fingers. Touching the glass will leave grease on the glass. When the lamp heats up, it will become hotter than normal, shortening it's lifetime. Even worse: the grease will vaporize and leave a non-removable milky deposit on your reflectors. Reflectors are very expensive to replace. The dealer will charge you for a complete headlight unit.&lt;/p>
+&lt;p>&lt;a href="r_citroen-reinstall-air-intake-box-arrows.jpg">&lt;img src="r_citroen-reinstall-air-intake-box-arrows.thumbnail.jpg" alt="Reinstall Air Intake Box (arrows)">
+&lt;/a>&lt;strong>12. Put it all back together&lt;/strong>
+Connect the lamp and make sure it is working. After that, re-install all parts in revers order. Make sure that when you re-install the air intake box, the clips (pointed out by arrows 1 and 2 in the picture) are around the steel rimm. If the air intake box is not correctly placed, the plastic pin will not go through the misaligned holes, and the bottom slot will not align with the thread on which the 10mm nut goes.&lt;/p>
+&lt;p>I hope this will help other owners of Citroen Xsara's in replacing their own headlights. If you do not feel confident of something when replacing your headlights, please contact your local dealer. Needless to say, messing aroung with your brake system should be done with care and professionalism.&lt;/p>
+&lt;p>Take care!&lt;/p></description></item><item><title>You Can't Fix What You Don't Measure</title><link>https://realrolfje.github.io/rolfje.com/2006/02/25/you-cant-fix-what-you-dont-measure/</link><pubDate>Fri, 24 Feb 2006 20:23:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/25/you-cant-fix-what-you-dont-measure/</guid><description>
+&lt;p>... maybe the title should be &amp;quot;Two Stupidities A Week&amp;quot;, but since both stupid actions had to do with measurement, or rather the lack thereof, let's stick with the proverb.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;a href="o_img_3626.jpg">&lt;img src="o_img_3626.thumbnail.jpg" alt="Selfmade rotorpuller next to old one">
+&lt;/a>&lt;strong>Stupidity #1&lt;/strong>
+Last Saturday my brother and I went to a motorbike scrapyard for some advice, and maybe a new rotorpuller we could borrow. While talking to the guy, it became clear that either I am treating the rotor with too much love and care, or this guy turns into the Hulk when he pulls rotors. He gave us the advice to try again, and:&lt;/p>
+&lt;p>&lt;em>&amp;quot;Don't force it, get a larger hammer!&amp;quot;&lt;/em>&lt;/p>
+&lt;p>So we set out to get the larger hammer. While getting the hammer I got the brilliant idea to only use the outer bolt of the rotorpuller, so that it sat against the flat outer end of the crank. That way we could hit it harder without the risk of tearing up the threads inside the crank.&lt;/p>
+&lt;p>I turned the puller into the rotor, tightened it, and started hitting it with the hammer. Nothing happened. After hitting it, I could hardly remove the puller from the rotor. It appeared to be forged shorter and thicker by the hammering. The threads looked strangely damaged. When I overlooked the damages a day later, it occured to me that the rotor puller was rather short. And yes, mesaurements confirmed that it never could have touched the crank. It turns out that I was actually hammering the rotor &lt;strong>onto&lt;/strong> the crank, and killing the puller in the process. The thread in the rotor still looked pertty intact. Phew.&lt;/p>
+&lt;p>&lt;strong>Stupidity #2&lt;/strong>
+The rotor puller now being officially useless, I started browsing the internet to see what type of bolt I would need to pull the rotor of a Kawasaki KL650B block. I found a site, telling me I needed a 20mm bolt, with 1.5mm thread. That's an ISO fine M20x1.5 bolt. So I set out to get one. 20mm bolts are not common in your local hardware store. One hardware store could actually find where he could order it, but refused to do that (I will never walk into WALCO hardware store next to Haarlem Central Station again). I would have gladly payed any shipping costs, he had no idea, and he never asked.&lt;/p>
+&lt;p>Since I have a lathe, I decided to put some time in it. My local favourite hardware store had 20mm round steel (the thickest they had) , so I bought a meter of it. With my lathe I cut the 1.5mm thread onto it, which actually worked quote nice. I only broke a cutter on the last pass, stopping too late. I have to find out how to prevent that from happening the next time.&lt;/p>
+&lt;p>I removed the workpiece from the lathe, and tried to screw it into the rotor. Guess what? It was too small! If I had taken 15 seconds to measure the rotor before buying the steel, I would have saved myself a lot of work. After uploading this story I will try to order a puller online, because I can't find larger steel rods today, and the rotor puller is nothing more than a $3,00 bolt.&lt;/p>
+&lt;p>Or maybe I feel like using my lathe again next week, who knows... But then I will use my measure calipers first, last, and very often in between, because: &lt;em>You Can't Fix What You Don't Measure!&lt;/em>&lt;/p></description></item><item><title>Rotten Rotor</title><link>https://realrolfje.github.io/rolfje.com/2006/02/14/rotten-rotor/</link><pubDate>Mon, 13 Feb 2006 20:36:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/14/rotten-rotor/</guid><description>
+&lt;p>&lt;a href="o_img_3581.jpg">&lt;img src="o_img_3581.thumbnail.jpg" alt="Kawasaki KL 650 Tengai crankshaft drawing">
+&lt;/a>Last week I tried to pull the rotor by using a rotor puller, and a socket (from a socket wrench set) to block it. The socket burried it's way into the first thread of the crankshaft. After realising this, I tried to fit the rotor bolt, and it wouldn't go in. Since only the first thread was damaged, I carefully drilled it out (only needed to go 2 mm deep), and now the rotor bolt fits nicely again.&lt;!-- more -->&lt;/p>
+&lt;p>&lt;a href="o_img_3574.jpg">&lt;img src="o_img_3574.thumbnail.jpg" alt="Kawasaki Rotor bolt made into Rotor puller stub">
+&lt;/a>To prevent this from happening again, I ordered a new rotorbolt, and changed the old one to a stub to rest the rotor puller against. You can see the stub on the left. This is needed because the crankshaft is hollow, and the rotor puller has nothing to press against.&lt;/p>
+&lt;p>This evening, I spent another few hours of battering the crankshaft and the rotorpuller, still nothing. No matter what I do, the rotor does not want to let go of the crankshaft. I even tried heating the rotor up until the point I could not touch it with my hands. I protected the magnets from direct heat of the flame with a strip of aluminium, but I didn't want to take the risk to melt the plastic holding them.&lt;/p>
+&lt;p>&lt;a href="o_img_3580.jpg">&lt;img src="o_img_3580.thumbnail.jpg" alt="Rotor puller side view">
+&lt;/a>&lt;a href="r_img_3579.jpg">&lt;img src="r_img_3579.thumbnail.jpg" alt="Rotor puller after failed attemt to pull kawa rotor">
+&lt;/a>In the process, my trusty old rotor puller even almost gave up on me, I think it is time for it's retirement. The thread inside the nut is defintely at it's end, and the handle is bent out of shape from the force applied to try to seperate the rotor from the crank. That, and the beating of the hammer on the inside bolt has turned this rotor puller into a paper weight (almost).&lt;/p>
+&lt;p>I decided to give it another rest, I'm going to a motorbike exposition/dealer show next friday, maybe I can talk to people there about my problem. Sometimes the experienced bike repair shops have simple but effective tips to solve seemingly impossible problems.&lt;/p>
+&lt;p>To make my evening productive I measured the valve clearances. They are pretty nice, only 1 valves is slightly low on their clearance. This strikes me as funny because usually the clearance increases because of wear. Maybe the original clearance was allready low, or the disassembly and reassembly of the head has changed the clearing because I tightened the bolts a bit harder, I don't know. I am fairly sure I measured the clearances correctly, and at the correct camshaft angles.&lt;/p>
+&lt;p>Clearances are:&lt;/p>
+&lt;table >
+&lt;tr >
+&lt;td >
+&lt;/td>
+left
+right
+Allowed
+&lt;/tr>
+&lt;tr >
+exhaust
+&lt;td >0.15mm (just enough)
+&lt;/td>
+&lt;td >0.09mm (0.06 too little)
+&lt;/td>
+&lt;td >0.15~0.25mm
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+inlet
+&lt;td >0.12mm (spot on)
+&lt;/td>
+&lt;td >0.15mm (spot on)
+&lt;/td>
+&lt;td >0.10~0.20mm
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+So, I probaly need to buy a 0.06mm to 0.1mm thinner shim for the right exhaust valve cam to be on the safe side, but I will re-measure the clearances once the head is on the bike, to see how much the wrenching influences the measurements.</description></item><item><title>195Nm Victory!</title><link>https://realrolfje.github.io/rolfje.com/2006/02/07/195nm-victory/</link><pubDate>Mon, 06 Feb 2006 20:46:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/07/195nm-victory/</guid><description>
+&lt;p>&lt;a href="o_img_3569.jpg">&lt;img src="o_img_3569.thumbnail.jpg" alt="Kawasaki Rotor Holder (from workshop manual)">
+&lt;/a>For some strange reason, my brother's Kawasaki KLR Tengai dead-stopped. After starting it again, it made some strange noises. It also had lost a lot of oil somewhere along the way, so we decided to not run it again before we found the cause of the trouble. A few weeks ago we encountered a funny problem, we couldn't loosen the rotor-bolt. In the Kawasaki KLR workshop manual is a picture of a strange wrench to hold the rotor. Ofcourse we're cheap, so we wouldn't spring for a nifty and probably expensive Kawasaki specialty tool for a very old bike which not worth more than the petrol that's in the tank (okay, okay, but you get the point).&lt;/p>
+&lt;p>&lt;a href="o_img_3565.jpg">&lt;img src="o_img_3565.thumbnail.jpg" alt="32mm wrench, colored from heating">
+&lt;/a>The rotor bolt is tightened to 195Nm. That's a lot of force there, so it's not surprising we couldn't loosen it by holding the flywheeel with our hands. So we set out to create a tool of our own. We even ended up trying to bend an old 32mm Chrome-Vanadium wrench, which resulted in an empty gas can, a very hot workbench and nice colors on the wrench, without it bending even the slightest. We we barely able to heat it to the point it got red-hot, because the metal just conducts the heat away from the point you want to heat.&lt;/p>
+&lt;p>&lt;a href="o_img_3567.jpg">&lt;img src="o_img_3567.thumbnail.jpg" alt="Holding the piston to loosen the rotor-bolt (overview)">
+&lt;/a>So I started mailing with Vincent, a good friend of mine which happens to be &lt;a href="http://www.zodiac.nl/dragrace/index2.htm">&amp;quot;quite handy&amp;quot; with motorbikes&lt;/a> . He pointed out that you could also stop the rotor from turning by holding the piston. Because we wanted to measure the play in the bigend bearing we needed to remove the sleeve anyway, so I immediately went back to the workshop to do this. After removing the sleeve, I could easily make some wood pegs to block the piston. The wood would have to have a big surface and be strong enough to hould the piston, without damaging the piston or the engine casing.&lt;/p>
+&lt;p>&lt;a href="o_img_3566.jpg">&lt;img src="o_img_3566.thumbnail.jpg" alt="Holding the piston to loosen the rotor-bolt (detail)">
+&lt;/a>It turned out to work great! I needed to attach a long bar to the socket wrench to be able to apply enough force to the bolt, but in the end I got it! In the picture on the left you can see a detail of how the wood blocks are resting on the engine casing. After loosening the bolt, there was absolutely no visible damage to the piston or the engine. Even greater news is that there is also virtually no play on the bigend bearing, so we don't have to disasemble the crank.&lt;/p>
+&lt;p>&lt;a href="o_img_3568.jpg">&lt;img src="o_img_3568.thumbnail.jpg" alt="Wearmarks from applying 195Nm to the bolt">
+&lt;/a>When looking at the bolt, the results of applying so much force to the faces of the socket wrench become visible. We know for a fact that this bolt has been removed once before, so these wearmarks are from tightening and loosening the bolt just two times. I think we can tighten it one more time, but after that it needs to be replaced.&lt;/p></description></item><item><title>Brilliant Fluids</title><link>https://realrolfje.github.io/rolfje.com/2005/10/31/brilliant-fluids/</link><pubDate>Mon, 31 Oct 2005 11:54:47 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2005/10/31/brilliant-fluids/</guid><description>
+&lt;p>&lt;a href="r_img_3395.jpg">&lt;img src="r_img_3395.jpg" alt="">
+&lt;/a>Patience has paid off! In stead of stripping the front fender from the &lt;a href="http://rolfje.wordpress.com/2005/10/19/terrible-italeri-decals/">terrible italeri decals&lt;/a>, I left it as is, and started searching the web for solutions. I read some brilliant tips on the forms at &lt;a href="http://www.modelbrouwers.nl/">www.modelbrouwes.nl&lt;/a>, and went to the &lt;a href="http://www.degroottoyspecialstore.nl/">local model shop&lt;/a> and bought some Microscale SET and SOL decal solutions.&lt;/p>
+&lt;p>&lt;a href="http://blogger.xs4all.nl/rrolfje/gallery/image/42690.aspx"> &lt;/a>Actually, de bottle labled &amp;quot;SOL&amp;quot; proved to be the most useful. After you applied the decal, and it is all dry (like my carbon fender struts), you gently apply the SOL fluid to the decal with a soft brush. As you may have guessed, SOL stands for &amp;quot;solution&amp;quot; and that's what it does, it dissolves the decal slightly. The decal becomes so soft you can push and stretch it with the soft brush. Don't overdo it, if the decal won't go any further just let it dry, and try again tommorow. Sometimes it takes 2 to 3 tries.&lt;/p>
+&lt;p>&lt;a href="r_img_3399.jpg">&lt;img src="r_img_3399.jpg?w=128" alt="">
+&lt;/a>The funny thing is that when the SOL fluid is applied, your decal may start to wrinkle. Ignore this. Just let it dry for a few hours (don't touch it!) and it will straighten out. Really great stuf!&lt;/p>
+&lt;p>The SET fluid smells like vinigar, and you are supposed to apply it to the model before you put the decal on. I have tried it, but I haven't seen the benefits of it yet. Maybe the SET fluid de-greases the surface a bit, but since I keep the surfaces clean anyway, it won't do much for me I guess. I have a lot more twisty and lumpy carbon parts to do, so maybe I'll get back at this...&lt;/p></description></item><item><title>Exhausts Airbrushed</title><link>https://realrolfje.github.io/rolfje.com/2005/10/25/exhausts-airbrushed/</link><pubDate>Tue, 25 Oct 2005 12:01:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2005/10/25/exhausts-airbrushed/</guid><description>
+&lt;p>&lt;a href="o_img_3383_welds.jpg">&lt;img src="o_img_3383_welds.jpg?w=128" alt="">
+&lt;/a> After a lot of &lt;a href="o_img_3372.jpg">masking&lt;/a>, lot of &lt;a href="o_img_3382.jpg">paint-mixing&lt;/a>, and very little airbrushing, this is the result of my airbrush adventure to make the exhaust pipes look more realistic. I smuggled a bit, because normally exhausts are welded out of several bended pipes, to get the desired curve. The welds are allways on a spot where two bends meet. In this case, the welds are on random positions, and because I don't have a very acurate airbrush (rigid needle), they are seperated a bit more than normally. By doing it like this I can make the 3 gradients I wanted from metal to dark bronze-like oxidated metal.&lt;/p>
+&lt;p>It may be not competely realistic, but it sure beats my normal pencil-only paintjobs! For the observant reader: Yes, that's another yucki Italeri decal on the engine side cover which is supposed to look like a carbon part with slots in it. The thick Italery decal can not follow the detail of the slots. I still haven't got the micro set fluid which could solve this (from hear-say). More on that later this week I guess, when I have time to stop by the local modelling shop to see if they have it in store.&lt;/p>
+&lt;p>I also notice that it seems to be harder to get the larger models more realistic. Small models are easier because at some point, you simply can't add more detail, and it will look good. I built my &lt;a href="http://rolfje.wordpress.com/2005/10/16/ducati-desmodesi-supersport/">first ducati&lt;/a> in less time, without an airbrush, and it looks quite nice. I think I'll stick with the smaller models from now on. Shorter build time, takes up less storage space, are (very) cheap and fun to do.&lt;/p></description></item><item><title>Milling aluminum housing</title><link>https://realrolfje.github.io/rolfje.com/2004/11/14/milling-aluminum-housing/</link><pubDate>Sun, 14 Nov 2004 13:29:08 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2004/11/14/milling-aluminum-housing/</guid><description>
+&lt;p>&lt;a href="o_img_2708.jpg">&lt;img src="o_img_2708.jpg?w=128" alt="">
+&lt;/a> Today I found the first good use for the milling machine. I had this cast aluminum housing for an electronics project, with ridges on the inside. I made a hole for a connector in it, but I never got the nut on the inside flat to the surface because of the ridges on the inside of the housing. I decided to use the mill to flatten the surface on the inside of the housing. The housing did not fit in the clamp, so I had to find a way to get it attached to the bed of the mill in a different way. I took a piece of wood, drilled two holes in it and bolted that to the bed of the mill. Then, I used long plywood screws and another piece of wood to hold the housing. In the picture on the right you can see this construction. I used a test indicator to align the house to the X-axis of the bed.&lt;/p>
+&lt;p>&lt;a href="o_img_2710.jpg">&lt;img src="o_img_2710.jpg" alt="">
+&lt;/a>Since I only needed a plane large enough to place a ring and nut on, I roughly adjusted the 6mm mill to just not touch the bottom of the housing. I milled down to the point where the ridges were not visible. The image on the left is the result of the work. The mill is a very nice tool to adjust ready-made electronics housing to your likings.&lt;/p></description></item><item><title>Miling machine</title><link>https://realrolfje.github.io/rolfje.com/2004/11/07/miling-machine/</link><pubDate>Sun, 07 Nov 2004 18:36:44 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2004/11/07/miling-machine/</guid><description>
+&lt;p>&lt;img src="http://blogger.xs4all.nl//images/blogger_xs4all_nl/rrolfje/4030/t_IMG_2695.jpg" alt="16mm mill detail">
+Yes, that's right. That's a mill you're looking at. And yes, that photo was taken at my workshop. Last week I took a couple of days off from work, and decided to do another workshop upgrade session. After buying some decent wrenching tools, I spent some hours on the web looking for a nice bench drill. I was thinking of buying a cheap mill later on, but I found a nice combination of the two at the &lt;a href="http://www.locloods.demon.nl/">locloods&lt;/a>. This small mill, the HMD Black &amp;amp; Red X1-super, is a nice hybrid. It operates like a bench drill, but when the handle is locked, you can use the wheels to precisely control X and Y movement of the working piece and Z movement of the mill.&lt;/p>
+&lt;p>&lt;img src="http://blogger.xs4all.nl//images/blogger_xs4all_nl/rrolfje/4030/t_IMG_2704.jpg" alt="Milling Machine">
+I made a nice sturdy table for the mill to rest on and bolted it on. It was a bit hard to get the mill on the high table, because it weighs about 45 kilograms and it's really hard to grab on to. I've put a piece of white MDF board on the wall to hold the tools that go with the mill. Putting pieces of wood against the wall to hold tools is terrific. I've also done this with the tools for my lathe, see the zundapp image gallery for more pictures of the workshop.&lt;/p>
+&lt;p>What was once a gray and dark place to just park a car in, is now almost a solarium with lots of tools. There's still a lot of work to be done to get the workshop completely ready, and I wonder if it will ever be finished, but it's becomming more practical every day.&lt;/p>
+&lt;p>&lt;img src="http://blogger.xs4all.nl//images/blogger_xs4all_nl/rrolfje/4030/r_garage-panorama.jpg" alt="Workshop panorama">&lt;/p></description></item><item><title>Mopeds are cool</title><link>https://realrolfje.github.io/rolfje.com/2004/10/31/mopeds-are-cool/</link><pubDate>Sat, 30 Oct 2004 21:03:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2004/10/31/mopeds-are-cool/</guid><description>
+&lt;p>&lt;a href="o_img_2662.jpg">&lt;img src="http://blogger.xs4all.nl/images/blogger_xs4all_nl/rrolfje/4030/t_IMG_2662.jpg" alt="">
+&lt;/a> Today I picked up my old moped at my parents house. Yes, that's right, I'm 33 and I still have my very first moped. It's a real special one. I belonged to my grandfather, who passed it on to my nephew, who passed it on to me when I turned 15. When I got it it needed a lot of work. I spent some months taking it completely apart with my dad. We didn't have a workshop back then, so we took it apart in the kitchen, of my parent's apartment on the 7th floor :-)When I turned 16 it was ready and better than new. It was really cool to have a classic Zundapp CS50. At that time, it looked like a motorbike next to my friend's puchs and peugeots. It really was a dream to ride, you could sit for hours on it without getting tired. I drove it for a good 6 years before it went in to &amp;quot;hibernation&amp;quot;.&lt;/p>
+&lt;p>&lt;img src="http://blogger.xs4all.nl/images/blogger_xs4all_nl/rrolfje/4015/t_IMG_2371.JPG" alt="">
+So, having my own home and my own workshop right now, I decided it was a good time to pick it up and make it run once again. These German mopeds are made to last, I can tell you. When I get it running again I am sure it will be able to run for at least another 20 years or so, provided it gets reasonable maintenance.&lt;/p>
+&lt;p>Browse through the &lt;a href="http://blogger.xs4all.nl/rrolfje/gallery/4030.aspx">&amp;quot;Zundapp&amp;quot; gallery&lt;/a> to see more pictures.&lt;/p></description></item></channel></rss>

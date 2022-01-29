@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>CheckStyle on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/checkstyle/</link><description>Recent content in CheckStyle on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 13 Apr 2008 17:34:53 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/checkstyle/index.xml" rel="self" type="application/rss+xml"/><item><title>Layer Violations</title><link>https://realrolfje.github.io/rolfje.com/2008/04/13/layer-violations/</link><pubDate>Sun, 13 Apr 2008 17:34:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/13/layer-violations/</guid><description>
+&lt;p>Like buildings, software usually a deviation of a standard structure. The architect chooses the structure his design will be based upon. After making design adjustments to the structure to cater the requirements, the architect supervises the builders. Like a building architect, the software architect supervises while walking around in the structure during the build.&lt;/p>
+&lt;p>Software projects can get so large and complex that the architect can not posibly monitor all the code all the time. This is where te tooling comes in. In this post, I will explain how to use &lt;a href="http://checkstyle.sourceforge.net/">Checkstyle&lt;/a> to automatically monitor the basic architectural integrety of the software.&lt;/p>
+&lt;!-- more -->When designing software, we usually start of with drawing high level building blocks on a piece of paper. In most of my sketches, these building blocks map to Java packages in the code, and the arrows between the blocks represent communication paths or method calls between the packages.
+&lt;p>Interfaces and calls between packages are an important part of the architecture or design. One of the ways to monitor design integrity is to monitor which packages are using other packages, and the way packages interact.&lt;/p>
+&lt;p>Packages are almost a Java-specific term for what other languages call “modules”, or “libraries”. The way these packages are grouped in graphical representations of the design is very often layer-like. For more information on layers, maybe you should read about &lt;a href="http://en.wikipedia.org/wiki/3_tier">3-tier architecture&lt;/a>.&lt;/p>
+&lt;p>The word &lt;a href="http://www.google.nl/search?q=define%3Atier">“Tier”&lt;/a> is a more exact term than layer, but to keep things less confusing by introducing another term, I’ll stick with the word “layer”.&lt;/p>
+&lt;p>As with any design, it is important to stick to the plan. Software developers have no physical boundaries to access the different layers of the software. This means that during development, layers can be interconnected in a way that was not intended by the architect. These connections are called “Layer violations”. One of the important tasks for the architect is to prevent these violations.&lt;/p>
+&lt;p>To prevent developers making layer violations, the design should be simple and clear to the developers. In essence, developers should not see the need to violate the layer access rules. Make the right thing to do, the easy thing to do.&lt;/p>
+&lt;p>If layer violations are a common practice in a project, the architect needs to investigate the reasons for these violations, and may need to reconsider the design or the layer access rules.&lt;/p>
+&lt;p>Eliminating layer violations will:&lt;/p>
+&lt;pre>&lt;code> * Reduce complexity of the software
+* Prevent circular dependencies
+* Reduce vulnerability to exploits
+* Improve code reusability
+&lt;/code>&lt;/pre>
+&lt;p>When software projects become too large to monitor each line of sourcecode by hand, tooling is needed to monitor these Layer Violations. One of the tools which is able to do this for Java code is &lt;a href="http://checkstyle.sourceforge.net/">CheckStyle&lt;/a>. The Checkstyle module we use to monitor layer violations is called &lt;a href="http://checkstyle.sourceforge.net/config_imports.html#ImportControl">&amp;quot;Import Control&amp;quot;&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>
+Suppose we want to create a simple (java web) application. This application consists of some screens for users to enter data, a bunch of business rules for processing this data, and data storage.&lt;/p>
+&lt;p>The generic way to solve this problem is to logically group the functionality into packages. The following packages will be used in our example application:&lt;/p>
+&lt;pre>&lt;code> * **Frontend** - Contains the screens (this can contain Wicket, Tapestry or JSP techoligy for instance
+* **Service** - Contains the business logic for processing the data. The servicelayer usually contains the highest level of abstraction, because it uses the core and data access layers to get things done.
+* **Core** - Data object which represent entities in the system. These are usually beans or POJO's, and represent real-world things like &amp;quot;User&amp;quot;, &amp;quot;Order&amp;quot; or &amp;quot;Invoice&amp;quot;.
+* **Data Access** - This layer has the responsibility of storing Core objects into the database, and retrieving them.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="layers.png">&lt;img src="layers.png" alt="">
+&lt;/a>In the image on the right, you can see the different packages, and the way they are organized. These type of images are the reason for calling the different packages &amp;quot;layers&amp;quot;.&lt;/p>
+&lt;p>The green arrows between the layers represent normal relationships, or method calls, if you like. The Frontend layer uses the service layer. The Service layer uses the Data Access layer. All layers need to pass Core objects to eachother, so they all have to be able to use the Core layer.&lt;/p>
+&lt;p>On the right side we see a red arrow from the Data Access layer to the Frontend layer. This arrow is an example of a so called &amp;quot;layer violation&amp;quot;. Having a relation to the Frontend layer makes the Data Access layer dependant on the Frontend, and could also lead to circular references.&lt;/p>
+&lt;p>&lt;strong>Checkstyle&lt;/strong>
+Checkstyle is a program which can parse Java source code, and create a list of coding style violations and architectural errors. It also has a maven plugin, which we are going to use in our example project to get a report on layer violations.&lt;/p>
+&lt;p>First, we need to add Checkstyle to the project. Layer violation monitoring was added to Checkstyle in one of the later releases. To make sure that we have the correct version of Checkstyle, add the folowing dependency to your Maven (1.0) project.xml:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;dependency&amp;gt;
+&amp;lt;groupId&amp;gt;checkstyle&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-checkstyle-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;3.0.1&amp;lt;/version&amp;gt;
+&amp;lt;type&amp;gt;plugin&amp;lt;/type&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>Should you want the Checkstyle report to be automatically included in the generated Maven site, you can optionally add&lt;/p>
+&lt;pre>&lt;code>&amp;lt;report&amp;gt;maven-checkstyle-plugin&amp;lt;/report&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>To the &lt;reports> section of the project.xml file.&lt;/p>
+&lt;p>Now that we have added Checkstyle to our Maven configuration, we need to configure Checkstyle to check our layer violations. Checkstyle can check a lot more, but we're only using it to check Layer Violations for the sake of this article.&lt;/p>
+&lt;p>We need to tell the Maven Checkstyle plugin where it can find it’s configuration file. Add the following line to the project.properties in the root of your maven project:&lt;/p>
+&lt;pre>&lt;code>#Checkstyle
+maven.checkstyle.check.tests=false
+maven.checkstyle.fail.on.violation=false
+maven.checkstyle.properties=checkstyle-config.xml
+&lt;/code>&lt;/pre>
+&lt;p>Next, create a checkstyle-config.xml in the root of your project which looks like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE module PUBLIC &amp;quot;-//Puppy Crawl//DTD Check Configuration 1.2//EN&amp;quot; &amp;quot;http://www.puppycrawl.com/dtds/configuration_1_2.dtd&amp;quot;&amp;gt;
+&amp;lt;module name=&amp;quot;Checker&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;severity&amp;quot; value=&amp;quot;warning&amp;quot;/&amp;gt;
+&amp;lt;module name=&amp;quot;TreeWalker&amp;quot;&amp;gt;
+&amp;lt;module name=&amp;quot;ImportControl&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;severity&amp;quot; value=&amp;quot;error&amp;quot;/&amp;gt;
+&amp;lt;property name=&amp;quot;file&amp;quot; value=&amp;quot;checkstyle-import-control.xml&amp;quot;/&amp;gt;
+&amp;lt;/module&amp;gt;
+&amp;lt;/module&amp;gt;
+&amp;lt;/module&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>As you can see in this configuration file, checkstyle will look for a checkstyle-import-control.xml file containing the Layer access rules.&lt;/p>
+&lt;p>An example of this file which would match our example would look like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE import-control PUBLIC
+&amp;quot;-//Puppy Crawl//DTD Import Control 1.0//EN&amp;quot;
+&amp;quot;http://www.puppycrawl.com/dtds/import_control_1_0.dtd&amp;quot;&amp;gt;
+&amp;lt;import-control pkg=&amp;quot;com.rolfje.example&amp;quot;&amp;gt;
+&amp;lt;!—allow access to utility libraries --&amp;gt;
+&amp;lt;allow pkg=&amp;quot;java&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;org&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;sun&amp;quot;/&amp;gt;
+&amp;lt;subpackage name=&amp;quot;frontend&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.frontend&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.service&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;javax.servlet&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;service&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.service&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.dataaccess&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;dataaccess&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.dataaccess&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;core&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;/import-control&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>There are a few things to note in this configuration file:&lt;/p>
+&lt;pre>&lt;code> * It is allowed to use java.*, org.*, and sun.* packages abywhere in the code. This is to allow normal usage of java.util.List for instance.
+* The frontend is a web frontend in this example, and accesses javax.servlet. Note that the service, backend and core layers are not allowed to use servlet classes.
+* Packages are allowed to access themselves. This is done so that sub-packages made by developers are not immediately detected and seen as a layer violation.
+* There are no nested subpackages in this example. You can nest subpackage elements if you need to.
+&lt;/code>&lt;/pre>
+&lt;p>Having configured everything, you can now run “maven checstyle:report” to see how your code is matching your design. If you run a “maven site”, then the Layer Violations will be visible as a report in the left menu.&lt;/p>
+&lt;p>You may also want to checkout the Checkstyle eclipse plugin, which will visually mark the violations in you sourcefiles and add them to the “Problems” view. It will help you to find and fix the violations much quicker.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Omniplan on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/omniplan/</link><description>Recent content in Omniplan on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 13 Aug 2009 20:41:00 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/omniplan/index.xml" rel="self" type="application/rss+xml"/><item><title>Omniplan Progress Tracking Tip</title><link>https://realrolfje.github.io/rolfje.com/2009/08/13/omniplan-progress-tracking-tip/</link><pubDate>Thu, 13 Aug 2009 20:41:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/08/13/omniplan-progress-tracking-tip/</guid><description>
+&lt;p>&lt;a href="http://www.omnigroup.com/applications/omniplan/">&lt;img src="opicon.jpg" alt="Omniplan">
+&lt;/a>During one of my Omniplan sessions at work, I discovered that the resource leveling was acting a bit funny, where people were not planned to do any work for days. I played around with a fake planning and soon discovered the problem and several solutions to it.&lt;/p>
+&lt;!-- more -->Imagine you have a 1-man project, with a couple of tasks. You want to keep track of the planning in Omniplan. So you set up a project as follows (sorry for the spelling error, discoverd it after taking all the screenshots):
+&lt;p>&lt;a href="planning-constrained.png">&lt;img src="planning-constrained.png" alt="(over)constrained planning">
+&lt;/a>&lt;/p>
+&lt;p>Everything looks fine and you set out to do your job. While putting the dishes on the sink, you decide to run hot water into the sink and place the dishes directly in the water. That will gain you some time. To reflect that, you slide the progress bar of &amp;quot;wash dishes&amp;quot;. Now your planning looks as follows:&lt;/p>
+&lt;p>&lt;a href="planning-constrained-progress.png">&lt;img src="planning-constrained-progress.png" alt="(over)constrained planning with progress">
+&lt;/a>&lt;/p>
+&lt;p>At first sight that might not look so strange. But when you look into your resource availability, you see that you are not 100% assigned to the project:&lt;/p>
+&lt;p>&lt;a href="resources-gap.png">&lt;img src="resources-gap.png" alt="Gap in resources due to completion">
+&lt;/a>&lt;/p>
+&lt;p>How did this happen? Well, Omniplan says (or rather: you toold Omniplan) that the &amp;quot;wash dishes&amp;quot; task can only start after the &amp;quot;Put dishes on Sink&amp;quot; task was finished. It will hold you to that, wether or not you reported progress on that.&lt;/p>
+&lt;p>&lt;strong>Solution 1&lt;/strong>
+The first solution is also a golden rule. Only put constraints in your planning if you are absolutely 100% positive that they need to be there. Removing the constraints from this planning (because you can start washing before everything is in the sync) will result in correct progress and an earlier finish, like so:&lt;/p>
+&lt;p>&lt;a href="planning-unconstrained.png">&lt;img src="planning-unconstrained.png" alt="unconstrained planning progress">
+&lt;/a>&lt;/p>
+&lt;p>And you will notice that the resource occupation is now also back at 100%:&lt;/p>
+&lt;p>&lt;a href="resources-level.png">&lt;img src="resources-level.png" alt="100% filled, leveled resources (yay!)">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Solution 2&lt;/strong>
+A collegue of mine has another phylosophy: only have work on your planning that you are going to do in the future. Completed tasks are removed, and existing tasks are shortened as you work on them. Don't use the progress sliders, and measure gain or loss against the baseline planning. This is what I used to do with MSProject until now.&lt;/p>
+&lt;p>&lt;strong>Solution 3&lt;/strong>
+Buy a dishwasher.&lt;/p></description></item></channel></rss>

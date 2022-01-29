@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>wtp on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/wtp/</link><description>Recent content in wtp on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 28 Jan 2011 22:51:10 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/wtp/index.xml" rel="self" type="application/rss+xml"/><item><title>Your Maven Java WEB project in Eclipse WTP</title><link>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</link><pubDate>Fri, 28 Jan 2011 22:51:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</guid><description>
+&lt;p>&lt;a href="http://www.eclipse.org/webtools/">&lt;img src="wtp_logo_2010.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>In our company, all Java projects are setup with Maven configuration so that after a &amp;quot;mvn eclipse:eclipse&amp;quot; any developer is generally good to go. One of these projects was a web project but would not transform into a WTP project. By running &amp;quot;mvn eclispe:eclipse&amp;quot; it became a Java project, but could not be added to a Server in Eclipse. It was not a WTP project.&lt;/p>
+&lt;p>I learned that the author of the project tried but never got the WTP plugin to work properly. Using the Google, I found more people who are having the same problem converting their existing Maven Java Web projects in Eclipse into a WTP project. There are even a few desperate articles describing how to edit your .project and .classpath files. Oh dear. This calls for an article on &lt;a href="http://www.rolfje.com">www.rolfje.com&lt;/a>.&lt;/p>
+&lt;!-- more -->It all came down to the maven-eclipse-plugin which would just not configure my project properly. I soon learned that in their infinite wisdom, the development team decided that the maven-eclipse-plugin no longer uses a default value for the _&lt;wtpversion>_ setting. Even if you have the _&lt;wtpapplicationxml>true&lt;/wtpapplicationxml>_ element in your _pom.xml_, without the _&lt;wtpversion>_ tag the maven-eclipse-plugin will ignore all wtp project settings silently. So the solution was rather simple:
+&lt;p>**Short answer
+**The short answer to this fun evening full of Googling and reading is: Add the &lt;em>&lt;wtpversion>&lt;/em> tag to your maven-eclipse-plugin configuration, run &lt;em>&amp;quot;mvn clean eclipse:eclipse&amp;quot;&lt;/em> and refresh your project. That's it.&lt;/p>
+&lt;p>**The long version
+**For people who like to copy-paste (like me): Change your &lt;em>pom.xml&lt;/em> file in the root of your project to include the &lt;em>&lt;wtpapplicationxml>&lt;/em> and &lt;em>&lt;wtpversion>&lt;/em> tags as shown at the bottom of this example pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;46,47&amp;quot;]
+&lt;project>
+&lt;packaging>war&lt;/packaging>&lt;/p>
+&lt;dependencies>
+[...]
+&lt;/dependencies>
+&lt;build>
+&lt;resources>
+&lt;resource>
+&lt;directory>src/main/java&lt;/directory>
+&lt;includes>
+&lt;include>**/*.xml&lt;/include>
+&lt;include>**/*.xsd&lt;/include>
+&lt;include>**/*.wsdl&lt;/include>
+&lt;/includes>
+&lt;/resource>
+&lt;/resources>
+&lt;pre>&lt;code>&amp;lt;testResources&amp;gt;
+&amp;lt;testResource&amp;gt;
+&amp;lt;directory&amp;gt;src/test/java&amp;lt;/directory&amp;gt;
+&amp;lt;includes&amp;gt;
+&amp;lt;include&amp;gt;**/*.xml&amp;lt;/include&amp;gt;
+&amp;lt;/includes&amp;gt;
+&amp;lt;/testResource&amp;gt;
+&amp;lt;/testResources&amp;gt;
+&amp;lt;plugins&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;source&amp;gt;1.6&amp;lt;/source&amp;gt;
+&amp;lt;target&amp;gt;1.6&amp;lt;/target&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-war-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;2.1.1&amp;lt;/version&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-eclipse-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;wtpapplicationxml&amp;gt;true&amp;lt;/wtpapplicationxml&amp;gt;
+&amp;lt;wtpversion&amp;gt;2.0&amp;lt;/wtpversion&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;/plugins&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;/build>
+&lt;/project>
+[/sourcecode]
+&lt;p>Open a command prompt at the root of your project (where the_ pom.xml_ file is) and have maven re-fresh the project, like this:&lt;/p>
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+mvn clean eclipse:eclipse
+[/sourcecode]&lt;/p>
+&lt;p>Open eclipse, right click on the root of your project and select &amp;quot;refresh&amp;quot; (or press F5).&lt;/p>
+&lt;p>After you've done this, you should have &amp;quot;Web Project Settings&amp;quot; in the properties of the eclipse project. If you right-click on your defined servers in Eclipse, the project should show up in the &amp;quot;Add and Remove&amp;quot; dialog.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item></channel></rss>

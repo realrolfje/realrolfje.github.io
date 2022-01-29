@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wiimote on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/wiimote/</link><description>Recent content in Wiimote on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 12 Dec 2008 21:28:39 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/wiimote/index.xml" rel="self" type="application/rss+xml"/><item><title>Wiimote Whiteboard</title><link>https://realrolfje.github.io/rolfje.com/2008/12/12/wiimote-whiteboard/</link><pubDate>Fri, 12 Dec 2008 21:28:39 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/12/wiimote-whiteboard/</guid><description>
+&lt;p>&lt;a href="http://www.uweschmidt.org/wiimote-whiteboard">&lt;img src="wiimotewhiteboard_128.png" alt="WiimoteWhiteboard">
+&lt;/a>For people wanting to have an interactive whiteboard but don't have the money, &lt;a href="http://www.cs.cmu.edu/~johnny/projects/wii/">Johnny Chung Lee&lt;/a> has found the solution. Using a Wiimote, he can track an infrared lightsource (like an LED) and use that to control the mousecursor. I tried some software on the Mac and the PC, and I actually got both to work without too much trouble.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;strong>The infra-red pen&lt;/strong>
+Please note that you need some kind of Infra-Red emitting device. In my first tests to see if the software works, I used a TV remote. This is a bit clunky, so next on my list is to build a simple infra-red pen this weekend.&lt;/p>
+&lt;p>I noticed a lot of people building infra-red pens by directly connecting an LED to a battery, which will possibly ruin your LED very quickly because there's too much current running through it. An LED is a diode, and it needs to be limited in current. The only right way to do it is follow &lt;a href="http://www.cs.cmu.edu/~johnny/projects/wii/pen.jpg">Johnny's schematic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Whiteboard app on the Mac:
+I was amazed about how well this worked. I was expecting a lot of experimental stuff, but instead, this is all you have to do:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. [![](afbeelding-21.png?w=47)
+&lt;/code>&lt;/pre>
+&lt;p>](afbeelding-21.png)Download &lt;a href="http://www.uweschmidt.org/files/WiimoteWhiteboard.dmg">WiimoteWhiteboard for the Mac&lt;/a> by Uwe Schmidt.
+2. Enable bluetooth on your mac.
+3. Start the WiimoteWhiteboard.app
+4. On the Wiimote, press buttons 1 and 2 simultaniously to put it in &amp;quot;detectable&amp;quot; mode. If the Wiimote was already on, you may need to press the red button in the battery compartment.
+5. After pairing is complete, press the &amp;quot;calibrate&amp;quot; button and follow the instructions.&lt;/p>
+&lt;p>I did these steps on an intel  Mac mini and it worked beautifully. You can pair up to 2 Wiimotes to increase reliability.&lt;/p>
+&lt;p>&lt;strong>Whiteboard app on the PC:
+This is slightly more work, but does not include steps which are strange to regular Windows users:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. Download and install the [.Net framework version 3.5](http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6&amp;amp;displaylang=en)
+2. Download Boon Jin's [Smoothboard](http://www.boonjin.com/wp/2008/08/14/wiimote-smoothboard-045-beta) for Windows.
+3. [![XP Bluetooth Wizard Screen 1](clipboard02.png)
+&lt;/code>&lt;/pre>
+&lt;p>](clipboard02.png)Install the .Net framework, and unpack the smoothboard zipfile in a convenient location. It has no setup.exe (thank god)
+4. In the system tray on your Windows, right-click the bluetooth icon, and choose &amp;quot;Add a Bluetooth Device&amp;quot;
+5. Click the &amp;quot;My device is set up and ready to be connected&amp;quot; checkbox.
+6. &lt;a href="clipboard03.png">&lt;img src="clipboard03.png?w=124" alt="XP Bluetooth Wizard Screen 2">
+&lt;/a>Press the red button of the Wiimote (in the battery compartement) to unpair it from anything else and get into &amp;quot;detecable&amp;quot; mode.
+7. Click the &amp;quot;Next&amp;quot; button in the Wizzard
+8. Select the &amp;quot;Nintendo RVL-CNT-01&amp;quot; device and click &amp;quot;Next&amp;quot;
+9. &lt;a href="clipboard04.png">&lt;img src="clipboard04.png?w=124" alt="XP Bluetooth Wizard Screen 3">
+&lt;/a>Select the &amp;quot;Don't use a passkey&amp;quot; radio button and DON'T press &amp;quot;Next&amp;quot;.
+10. Press the little red button on the Wiimote again, so that all blue lights start flashing, and then press &amp;quot;Next&amp;quot; on the wizard.
+11. In the tray, you should now see popups saying &amp;quot;Found new hardware&amp;quot; and something like &amp;quot;New HID device&amp;quot;. They will dissapear after a while. If the popups did not show, start the whole process again from step 4.
+12. Press &amp;quot;Finish&amp;quot; in the Wizard, notice that the Wiimote keeps flashing all the lights.
+13. Start Smoothboard. The Wiimote should stop flashing, and you can click on the &amp;quot;Calibrate&amp;quot; button to start the fun.&lt;/p>
+&lt;p>&lt;a href="clipboard05.png">&lt;img src="clipboard05.png?w=33" alt="Smoothboard Screenshot">
+&lt;/a>&lt;/p>
+&lt;p>I've tested the Windows setup on a Dell 530 laptop with the built-in bluetooth device, and it works fine, although I did have to reboot once because the bluetooth stack got confused and refused to detect my Wiimote. Smoothboard also allows you to pair 2 Wiimotes to improve reliability. It also has many features which are tailored to controling Powerpoint and other software, but I haven't tried that yet.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Spring on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/spring/</link><description>Recent content in Spring on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 06 Oct 2009 08:38:26 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/spring/index.xml" rel="self" type="application/rss+xml"/><item><title>Sonar "Close Connection" warning workaround.</title><link>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</link><pubDate>Tue, 06 Oct 2009 08:38:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</guid><description>
+&lt;p>When you use Spring and Ibatis and SQLTemplates, you could have code in your project which looks somewhat like this:&lt;/p>
+&lt;pre>&lt;code>Connection connection = DataSourceUtils.getConnection(getDataSource());
+...&amp;lt;do connection stuff here&amp;gt;...
+DataSourceUtils.releaseConnection(connection, getDataSource());
+&lt;/code>&lt;/pre>
+&lt;p>Sonar will report that you did not close the connection, while in fact, Spring did that for you. You can not just add a &lt;em>&amp;quot;connection.close()&amp;quot;&lt;/em> to the code because the whole point of calling &lt;em>&amp;quot;releaseConnection()&amp;quot;&lt;/em> is to have Spring handle all the smart stuff on committing, closing, and returning the connection to the pool if needed.&lt;/p>
+&lt;!-- more -->In our company, not closing the connection is a major blocking violation (and it should be). But in this case, there is no way to make the Jedi wave to Sonar, telling it that "this code will do just fine". So I added the following trick, albeit a bit dirty:
+&lt;pre>&lt;code>if (connection.isClosed()){
+// This code is only here to keep Sonar from
+// warning us that the connection is not
+// closed. Please note: Do not just close an
+// unclosed connection, Spring should handle
+// connection closing and returning to the pool.
+connection.close();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Use it to your advantage, but use this responsibly. If you see any problems in my solution, or if there is a better way to do this I'd be happy to hear about it.&lt;/p>
+&lt;p>&lt;strong>Edit (2009-12-01):&lt;/strong>&lt;/p>
+&lt;p>There is a much better way to do this if you have Spring/Ibatis integration. In stead of DataSourceUtils.getConnection() you can create a new ConnectionCallback object, like so:&lt;/p>
+&lt;pre>&lt;code>JdbcTemplate template = new JdbcTemplate(getDataSource());
+Object resultObject = template.execute(new ConnectionCallback() {
+public Object doInConnection(Connection conn) 
+throws SQLException, DataAccessException {
+// Do connection stuff here (can return object);
+return null;
+});
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this code does NOT contain any Connection.close() references. The connection is passed to you, you can use it, and after your method completes, the framework will do whatever is needed to clean everything up. Sonar will not complain because the whole open/close handeling is done outside your method.&lt;/p></description></item><item><title>Spring SystemPropertyInitializingBean</title><link>https://realrolfje.github.io/rolfje.com/2008/07/23/spring-systempropertyinitilizingbean/</link><pubDate>Tue, 22 Jul 2008 22:37:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/23/spring-systempropertyinitilizingbean/</guid><description>
+&lt;p>When using POI in any of your projects, and the application you're building is a web application, you probably have it running on a Windows machine. If not, you know all about the struggle with the &lt;a href="http://java.sun.com/developer/technicalArticles/J2SE/Desktop/headless/">&amp;quot;headless mode&amp;quot;&lt;/a> environment setting to tell the JVM how to handle graphics rendering.&lt;/p>
+&lt;p>I always like to keep my applications as clean as possible to the users. The system administrator is also a user of the software (during installation at least). So I wanted the application to set the environment properties itself, In this case, I built a nice little Spring bean to handle this. The solution is so simple, that it is almost a brilliant display of what Spring can solve for you. Suddenly, all these environment setting problems turned into a simple Spring configuration problem. Here's how:&lt;/p>
+&lt;!-- more -->In the Spring configuration, the whole "headless mode" problem got reduced to this bean definition:
+&lt;pre>&lt;code>&amp;lt;bean id=&amp;quot;systemproperty_initializer&amp;quot; 
+   class=&amp;quot;com.rolfje.SystemPropertyInitiliazingBean&amp;quot;&amp;gt;
+   &amp;lt;property name=&amp;quot;systemProperties&amp;quot;&amp;gt;
+      &amp;lt;map&amp;gt;
+         &amp;lt;!-- Set headless mode to true, 
+              for POI sheet.autoSizeColumn See 
+&amp;lt;span&amp;gt;              &amp;lt;/span&amp;gt;&amp;lt;span&amp;gt;http://poi.apache.org/hssf/quick-guide.html&amp;lt;/span&amp;gt;&amp;lt;span&amp;gt; 
+         --&amp;gt;
+         &amp;lt;entry key=&amp;quot;java.awt.headless&amp;quot; value=&amp;quot;true&amp;quot;/&amp;gt;
+     &amp;lt;/map&amp;gt;
+   &amp;lt;/property&amp;gt;
+&amp;lt;/bean&amp;gt;&amp;lt;/span&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>The code for the SystemPropertyInitilizingBean is really a simple list iterator which walks though the map and sets everything as a system property:&lt;/p>
+&lt;pre>&lt;code>/**
+ * Bean for automatically initializing System 
+ * properties from within a Spring context. 
+ */
+public class SystemPropertyInitializingBean 
+       implements InitializingBean {
+        /** Properties to be set */
+        private Map systemProperties;
+        /** Sets the system properties */
+        public void afterPropertiesSet() 
+               throws Exception {
+                if (systemProperties == null || 
+                       systemProperties.isEmpty()) {
+                        // No properties to initialize
+                        return;
+                }
+                Iterator i = systemProperties.keySet().iterator();
+                while (i.hasNext()) {
+                        String key = (String) i.next();
+                        String value = (String) systemProperties.get(key);
+                        System.setProperty(key, value);
+                }
+        }
+        public void setSystemProperties(Map systemProperties) {
+                this.systemProperties = systemProperties;
+        }
+}
+&lt;/code>&lt;/pre>
+&lt;p>In my opinion this is a nice and clean solution, which does not impact any of the application code, hides the setting of obscure system properties from the administrator, is simple to the developer, gives room to add comments (see Spring xml above)and is reusable. All in a few lines of code. You can even easily have it parese settings from a config file, and put that into system environment variables without changing a line of code. All in Spring XML.&lt;/p>
+&lt;p>Sometimes it's the small things that make you feel nice :-)&lt;/p></description></item></channel></rss>

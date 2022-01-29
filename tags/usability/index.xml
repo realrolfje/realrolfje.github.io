@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>usability on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/usability/</link><description>Recent content in usability on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 26 Oct 2017 15:58:01 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/usability/index.xml" rel="self" type="application/rss+xml"/><item><title>Mattermost Delete Channel "fixed"</title><link>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</link><pubDate>Thu, 26 Oct 2017 15:58:01 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</guid><description>
+&lt;p>&lt;a href="delete-or-leave.jpg">&lt;img src="delete-or-leave.jpg" alt="">
+&lt;/a>Users of Mattermost have probably noticed the less-than-optimal interface design where de Delete option is right above the Leave option in the Channel menu. On a busy server, you can imagine having quite a few incidents where people accidentally completely delete a channel.&lt;/p>
+&lt;p>In the Open Source version of Mattermost, everybody van do anything, because there is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320">no sensible security model with roles&lt;/a>. Mattermost Inc. seems to think that the Open Source community is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320#issuecomment-302996954">not entitled to roles&lt;/a>, which I (and others with me) strongly disagree with.&lt;/p>
+&lt;p>&lt;a href="https://github.com/realrolfje/mattermost-platform">Forking Mattermost&lt;/a>, learning Golang and enabeling security, improving &lt;a href="https://github.com/mattermost/mattermost-server/issues/6321">a few other issues&lt;/a> for the open source community along the way is a plan. But there is a simpler workaround for people running Mattermost inside &lt;a href="https://en.wikipedia.org/wiki/Nginx">Nginx&lt;/a>.&lt;/p>
+&lt;!-- more -->Open _/etc/nginx/sites-enabled/mattermost_ and find the _"location"_ sections. Add the highlighted lines (this modifies one location, and adds a new one):
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; highlight=&amp;quot;15-18, 20-50&amp;quot; padlinenumbers=&amp;quot;false&amp;quot; gutter=&amp;quot;false&amp;quot;]
+location ~ /api/v[0-9]+/(users/)?websocket$ {
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &amp;quot;upgrade&amp;quot;;
+client_max_body_size 50M;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code>if ($request_method = DELETE) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location ~ /api/v[0-9]+/channels/[\d\w]*$ {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code># See https://stackoverflow.com/questions/4833238/nginx-conf-redirect-multiple-conditions#4939522
+if ($request_method = DELETE) {
+set $block_delete 1;
+}
+# Allow deletes originatig from this ip address.
+if ($remote_addr = 44.137.37.17) {
+set $block_delete 0;
+}
+if ($block_delete = 1) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location / {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;
+}
+[/sourcecode]&lt;/p>
+&lt;p>Restart nginx with the command &lt;em>&amp;quot;service nginx restart&amp;quot;&lt;/em>. After this modification, nobody can delete a channel. Crude but effective. If you have tips on how to parse the headers with nginx to allow certain users to access the DELETE methods, please let me know.&lt;/p>
+&lt;p>&lt;strong>Background:&lt;/strong>
+We run a chat server for (mostly Dutch) licensed HAM radio operators on our own &lt;a href="https://en.wikipedia.org/wiki/AMPRNet">44.x.x.x network segment&lt;/a> of the internet also known in the Netherlands as &lt;a href="https://www.hamnet.nl/">&amp;quot;hamnet&amp;quot;&lt;/a>. We wanted a modern chat service with mobile applications to spice up the HAM radio world, ping eachother on field days, share thoughts and links to information, and enable colaboration for the growing number &lt;a href="https://github.com/travisgoodspeed/md380tools">HAM radio programmers&lt;/a> working on &lt;a href="https://freedv.org/">open source&lt;/a> software.&lt;/p>
+&lt;p>The server is paid for and run by people who care about sharing. Although Mattermost is not our focus area, we do try to contribute to Mattermost with bug reports, &lt;a href="https://github.com/42wim/matterbridge/pull/176">fixes&lt;/a> and running the beta chat clients. Our usergroup is almost 500 people, and growing. Depending on events or contests roughly 20% of our users are actively reading and contributing to one or more channels:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](mattermost_users_hobbyscoop-month.png?w=150)
+](mattermost_users_hobbyscoop-month.png)
+&lt;/td>
+&lt;td >[![](mattermost_sessions_hobbyscoop-week.png)
+](mattermost_sessions_hobbyscoop-week.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Mattermost did mention their ["monday license program"](https://about.mattermost.com/mattermost-mondays/) in their responses, but as you can see we are already halfway their 1000 user limit and growing. We have no intention of sending any legal documents or statutes to a company which then decides if we can access our own existing content.
+&lt;p>From where we are standing, with the open source tools we use, Mattermost looks like an odd duck. Most of the open source tools we use and contribute to have common-sense safety and security built in, Linux, nginx, &lt;a href="http://www.haproxy.org/">haproxy&lt;/a> and &lt;a href="https://letsencrypt.org/">letsencrypt&lt;/a>  being a few strong examples. In contrast, the Mattermost team cripples the Open Source version with &lt;a href="https://github.com/mattermost/mattermost-server/issues/5935">weak passwords&lt;/a> and no implementation of even the most basic security roles. For a tool which pretends to be mature and safe enough to be exposed to the Internet, the workaround as described in this blogpost should not be needed.&lt;/p>
+&lt;p>Please help us convince the Mattermost Team of the importance of security in all versions of their products. Making money with support and features is okay, but basic common sense security should be the default for any open source project. We even think that improving security and speed makes Mattermost a more viable competitor against Slack and Telegram, to name two.&lt;/p>
+&lt;p>Open Source is about sharing, not about farting in the general direction of the very people contributing to it.&lt;/p></description></item><item><title>Open a port in OSX Mavericks' Firewall</title><link>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</link><pubDate>Sat, 10 May 2014 13:57:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?feature=player_embedded&amp;amp;v=at6HrV5CTo8">&lt;img src="security.png" alt="Firewall">
+&lt;/a>The new firewall in Mavericks is great. For the common user. For a developer, not so much. If you are a Java developer like me, and you just need to open one port (say, 8080) so that the web application you’re working on is accessable from another computer, you can’t. I disabled the Firewall altogether for a few days, but it didn't feel right.&lt;/p>
+&lt;p>I googled around and to make a long story short, here’s how to open port 8080 on any interface to any application on your OSX Mavericks installation in 3 steps:&lt;/p>
+&lt;p>&lt;code>sudo vim /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Then add the following lines at the end of the file:&lt;/p>
+&lt;p>&lt;code># Open port 8080 for TCP on all interfaces pass in proto tcp from any to any port 8080&lt;/code>&lt;/p>
+&lt;p>Test (and, according to the documentation, load) your edits with:&lt;/p>
+&lt;p>&lt;code>sudo pfctl -vnf /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Reboot.&lt;/p>
+&lt;p>(I have found at least 5 pieces of voodoo to make the Firewall restart and reload, but none of them seemed to work reliably, so pardon the reboot)&lt;/p>
+&lt;p>You can close it by commenting out the lines in pf.conf and reboot again. If anybody knows of an easier way to do this, preferably in one terminal command, and without rebooting, let me know.&lt;/p>
+&lt;p>Hope this helps.&lt;/p></description></item><item><title>There's life without Google. Or iCloud. Or Facebook.</title><link>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</link><pubDate>Fri, 07 Mar 2014 22:41:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</guid><description>
+&lt;p>&lt;a href="https://threema.ch/en/">&lt;img src="appicon128.png" alt="Threema, the secure Whatsapp alternative">
+&lt;/a>Regular readers of this blog already know that I am &lt;a href="http://rolfje.wordpress.com/2011/07/03/1355/">not using dropbox&lt;/a>, and I was an Evernote user, but recently decided it became to dangerous and &lt;a href="http://rolfje.wordpress.com/?s=evernote">replaced it with my own scripts&lt;/a>. I had an interesting discussion on Twitter which made me decide to show you how I run my digital life without the help of Google, Facebook, Dropbox, Whatsapp or iCloud, and still be able to have all the functionality these services offer.&lt;/p>
+&lt;p>The search was hard and sometimes I need to reconsider some of the choices, but the last few years the selection of products was very stable and the setup has worked flawlessly. Searching for a secure replacement for Whatsapp or Google? It's in here.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tbody >
+&lt;tr >
+Original
+The Safer Alternative:
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Whatsapp
+&lt;/td>
+&lt;td >[**Threema**](https://threema.ch/en/). Hands-down the best safe messaging service. Easy to use, group chats, image and video transfers. Under the hood it always uses true end-to-end encryption, and does not store any data about you or contacts your addressbook while still being able to find your friends. Threema costs a mere €1,70 for the iPhone and €1,60 for Android, and is very clear about their revenue model. Sending a message is free of charge. No I don't use Telegram.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mail
+&lt;/td>
+&lt;td >**[Hushmail](https://www.hushmail.com/services/hushmail/)**. A Canadian email provider which at least claims it respects your privacy and is not bound to American legislation. I use their [Premium service](https://www.hushmail.com/premium/) which costs $35 a year. A bargain.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Search
+&lt;/td>
+&lt;td >**[DuckDuckGo](https://duckduckgo.com)**. Although there are some sceptics out there who argue that there is no way to verify how duckduckgo is any different than Google's search engine, I still think it is a better alternative. One of the most important ones is that they don't ["bubble"](http://dontbubble.us) you. Image searching is not possible yet. so I do fall back to Google for that every now and than, but only in a separate, private browser session with cleared cookies.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Maps
+&lt;/td>
+&lt;td >The Apple [**Maps**](http://appleinsider.com/articles/13/06/26/new-maps-app-in-os-x-mavericks-extends-tools-for-reporting-fixing-errors) app, or if you don't have a Mac or need to search online: [Mapquest](http://www.mapquest.com) provides a good alternative to Google maps. Not the prettiest interface, but any product other than a Google product gives them less data to harvest on me. Always remember: If you're not paying for the product, you're the product.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Calendar, Contacts
+&lt;/td>
+&lt;td >[**Owncloud**](http://owncloud.org). In my case, I have bought a $40 Raspberry Pi which is beautifully running Owncloud to sync Calendars over SSL between my iPhone and all my Macs. It requires a bit of Linux skills and isn't really safe "out of the box", but can be made pretty airtight. **Remember to close all ports and only access Owncloud over**** SSL** (most tutorials wrongly teach you otherwise), and don't expect high performance from the Raspberry when it comes to rendering browser pages. I've added a little script that sends backups to my file server via SMB.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >File synching (Dropbox)
+&lt;/td>
+&lt;td >[**SpiderOak**](https://spideroak.com/signup/referral/4b01a22f64d398afbd846637080bd2b4/). A true zero-knowledge encrypted file storage. With the new ["Hive" feature](https://spideroak.com/hive/) it behaves exactly like Dropbox, but has additional features like a backup service. Choose a safe password and store it somewhere secure, because Spideroak can not recover your password or your files if you loose it. I started with the 2GB free for life account, but it soon grew to a 50GB account. Great stuff, very reliable, safe.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Evernote
+&lt;/td>
+&lt;td >**[SpiderNote](http://rolfje.wordpress.com/2014/03/02/replace-evernote-with-spidernote/)**. It may be a bit cobbled together, but as an old Evernote fan I needed a good alternative and it should be able to sync between all my Macs. So I save my notes in a SpiderOak folder and search them with Spotlight. Not as fancy as Evernote, but the price (risk) of storing my data unencrypted on an American server became too high. **
+**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Facebook
+&lt;/td>
+&lt;td >[**Twitter**](https://twitter.com/rolfje#). I hate to dissapoint you, but Facebook is free of charge and they store your entire digital life. What do you think is Facebook's product precisely? Also, I see that you have 86.355 "friends" on Facebook. I hate to disappoint you but those are called "random strangers". Even if your account is *cough* private (except for Mark $uckeberg). I like to talk to people too, that's why I have this blog, and for the smaller chit-chat I use Twitter. My real friends are on Threema, or, if need be, I talk to them. It's very old-fashioned. I drive over and meet them in person. And sometimes they even come to my house. I know, crazy right? Old school.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >LinkedIn
+&lt;/td>
+&lt;td >None. I could hold the same rant for Facebook and LinkedIn alike. They're not there for you. You're there for them. I did make the mistake of creating a LinkedIn account a long time ago because people said "you need this". After quite a few mails from LinkedIn requesting me to endorse people, update my profile or water their plants, I realized that I was working for them, not the other way around. I cancelled and deleted my account. Guess what? I'm still alive and well. If you're a developer, you're better off by gaining community based reputation on sites like **[Stackoverflow](https://stackoverflow.com/users/21134/rolf)**.
+&lt;/td>
+&lt;/tr>
+&lt;tr valign="top" >
+&lt;td >Local Backups
+&lt;/td>
+&lt;td >**[Encrypted TimeMachine](http://support.apple.com/kb/PH11102)** and Time Capsule volumes. My local drives are also full-disk encrypted using Apple's built-in [FileVault 2](http://support.apple.com/kb/HT4790?viewlocale=en_US&amp;locale=en_US). There is a Mac Mini file server in the house which holds all familiy photos  so that we can view them on the TV for example. The photos are on a read-only fileshare and are backed up using Time Machine locally.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Remote/Offsite Backups
+&lt;/td>
+&lt;td >[**Crashplan Free**](https://www.code42.com/store/), sending the data on the TimeMachine drive on the fileserver to another fileserver at my parents' house. His fileserver backs up on my machine and vice-versa. One house can completely burn down and we still have all data, without it ever being uploaded to some unencrypted company server.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Why not Telegram?**
+A few words of advice on using Telegram: Whatever they tell you, the data is *not* (properly) encrypted and it is easy to tell: The data is [stored in their "cloud"](http://unhandledexpression.com/2013/12/17/telegram-stand-back-we-know-maths/) and provided to you on all your devices. Even worse: They are [showing your data to "potential friends"](http://mcleaver.blogspot.nl/2014/02/telegram-verses-whatsapp.html?m=1) who [do not have you in their contact](https://twitter.com/GVerbaan/status/436909531625697280) lists or may have never heard of you. They upload your complete address book to their servers. They also know the [geolocation of your phone](http://blog.hackapp.com/2013/12/telegram-secret-chat-geolocation-leak.html). Unencrypted. They have your data, and show it by leaking it. They can fix the leaks and tell you it's safe, but they still have your data. It's also fishy that they clearly [have money to pimp their server farm](https://twitter.com/telegram/status/437745646007631872), even when the app and the messages are free of charge. Who do you think is the product here?
+&lt;p>&lt;a href="https://www.netmess.org/only-threema-rated-uncritical-telegram-rated-critical-for-privacy/">&lt;img src="telegram.png" alt=""Come in to the dark side. We have privacy"">
+&lt;/a>&lt;/p></description></item><item><title>iOS7 hidden features</title><link>https://realrolfje.github.io/rolfje.com/2013/09/28/ios7-hidden-features/</link><pubDate>Sat, 28 Sep 2013 21:03:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/09/28/ios7-hidden-features/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=QS4xIrTYDWU">&lt;img src="ios-7-logo.png" alt="ios-7-logo">
+&lt;/a>If you've just installed iOS7 and like it as much as I do, you are probably interested in all the new features of it, and where to find them. On behalf of Apple, I'll be happy to point out where all those neat new features are, and share my happiness about this wonderful new magical market-leading mobile OS.&lt;/p>
+&lt;!-- more -->**Easy-Steal (tm)**
+&lt;p>**&lt;a href="easy-steal-e284a2.png">&lt;img src="easy-steal-e284a2.png?w=113" alt="Easy-Steal (™)">
+&lt;/a>**Remember how in iOS6, you can not just steal an iphone because of the &amp;quot;find my iPhone&amp;quot; feature? Thieves had to put your iPhone in a metal container so it could not tell the owner where it is. Because thieves are people too, we now introduced &amp;quot;Easy-Steal (tm)&amp;quot;. When a thief wants to steal your phone, all he has to do is swipe up, press the little airplane button, and nobody will hear from your iPhone again. Want to disable that? Easy. Hand over your flashlight, calculator, timer, and iPod controls.&lt;/p>
+&lt;p>&lt;strong>Separate is the new Integrate&lt;/strong>
+Remember how we beautifully integrated FaceTime with the Phone app? How Podcasts could be played from within iTunes? Well we think that's not the future. So we created a separate FaceTime app, and a separate Podcasts app. So you can have more icons on more screens, making it harder to find stuff. We'll let you in on a little secret. Our next big thing? A Separate device for each function. It will be great! You can just take the device you need and leave all the other ones charging on your desk.&lt;/p>
+&lt;p>&lt;strong>New sounds. And Old Classic ones.&lt;/strong>
+Remember how software developers always say you should not use terms as &amp;quot;Old&amp;quot;, &amp;quot;New&amp;quot; or &amp;quot;Classic&amp;quot; in your software because putting a &amp;quot;New&amp;quot; sticker on a banana will not prevent it from going stale? Well we're not so sure about that. So now, in the old (sorry, new) sound settings, you will find all the same behavior of the old settings, but with new sounds. We've even changed all the sounds your phone makes right from the upgrade. If you would like to revert to the old sounds, don't bother searching in the sounds list. Scroll through the &amp;quot;classic&amp;quot; list. You know, because on the first screen, there is a list of sounds, and in the second list, there will be... err... a list of sounds. But old. Get it? Did we say it was completely new? We lied. Sorry.&lt;/p>
+&lt;p>&lt;strong>Camouflage&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="icon-rainbow.png">&lt;img src="icon-rainbow.png" alt="icon rainbow">
+&lt;/a>&lt;/p>
+&lt;p>All icons are now devoid of those pesky shading and lining that made them visible on all backgrounds. So now, no matter what background color you use, there will always be at least one icon which will blend into the background. We even removed the shading on the text, so you can make that disappear with a simple white background. And did you notice the gradients? Some are light-to-dark, and some are dark-to-light. Why? Because at the new Apple, we hate consistency.&lt;/p>
+&lt;p>&lt;strong>Square.&lt;/strong>
+A new picture mode. Because you want to make photos. videos, and... err... squares?&lt;/p>
+&lt;p>&lt;strong>Look-at-Me (tm)&lt;/strong>
+To make the phone look faster, we made the icons zoom and pan to show how the operating systems moves to help you complete your tasks. It was tested on 500 Dwarf Hamsters and we are pretty sure we made a good job of making people look at your screen while you're using your phone. At least half of those people will get &lt;a href="http://www.tech-recipes.com/rx/44165/how-do-i-prevent-motion-sickness-when-using-ios-7/">motion sickness within 15 seconds&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>New Applications&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="new-apps.png">&lt;img src="new-apps.png" alt="New Apps">
+&lt;/a>
+The seasoned iOS6 user will have immediately spotted it: We've got new Applications! Get more accurate timing in your iPhone with the &lt;a href="https://en.wikipedia.org/wiki/Tourbillon">Tourbillon&lt;/a> app. Make your own weather predictions with the Barometer app, and create stunning graphics with the &lt;a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot&lt;/a> app.&lt;/p>
+&lt;p>&lt;strong>New Puzzles&lt;/strong>&lt;/p>
+&lt;p>_&lt;a href="clickable-puzzle.png">&lt;img src="clickable-puzzle.png?w=450" alt="Clickable Puzzle">
+&lt;/a>_&lt;/p>
+&lt;p>You can now have hours of fun trying to figure out what is tappable or slidable. Is it the text? Is it the color? Is it the icons? Who knows? We've put great care in removing all visual clues, so start taping and sliding!&lt;/p>
+&lt;p>The update process has also become more fun. Because we love our non-US iPhone users, we've made the &amp;quot;Purchased&amp;quot; icon a letter &amp;quot;P&amp;quot;. Level up! The dark arrow pointing down ads to the fun when you tap it and... it slides to the left, which reveals your purchases to the right.&lt;/p>
+&lt;p>&lt;a href="updates-puzzle.png">&lt;img src="updates-puzzle.png" alt="Updates Puzzle">
+&lt;/a>And did we say one update? We'll list all the past updates too, so you can have more useless info on the screen. For good measure, we even added fun blue dots next to the updated apps you did not open already. How useful is that?&lt;/p>
+&lt;p>&lt;a href="installing.png">&lt;img src="installing.png" alt="Installing..">
+&lt;/a>Progress indicators are now even more fun. During updates, your app is named &amp;quot;Installing...&amp;quot; Can you guess what this icon is? If you guessed the application was updating, can you tell if it is at 25% or 75%?&lt;/p>
+&lt;p>For the real advanced puzzlers, we've hidden some controls. Can you make the &amp;quot;Today&amp;quot; widget just display your calendar item without-arbitrary-text-around-it-which-makes-your-content-harder-to-view-at-a-glance? Can you slide your &amp;quot;Stock Options&amp;quot; widget below the &amp;quot;Tomorrow&amp;quot; widget?&lt;/p>
+&lt;p>&lt;a href="message-center-puzzle.png">&lt;img src="message-center-puzzle.png?w=169" alt="Message Center Puzzle">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>A new lock screen&lt;/strong>
+People like lock screens. So they can put functions on them for which you don't have to unlock. Smart, right? Now, people can start playing with your phone without unlocking it, weather you like it or not. Because there is no option to disable that. To make everything easier, we've put more icons on the lock screen, making gestures more finicky. Because we know what &lt;del>Android&lt;/del> iPhone users like.&lt;/p>
+&lt;p>&lt;a href="lockscreens.png">&lt;img src="lockscreens.png?w=450" alt="LockScreens">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>And 6789 more features&lt;/strong>
+There is much more to discover. The camera app is on 2 locations in the home screen. The message center is as confusing and inconsistent as ever. The new &amp;quot;dots&amp;quot; signal strength indicator, the network operator name, the wifi icon and the new &amp;quot;gprs&amp;quot; icon are now even wider, so they'll never fit the top bar. Sliders switches look bulkier, slide less, but they do change colors as if they were a bulb. You decide what it's supposed to be, let your imagination run wild! A white dot? Is it a slider or just a dot? Who needs aluminum, Try it out!&lt;/p>
+&lt;p>And if you'll excuse us, we're going to sue Sony because they made their Xperia look like our market-leading mobile OS. See?&lt;/p>
+&lt;h2 id="ios7-because-when-you-paid-for-an-iphone-we-know-you-actually-wanted-android">&lt;strong>iOS7. Because when you paid for an iPhone, we know you actually wanted Android.&lt;/strong>&lt;/h2>
+&lt;p>&lt;strong>P.S.&lt;/strong> Jony, I'm not sure how much you're involved in the UI design, but if you need help, or a better sparring partner, or I need to come rescue you from the bozos that made you do this, the iPhone 5Cheap with it's non-right-angle old-school injection molded back and the gold iPhone, let me know. You're better than this, and maybe we can still fix things. You know how to contact me. Hang in there buddy.&lt;/p></description></item><item><title>How big is 5 Zettabyte?</title><link>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</link><pubDate>Sun, 23 Jun 2013 19:42:47 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</guid><description>
+&lt;p>&lt;a href="http://www.spyvsspyhq.com/images.html">&lt;img src="3050431703_spyblack_answer_2_xlarge.jpeg" alt="Spy vs Spy">
+&lt;/a>Since the interview of &lt;a href="http://www.guardian.co.uk/world/video/2013/jun/09/nsa-whistleblower-edward-snowden-interview-video">Edward Snowden with the Guardian&lt;/a>, the discussion about privacy and companies storing and sharing unencrypted private data is picking up. Particularly Americans are worried about what it does for their National security and their private data. But that's actually a naive thought, given the NSA stores worldwide data.&lt;/p>
+&lt;p>In a &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">recent coverage on theblaze.com&lt;/a> (a rather tabloid-looking news station in the U.S.), the interviewers are shocked to see that the NSA spies on &amp;quot;every American&amp;quot;.&lt;/p>
+&lt;p>This is a limited view of the world and failing to see the importance of spying on people &lt;em>outside&lt;/em> the U.S., but lets start with technical side of things first. What data are they storing and how big is their hard-disk?&lt;/p>
+&lt;!-- more -->As you may know, the internet is a [packet switching network](https://en.wikipedia.org/wiki/Routing). Although people try to mess with the routing and sometimes even [disconnect whole countries](http://www.bgpmon.net/syria-shuts-down-the-internet/), it is hard to make a packet travel a certain route or prevent it from traveling through a certain country. Much of the internet traffic passes through the U.S. regardless of it's source and destination. But even if it didn't, the NSA has that covered. Many companies, Like Facebook, [Google](http://highscalability.com/google-architecture) has [servers all over the world](http://serverfault.com/questions/370385/location-of-google-servers). Since Google and Facebook are companies registered in the U.S. the [NSA could technically indirectly tap into](http://www.breitbart.com/Big-Government/2013/06/09/NSA-Obtains-Data-From-50-Companies) one of their servers in a foreign country which contains data which never travelled through the US in the first place.
+&lt;p>According to the &lt;a href="http://www.internetworldstats.com/stats.htm">worldwide distribution of internet users&lt;/a>, if the NSA wanted to store data just about Americans, they could have built a much smaller, simpler facility. But they didn't, which make you think. So how big is this facility exactly?&lt;/p>
+&lt;p>**&lt;a href="http://img.pr0gramm.com/2009/04/funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg">&lt;img src="funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg" alt="Holy Crepe">
+&lt;/a>5 Zettabyte**
+If you've watched the &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">coverage&lt;/a>, you'll hear James Bamford say that the facility that the NSA is building can hold enough physical machines to store around 5 Zettabyte of data, given current technology standards. It sounds like a lot, but how big is a Zettabyte really?&lt;/p>
+&lt;p>According to &lt;a href="http://en.wikipedia.org/wiki/Zettabyte">wikipedia&lt;/a>, 5 Zettabyte is 5,000,000,000,000,000,000,000 bytes. If, like me, you can not get your head around a number with 21 zeroes in it, I'll give you some of the calculations I made to understand just how big this is.&lt;/p>
+&lt;p>I started with the Internet Archive. Currently, the Internet Archive and it's &lt;a href="http://vimeo.com/59207751">Wayback machine holds 10 Petabytes&lt;/a> of data (10,000,000,000,000,000 bytes). The servers at the Internet Archive crawl the Internet and store all public data they can find in a searchable manner. They provide the public with that data, so you can do cool things like &lt;a href="http://web.archive.org/web/*/http://www.rolfje.com">see how my blog looked 10 years ago&lt;/a>. The Internet Archive is pretty big you might think. With 5ZB, the NSA could store the complete Internet Archive &lt;em>500,000 times&lt;/em>.&lt;/p>
+&lt;p>&lt;strong>Relative to world population&lt;/strong>
+Ok so maybe the size of the internet, or the size of a Petabyte are not very imaginable. Let's take it to the individual level. At the time of this writing, there are &lt;a href="http://www.worldometers.info">roughly 7.124.855.134 people on the world&lt;/a>.&lt;/p>
+&lt;p>If the NSA would wanted to store information on every person in the world, regardless if they were a president or a newborn African child, they would have 701,768,654,374 bytes per person to do so:&lt;/p>
+&lt;p>&lt;img src="5zbperperson.png" alt="5ZB per person">&lt;/p>
+&lt;p>Yes, they can store 701GB for each person in the world. My personal email archive is around 5GB right now, and I have a 1TB hard-disk containing every (digital or digitized) photo I have ever made. If I would be the standard (which I am probably not), the NSA could very easily store everybody's personal data, worldwide.&lt;/p>
+&lt;p>&lt;strong>Relative to the people connected to the internet&lt;/strong>
+Not everybody is connected to the internet (in fact that's not entirely true but we'll come to that later). As you have probably already seen on the &lt;a href="http://worldmeters.info">worldmeters.info&lt;/a> site, there are roughly 2,552,435,328 active internet users (at the time of writing). So let's see what the NSA can store if they &amp;quot;only&amp;quot; target the internet users:&lt;/p>
+&lt;p>&lt;img src="5zbperuser.png" alt="5ZB per Internet User">&lt;/p>
+&lt;p>Ah that's better. Almost &lt;strong>2TB per Internet user&lt;/strong>. The NSA can now not only store my private data, photo's and videos, but now there is room to spare so I can put a couple of blockbuster movies in there, too.&lt;/p>
+&lt;p>Since the NSA probably does some smart data reduction, like storing an email I send to you just once instead of a copy for each of us, I'm guessing the practical space per user will be more like 4TB.&lt;/p>
+&lt;p>**&lt;a href="http://www.youtube.com/watch?v=YozC8yFrZKI">&lt;img src="p.png" alt="Homer">
+&lt;/a>Am I connected to the internet?**
+In short: Yes. We are all connected in some way to the internet. Particularly if you are living in a &lt;a href="https://en.wikipedia.org/wiki/Western_world">&amp;quot;Western Country&amp;quot;&lt;/a> you can be sure that in some way you, or at least data about your existance, is online somewhere. Cities store data about their inhabitants and share them with other departments and services to do their work. By default, this data travels accross the internet and we all know how good governements are at protecting and encrypting their data, right?&lt;/p>
+&lt;p>Let's do an interesting thought experiment to see how far this goes. Suppose I have never connected to the internet, and neither have you. I own an old &lt;a href="https://en.wikipedia.org/wiki/Toyota_Corolla_(E70)">Toyota Corolla E70&lt;/a> and you and I stayed with our trusty &lt;a href="http://nokiamuseum.info/nokia-p-30/">Nokia P-30&lt;/a>'s. Now let's say I lend you my car. The NSA would know about that, instantly. How? My car is registered to me. The roads are covered with cameras to detect traffic violations, but in fact, the most governments like to store data about which car is going where. Our cellphones are connected to cell towers, which reveals &lt;a href="https://en.wikipedia.org/wiki/Mobile_phone_tracking">pretty accurate data&lt;/a> about where they are. So the NSA can map the time and place of my car to the time and place of my cell phone and all cell phones I've called. They would quickly and easily discover that my car is moving with your cellphone in it. The fact that their data shows that my cellphone is at home means that you are probably driving my car. Based on our cellphone data, it would even be pretty easy to see our daily commutes, see where you and I work and when and where we met in person.&lt;/p>
+&lt;p>Conspiracy? &lt;em>Maybe.&lt;/em> Possibility? &lt;em>Yes.&lt;/em> Privacy breach? &lt;em>Absolutely.&lt;/em>&lt;/p>
+&lt;p>Different countries have different meanings of the word &lt;a href="https://en.wikipedia.org/wiki/Privacy">&amp;quot;Privacy&amp;quot;&lt;/a>. By definition, gathering of data which is considered to be private (secret or confidential) in the country of origin, is &lt;a href="https://en.wikipedia.org/wiki/Espionage">Espionage&lt;/a>. This is not surprising, as &lt;a href="https://en.wikipedia.org/wiki/Cold_War">old habbits die hard&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>I don't care, I have nothing to hide.&lt;/strong>
+&lt;a href="http://www.youtube.com/watch?v=N5VAgSdGnSQ">&lt;img src="gollum.jpg" alt="Gollum has something to hide">
+&lt;/a>Not so fast grasshopper. You do. In fact, the NSA just introduced the very need to keep your data private and store it locally, indefinitely. In the example above, suppose you used my car to take pictures as a hobby photographer of a crime scene that was in the news. With the data they gathered, the NSA could frame either you or me at that scene, at their peril. Because you and I have no access to the data they are storing about us, it will be very hard for you or me to prove that we weren't, because the NSA will not provide you or the court with data that will prove otherwise.&lt;/p>
+&lt;p>The same goes for mail and other communications. Tabloid journalists can explain how to use one email, or once sentence from an email out of context to start a nasty gossip. The NSA could do that too. Suppose you are sharing role-playing stories with a friend over email. Those emails could suddenly look very interesting when placed out of context. Don't think they will not do that. &lt;a href="http://www.whereisthemoney.org/1.1trillion.htm">Power corrupts.&lt;/a> They will, and very likely already have done so.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="https://en.wikipedia.org/wiki/Don't_Make_Me_Think">Don't make me think&lt;/a>&lt;/strong>
+I've always said that the failure to make stuff user friendly is the single most important reason for brilliant ideas to &lt;a href="http://www.washingtonpost.com/blogs/wonkblog/wp/2013/06/14/nsa-proof-encryption-exists-why-doesnt-anyone-use-it/">fail miserably&lt;/a>. In the light of current events and the power of modern computers, can we at least try to make strong encryption like &lt;a href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy">PGP&lt;/a> stupid-easy to use, and add &amp;quot;coolness&amp;quot; so people will &lt;em>want&lt;/em> to use it?&lt;/p>
+&lt;p>&lt;strong>Because much like openness, responsibility and privacy is now more important than ever.&lt;/strong>&lt;/p>
+&lt;p>Related material I found while writing this blog post:&lt;/p>
+&lt;pre>&lt;code> * [Surveiller et punir: Naissance de la Prison](https://en.wikipedia.org/wiki/Discipline_and_Punish) is a 1975 book by the French philosopher Michel Foucault. If he was still alive, Foucault would probably see that after a period of individualism and consumer-centric change, the NSA is the re-introduction the [Panopticon](https://en.wikipedia.org/wiki/Panopticon), a prison (or society) where the prisoners can not see the guards.
+* This Dutch program [&amp;quot;Dare to Think&amp;quot;](http://www.uitzendinggemist.nl/afleveringen/1304898) discusses how Foucault thought, and places it in the modern time. It discusses how modern individualism and a market driven society needs new mechanisms to steer the individual. The theory is in essence that people need to learn to steer themselves and check the self-set boundaries with others from time to time.
+* In the source of Windows NT 4 Service Pack 5 a [variable with the name _NSAKEY](https://en.wikipedia.org/wiki/NSAKEY) was discovered which led to speculation that Windows computers could leak private data to the NSA.
+* Because few people do, When you decide to use PGP to encrypt your mail, you are likely to gain some attention, particularly from American &amp;quot;authorities&amp;quot;. Because you stand out. If you decide to stand out and encrypt stuff, you better do it right. Gather some information about [Uncrackable Email](http://www.ncmilitia.org/spycounterspy/fs006.html) (yes it's possible). Please note that all your encrypted mails will be stored, so when somebody does find reason to detain you and get your passphrase, deleting your drive will be useless.
+* Estimations in the linked articles say that the NSA facility cost $2B to build, has it's own 65MW power station, 60,000 tons of cooling equipment, and an electricity bill of $40M per year (unclear if that includes running their own power station). If you looked closely at the WorldMeters link, you could have noticed that there are almost 4 million Cancer related deaths per year and 35 million HIV related deaths, versus [less than 8,000 terrorism related deaths in 2010](http://www.economist.com/blogs/dailychart/2011/09/global-terrorism-deaths). If the NSA is here to pretect us from dying, they'd better use their budget and intelligence to start investigating other stuff.
+&lt;/code>&lt;/pre></description></item><item><title>Open letter to Keith Lang about Skitch</title><link>https://realrolfje.github.io/rolfje.com/2013/01/03/open-letter-to-keith-lang-about-skitch/</link><pubDate>Wed, 02 Jan 2013 22:33:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/01/03/open-letter-to-keith-lang-about-skitch/</guid><description>
+&lt;p>&lt;a href="http://evernote.com/download/get.php?file=SkitchMac_v1">&lt;img src="skitch_logo_lockup_blog.jpg" alt="Skitch 1.0.2">
+&lt;/a>Dear Keith,&lt;/p>
+&lt;p>I read &lt;a href="http://blog.evernote.com/blog/2012/11/21/skitch-and-evernote-a-letter-from-keith-lang/">your letter&lt;/a> about Skitch and would like to respond to all that has happened from my end-user perspective.&lt;/p>
+&lt;p>I am a long-time Evernote user and fan. Evernote changed note taking by being truly searchable. I can confidently drop all the websites, receipts, todos and ideas in there, and clear my mind of the &amp;quot;I must remember that&amp;quot; burden. The OCR of Evernote works beautifully on photos of whiteboards, making even my whiteboard notes searchable.&lt;/p>
+&lt;p>In 2010, I discovered Skitch. The simplicity and razor sharp focus on anotating a screencapture and share the anotated image by dragging it anywhere was sheer brilliance. My daily work includes making annotated screenhots and mailing them to team members to discuss improvements. Skitch changed this ugly capture-save-edit-save-attach-send cycle to pure poetry in motion. Dragging images into Evernote even made my screenshots searchable. It instantly became second nature and my go-to image tool.&lt;/p>
+&lt;!-- more -->As a software developer, I know that software is rarely "finished". There is always that little bug to fix, that missing functionality to add, or some ugly code to refactor. But Skitch was different. It was perfect as it was. It integrated beautifully with everything in my Mac, including Evernote. Not tightly coupled to anything, yet integrated with everything. As a fellow software developer surely you must recognize the poetry in perfect decoupling like this.
+&lt;p>When rumors reached me about Skitch being integrated into Evernote I was very worried. Why integrate Skitch into something? It already integrated beautifully with everything on my Mac. Why tie it to some product? I guess the answer is money. Evernote buying Skitch must have been a financially interesting, but I fully expected Skitch to degrade because of that deal.&lt;/p>
+&lt;p>The first release of Skitch in the Mac App store confirmed all my fears. Skitch 2.0 was so utterly broken, so alien to all users who used or saw Skitch 1.0 on my machine, so crippled, so devoid of it's original focus. Skitch 2.0 left me and some of my colleagues very dissapointed.&lt;/p>
+&lt;p>Luckily, my trusty Time Machine backup had the old version of Skitch and I quickly distributed it to all the poor users who installed Skitch from the Mac App store. But the damage was already done. Frustrated users, underground distribution of the old version of Skitch to a lucky few. To this day I have not figured out what the &amp;quot;advantage&amp;quot; of the &amp;quot;integration&amp;quot; with Evernote is. All blogs and open letters from Evernote and the Skitch team make excuses, link to the old Skitch 1.0.2, talk about how Skitch 2.0 is not Skitch 1.0, but fail to explain what the true advantage is.&lt;/p>
+&lt;p>To me, &lt;a href="http://evernote.com/download/get.php?file=SkitchMac_v1">Skitch 1.0.2&lt;/a> is the version of Skitch that truly integrates with Evernote and every other application in a simple, consistent and easy to understand way. It made sharing easy and understandable.&lt;/p>
+&lt;p>The sellout to Evernote was the death of Skitch. Sure, some features were added back into Skitch 2.0.2, but only to make Skitch 2 into a cheap knockoff of the once great Skitch 1.&lt;/p>
+&lt;p>Now that Evernote has bought Skitch, sales people will want to integrate it into Evernote even more tightly, migrate it to all platforms, thereby losing some of the tight integration with the OS that made Skitch so wonderful and effortless. Even with all the Skitch 1.0 fans behind you, you will have to fight a board of directors who never used Skitch and want to change it without truly understanding why people loved the old Skitch. The gold handcuffs in your deal with Evernote will prevent you from restoring Skitch to what it was.&lt;/p>
+&lt;p>I can only hope that somebody, somewhere realizes how brutally Skitch was butchered by people who clearly did not see the beauty and simplicity of Skitch's userinterface. I can only hope that this person has the skill, means or pure balls to bring the old Skitch back and release it to the Mac App store, maybe under a different name. Just the &lt;a href="http://evernote.com/download/get.php?file=SkitchMac_v1">Skitch 1.0.2&lt;/a>, as is. Screen capture, resize or crop, annotate, your history on the flip-side, and sharing/saving by dragging. Nothing more.&lt;/p>
+&lt;p>Meanwhile, I have Skitch 1.0.2 backed up in every location I can possibly think of. It is an invaluable addition to my daily workflow, and I dread the day Skitch 1.0.2 will no longer work with a new version of OSX.&lt;/p>
+&lt;p>On behalf of all Skitch users out there, thanks for creating the truly amazing, one and only &lt;a href="http://evernote.com/download/get.php?file=SkitchMac_v1">Skitch 1.0.2&lt;/a>. Come over and talk to us. Bring your 1.0.2 sources. We have cookies.&lt;/p></description></item><item><title>Make your buildserver talk</title><link>https://realrolfje.github.io/rolfje.com/2012/12/16/make-your-buildserver-talk/</link><pubDate>Sun, 16 Dec 2012 16:52:50 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/12/16/make-your-buildserver-talk/</guid><description>
+&lt;p>&lt;img src="jenkins-bla.png" alt="Jenkins talking">
+Have you ever started a shell script which takes a while and you keep monitoring that window because you really need those results? If you are working on a Mac, you can use the Mac's power of speech to tell you a command is finished. Here's how:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; gutter=&amp;quot;false&amp;quot;]
+./yourreallyslowbuild.sh; say &amp;quot;really long build is finished&amp;quot;
+[/sourcecode]&lt;/p>
+&lt;p>With a little curl and shell scripting magic, I told my Mac to constantly monitor our Jenkins buildserver, and bug everybody in the office when the hourly build is failing:&lt;/p>
+&lt;!-- more -->
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; gutter=&amp;quot;false&amp;quot;]
+#!/bin/sh&lt;/p>
+&lt;h1 id="configuration">Configuration&lt;/h1>
+&lt;p>jenkinsurl=http://my.jenkins.server/jenkins
+voice=Vicki&lt;/p>
+&lt;h1 id="the-function-that-does-the-trick">The function that does the trick&lt;/h1>
+&lt;p>fnReportFailure() {
+job=${1}
+message=${2}
+result=&lt;code>curl -s \ ${jenkinsurl}/job/${job}/lastBuild/api/xml?xpath=/*/result/text()&lt;/code>&lt;/p>
+&lt;p>if  [ &amp;quot;${result}&amp;quot; == &amp;quot;XPath /*/result didn't match&amp;quot; ] &lt;br>
+|| [ &amp;quot;${result}&amp;quot; == &amp;quot;ABORTED&amp;quot; ]; then
+# ignore aborted or in-progress build. Ignore.
+return 0
+elif [ &amp;quot;${result}&amp;quot; != &amp;quot;SUCCESS&amp;quot; ]; then
+echo &lt;code>date&lt;/code> ${job} : ${result}
+say -v &amp;quot;${voice}&amp;quot; &amp;quot;${message}&amp;quot;
+fi
+}&lt;/p>
+&lt;h1 id="loop-over-all-projects-and-shout-out-problems">Loop over all projects and shout out problems&lt;/h1>
+&lt;p>clear
+echo
+echo &amp;quot;Monitoring ${jenkinsurl}&amp;quot;
+echo
+printf &amp;quot;===== &amp;quot;&lt;/p>
+&lt;p>while [ true ]; do&lt;/p>
+&lt;h1 id="add-as-many-jobs-as-you-want-here">Add as many jobs as you want here:&lt;/h1>
+&lt;p>fnReportFailure &amp;quot;hourly_java_job&amp;quot; &amp;quot;The hourly java job is unstable.&amp;quot;
+fnReportFailure &amp;quot;hourly_deploy_job&amp;quot; &amp;quot;The hourly deploy failed.&amp;quot;&lt;/p>
+&lt;h1 id="tell-the-time-and-sleep-a-little">Tell the time and sleep a little&lt;/h1>
+&lt;p>now=&lt;code>date +%H:%M:%S&lt;/code>
+printf &amp;quot;\b\b\b\b\b\b\b\b\b${now} &amp;quot;
+sleep 60
+done
+[/sourcecode]&lt;/p>
+&lt;p>This script talks with the &amp;quot;Vicky&amp;quot; voice, because I let &amp;quot;Alex&amp;quot; read my iChat messages to me. Of course, the &amp;quot;Bad News&amp;quot; and &amp;quot;Zarvox&amp;quot; voices may be even more &amp;quot;motivating&amp;quot; to quickly fix the build. Now go and keep your eyes on youtube... err I mean your code.&lt;/p>
+&lt;p>Enjoy.&lt;/p></description></item><item><title>Why developers are never on time</title><link>https://realrolfje.github.io/rolfje.com/2012/06/28/why-developers-are-never-on-time/</link><pubDate>Wed, 27 Jun 2012 22:14:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/06/28/why-developers-are-never-on-time/</guid><description>
+&lt;p>&lt;a href="https://en.wikipedia.org/wiki/Daylight_saving_time">&lt;img src="alarmclock.jpg" alt="">
+&lt;/a>If you have worked in IT as long as I do, you probably have noticed that developers have a tendency to not be on time. They are late for meetings, late for lunch, and on other days they are in at 6am or (and) they work until 3am the next morning. If you ever wondered why this is, I might have some answers for you.&lt;/p>
+&lt;p>You might also find this post interesting if you are trying to figure out why you can't get your time zones working in MySQL.&lt;/p>
+&lt;!-- more -->Today, a customer complained that my use of unix timestamps was unacceptable because it supposedly is not an exact representation of a single point in time. He concluded that after some research he did in the MySQL documentation, and quoted [this text](http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_unix-timestamp) :
+&lt;p>&lt;a href="screen-shot-2012-06-27-at-10-22-18-pm.png">&lt;img src="screen-shot-2012-06-27-at-10-22-18-pm.png" alt="Image">
+&lt;/a>&lt;/p>
+&lt;p>It says that converting a Date/Time to a Unix timestamp is lossy &lt;em>&amp;quot;due to conventions for local time zone changes&amp;quot;&lt;/em>. I am very curious as to what &lt;em>&amp;quot;conventions&amp;quot;&lt;/em> MySQL is referring to in an attempt to hide their buggy time zone implementation.&lt;/p>
+&lt;p>The example in the MySQL documentation shows how the following two statements result in exactly the same Unix timestamp:&lt;/p>
+&lt;p>&lt;code>SELECT UNIX_TIMESTAMP('2005-03-27 03:00:00'); SELECT UNIX_TIMESTAMP('2005-03-27 02:00:00'); &lt;/code>
+If you have worked with Dates and Times for international customers before, you will immediately notice that these two examples are lacking a crucial part, namely the time zone component. In these two cases, MySQL will &amp;quot;guess&amp;quot; the correct time zone for you. Both timestamps represent the crossover between winter- and &lt;a href="https://en.wikipedia.org/wiki/European_Summer_Time">summer time&lt;/a>, depending on what time zone you put behind them (02:00 CEST = 03:00 CET). Apparently the MySQL algorithm for figuring out the &amp;quot;correct&amp;quot; time zone makes a pretty awful guess here.&lt;/p>
+&lt;p>To be able for the client to query the database directly, I needed to come up with a solution. I did some research and found out that the MySQL development team, in their infinite wisdom, chose to not install time zone support by default in MySQL. They also decided that any date/time function you use not so much as peeps about missing time zone support. I will not start a rant on how wrong either of those is. No I will not. Will. Not... Must... not......&lt;/p>
+&lt;p>&lt;strong>Solving the MySQL time zone problem.&lt;/strong>
+When you connect to a MySQL instance, it is easy to check if the administrator has installed time zone support. Execute the following query:&lt;/p>
+&lt;p>&lt;code>SELECT CONVERT_TZ('2004-01-01 12:00:00','GMT','MET');&lt;/code>&lt;/p>
+&lt;p>If this query returns the very informative &amp;quot;null&amp;quot;, then time zone support is not installed on your server. Go to the server (or ask your administrator to do this) and execute the &lt;a href="http://dev.mysql.com/doc/refman/5.5/en/mysql-tzinfo-to-sql.html">following commands&lt;/a>:&lt;/p>
+&lt;p>&lt;code>$ cd /usr/local/mysql/bin $ ./mysql_tzinfo_to_sql /usr/share/zoneinfo | \ mysql -u root mysql -p &lt;/code>
+It will give you some useless warnings about unsupported time zones. They should have put that effort in warning us when we try to use time zones. (oops I did it again.. must... not...).&lt;/p>
+&lt;p>(Tested on MySQL 5.5 on Mac OSX as well as MySQL 5.5 on CentOS Linux)&lt;/p>
+&lt;p>If everything went smoothly, you should now be able to do a time zone conversion with the convert_tz() function. We need time zone support to be able to tell MySQL that our session will now use the GMT time zone. We choose this because Unix Time Stamps are (milli)seconds since 1970-1-1 00:00 &lt;strong>GMT&lt;/strong>. Also, MySQL can not correctly tell the difference between CET and CEST so we steer clear of any summer/wintertime problems it has.&lt;/p>
+&lt;p>We can try our unix_timestamp conversion again:&lt;/p>
+&lt;p>&lt;code>set time_zone='GMT'; SELECT @@session.time_zone; SELECT UNIX_TIMESTAMP('2005-03-27 03:00:00'); SELECT UNIX_TIMESTAMP('2005-03-27 02:00:00'); &lt;/code>
+The first statements sets the time zone, and the second shows your time zone setting. If this does not say &amp;quot;GMT&amp;quot; then either you made a typo or time zone support is not enabled but MySQL &amp;quot;forgot&amp;quot; to tell you (oh dear, doing it again, am I?). The last two statements should return different Unix Time Stamps, and you should be able to convert back from those into the correct readable (but missing time zone information) timestamps again.&lt;/p>
+&lt;p>So the whole problem comes down to MySQL &amp;quot;silently failing&amp;quot; when you use time zones it does not &amp;quot;understand&amp;quot;, and the consistent lack of time zones in the date/time representations, both in the application and in the documentation.&lt;/p>
+&lt;p>It seems that a lot of developers on this world still have a hard time grasping that &amp;quot;yyyy-mm-dd HH:MM:ss&amp;quot; is never an exact representation of a point in time without a time zone component. Show me a date/time without a time zone and I show you software with time conversion bugs.&lt;/p>
+&lt;p>In our software, we do all date and time conversions ourselves, and store them as Unix Timestamps in in the database as a Long. This way no driver, client or server database will be able to do &amp;quot;smart&amp;quot; conversions for us. It helped us develop applications for customers in over 12 countries, spanning a multitude of time zones. The MySQL handling of time zones has reinforced my belief that this is the only way to have total control over dates and times.&lt;/p></description></item><item><title>Review: Lamy Pico pen</title><link>https://realrolfje.github.io/rolfje.com/2011/12/23/review-lamy-pico-pen/</link><pubDate>Fri, 23 Dec 2011 21:00:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/12/23/review-lamy-pico-pen/</guid><description>
+&lt;p>&lt;img src="1300_p630491a.jpeg" alt="">
+A few weeks ago I saw this amazing pen design by Lamy, the Pico. I'm a heavy computer user so I don't do much handwriting, but I do like nice tools so I thought I'd get this. Particularly the small form factor when retracted and the sleek design attracted me.&lt;/p>
+&lt;p>There are some things about the Pico that nobody is telling you, so I thought I'd write a little review.&lt;/p>
+&lt;!-- more -->The pen is nicely packaged and looks really cool in the shop display. I bought it at €35,- which is pretty steep for a ballpoint pen. You can probably find a cheaper seller but I haven't seen prices below €30.
+&lt;p>Aston Martin also thinks the Lamy Pico looks cool. It is a standard part of the Aston Martin DB9 interior. If you can't afford an Aston Martin, you can get the Lamy Pico with Aston Martin logo as &lt;a href="http://www.astonparts.com/lamy-pico-compressible-pocket-pen-d160234.html">&amp;quot;replacement part&amp;quot;&lt;/a> so you can show off at the bar.&lt;/p>
+&lt;p>When unpacking the pen you immediately notice the plastic feel and light weight, something you might not expect from a pen that looks like it is made of massive steel. The mechanics of the pen work, but with that same plastic sound and feel. The &amp;quot;stroke&amp;quot; for retracting the pen is rather large and sometimes you have to click twice. Holding the pen in writing position feels strange, because it is &amp;quot;Stubby&amp;quot;. It feels like he writing end of the pen is not tapered enough, blocking your view on the paper.&lt;/p>
+&lt;p>When I started writing with it, the black ink would not start to flow immediately. It kept doing this, and it became really irritating. Maybe this pen had been in the shop for a very long time, drying out the ink. It gave me a good excuse to buy a blue replacement cartridge because blue stands out when annotating black printed text.&lt;/p>
+&lt;p>&lt;img src="4014519133803_bum-550.jpeg" alt="">&lt;/p>
+&lt;p>To my dismay, the €2,60 Lamy Pico M22 M replacement cartridge was even worse. The ink does not flow immediately when you start writing, and with this blue cartridge, it stops flowing after 3 words. It actually turns out to be a &lt;a href="http://nopenintended.wordpress.com/tag/lamy-pico/">known problem&lt;/a> with these cartridges. If I had only known beforehand. Here you can see some writing with the Lamy Pico compared with a standard Parker Jotter.&lt;/p>
+&lt;p>&lt;a href="img_3320.jpg">&lt;img src="img_3320.jpg" alt="">
+&lt;/a>&lt;/p>
+&lt;p>You can clearly see in the &amp;quot;T&amp;quot; that the ink did not start to flow immediately. After just a 2 words, the M22 cartridge just gives up. Mind you that this is a new, fresh cartridge. The black cartridge I mentioned  wrote a couple more words before stopping but was worse in starting the ink flow.&lt;/p>
+&lt;p>In comparison, the good old Parker Jotter immediately starts putting down dark blue ink and stays consistent all throughout the page. The Parker actually sometimes leaves a little blob of ink, which sometimes smudges when you wipe over it with your hand. But it writes, and that is not what we can say for the Pico.&lt;/p>
+&lt;p>&lt;a href="img_3324.jpg">&lt;img src="img_3324.jpg?w=109" alt="">
+&lt;/a>&lt;/p>
+&lt;p>In the couple of days I (tried to) use the Lamy Pico at work, I started noticing scratches on the end cap. These scratches are made by the pen itself, from the retracting motion. You can clearly the scratches on the image on the right. This is after just a week of very mild office use.&lt;/p>
+&lt;p>Compared to my cheap but very reliable all steel &lt;a href="http://www.parkerpen.com/en/discovery/range/performance/jotter">Parker Jotter&lt;/a> which has survived many years in my Filofax, has a nice steel feel, a firm &amp;quot;click&amp;quot; and the very reliable Parker replacement cartridges, the expensive plastic unreliable Lamy Pico is no comparison.&lt;/p>
+&lt;p>&lt;strong>The Good&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * Very nice design with a high &amp;quot;cool factor&amp;quot;
+* Fits nicely in your pocket
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>The Bad&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * Looks metallic but feels plastic
+* Makes it's own scratches on the end cap
+* Too slippery and feels too &amp;quot;stubby&amp;quot; to be an all-day writing pen.
+* Refills are of very poor quality. Ink will not start to flow, and stops flowing after a few words so you can not even use it to write a complete sentence.
+* Absolutely unusable as reliable pen.
+&lt;/code>&lt;/pre>
+&lt;p>If you are looking for a reliable pen with good looks, don't buy a Pico. The cartridges are terrible, and will fail you every time.&lt;/p></description></item><item><title>Linked-In not really Opt-in?</title><link>https://realrolfje.github.io/rolfje.com/2011/09/07/linked-in-not-really-opt-in/</link><pubDate>Wed, 07 Sep 2011 19:14:25 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/09/07/linked-in-not-really-opt-in/</guid><description>
+&lt;p>&lt;a href="http://en.wikipedia.org/wiki/Opt-out">&lt;img src="linked-in-opt-in-1.png" alt="Linked-In, or Opt-out?">
+&lt;/a>Recently there was some &lt;a href="http://www.worldwidewords.org/weirdwords/ww-ker1.htm">kerfuffle&lt;/a> about LinkedIn silently changing privacy settings. In fact, they didn't do that &lt;em>&amp;quot;silently&amp;quot;&lt;/em>, nor was it &lt;em>&amp;quot;recent&amp;quot;&lt;/em>. Remember that large chunk of text nobody reads with the &lt;em>&amp;quot;Agree&amp;quot;&lt;/em> button you clicked on? Those were the new terms, and deeply buried in them was this privacy settings stuff. LinkedIn's Eric Heath &lt;a href="http://blog.linkedin.com/2011/06/10/privacy-policy-changes/">blogged about that&lt;/a>, bringing it as &lt;em>&amp;quot;more control over your LinkedIn information&amp;quot;.&lt;/em> Sadly, the default setting for this new &lt;em>&amp;quot;control&amp;quot;&lt;/em> is &lt;em>&amp;quot;rather open&amp;quot;&lt;/em>. But you can change that.&lt;/p>
+&lt;!-- more -->Just recently, people started to see the effects of the new terms and conditions, as LinkedIn started a new social advertising campaign including profile pictures. Most LinkedIn users felt they did not (knowingly) agree to that. Ryan Roslansky [explains the new ads](http://blog.linkedin.com/2011/08/11/social-ads-update/) on August 11th, and also mentions that LinkedIn is responding to the complaints and will remove the profile pictures from the new ads.
+&lt;p>If you want to be sure that LinkedIn does not use your profile in ads in the future ever again, you could always &lt;a href="http://www.linkedin.com/answers/using-linkedIn/ULI/728753-417696">cancel your account&lt;/a>. For people that don't want to cancel their account, there is a setting you can try to change (given that LinkedIn doesn't change it again). Here's a little screenshot I annotated with &lt;a href="http://skitch.com/">Skitch&lt;/a>:&lt;/p>
+&lt;p>&lt;a href="linked-in-social-advertising-1-2.png">&lt;img src="linked-in-social-advertising-1-2.png" alt="How to Opt-Out of social advertising with Linked-In">
+&lt;/a>&lt;/p>
+&lt;p>You might also want to check out some other settings on those tabs. There's no clear overview, and the settings are hard to click through. That's probably on purpose, because well, Linked-In is now cashing in on it's (or: your) data.&lt;/p>
+&lt;p>Remember: What's not on the internet, is not on the internet.&lt;/p></description></item><item><title>Replacing Dropbox with Spideroak</title><link>https://realrolfje.github.io/rolfje.com/2011/07/03/1355/</link><pubDate>Sun, 03 Jul 2011 14:39:30 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/07/03/1355/</guid><description>
+&lt;p>&lt;a href="https://spideroak.com/">&lt;img src="spideroak-logo.gif" alt="">
+&lt;/a>After lies about Dropbox Employees &lt;a href="http://www.businessinsider.com/dropbox-updates-security-terms-of-service-to-say-it-can-decrpyt-files-if-the-government-asks-it-to-2011-4?op=1">not being able to see your files&lt;/a>, then proving that they do &lt;a href="http://blog.dropbox.com/?p=821">not do regression testing&lt;/a> on their security, the latest &lt;a href="http://hardware.slashdot.org/story/11/07/02/0515218/Dropbox-TOS-Includes-Broad-Copyright-License">change in terms of service&lt;/a> really was the last drop. So I dropped dropbox.&lt;/p>
+&lt;p>I had become dependent on Dropbox to transfer files between my private and work machines, having my notes, configuration files and (encrypted thank god) password databases handy at all times. Searching around, there is really no other service like it. Although lots of products claim to have the same functionality, the &amp;quot;share this folder between all my machines&amp;quot; feature which dropbox proviced is really unsurpassed.&lt;/p>
+&lt;p>I had to find an alternative solution which would meet the following criterea:&lt;/p>
+&lt;pre>&lt;code> 1. has to be a single, native folder, instantly syncing with all other machines
+2. has to be free or *really* cheap, minimum 2GB
+3. has to use an encryption technology where no one else can ever read my files, not even the hosting party, not even at gunpoint
+4. has to have client software for Windows, Mac and Linux
+5. accessing data on my iPhone would be a nice bonus.
+&lt;/code>&lt;/pre>
+&lt;p>After some browsing around, there are two solutions that come close, one is &lt;a href="http://www.wuala.com/">Wuala&lt;/a>, and the other is &lt;a href="https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4">Spideroak&lt;/a>.&lt;/p>
+&lt;blockquote>For **one additonal GB of storage for life, [use my referal link](https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4)** to register at SpiderOak. Read the whole article to add another 5GB to that.&lt;/blockquote>
+&lt;p>&lt;strong>&lt;!-- more -->Why not Wuala?&lt;/strong>
+Wuala looked really cool at first. It looked like they had a native Mac app, and easy syncing between computers. As it turns out, it's nastier than that. The Mac client is effectively a slow Java program in which you need to drag and drop your files to get them uploaded/downloaded. That's not seemless. There is a MacFUSE client that comes with the download, but that affectively makes Wuala into a seperate drive (not a local folder), and the MacFUSE client is low on support, and not compiled as 64bit runtime.&lt;/p>
+&lt;p>Scanning the Wuala forums, there seemed too much confusion and bugs around the whole software product. Being made by a hardware manufacturer, that doesn't really surprise me.&lt;/p>
+&lt;p>Spideroak has native clients for all platforms, and ticks all the boxes in my requirements list, really &lt;a href="https://spideroak.com/engineering_matters#true_privacy">nailing it in the security department&lt;/a>. Spideroak even conforms to my &lt;a href="http://rolfje.com/2007/12/19/if-not-https-then-exit/">&amp;quot;https please&amp;quot;&lt;/a> blogpost. A bit of poking around revealed that it is written in Python, and knowing that you can spot some Qt UI elements.&lt;/p>
+&lt;p>&lt;strong>Enough talk. How do I get my magically synced folder back?&lt;/strong>
+Spideroak is really targeted at backup, and has &amp;quot;sync&amp;quot; as a feature. So in order to get only syncing working, you need to setup a backup for that folder. Don't worry, here are all the steps you need to take to migrate from dropbox to Spideroak:&lt;/p>
+&lt;pre>&lt;code> 1. Cancel your dropbox account as described on the [dropbox help pages](http://www.dropbox.com/help/43).
+2. Uninstall dropbox from all your machines. Please note that this will not remove your dropbox folder. Your data will be safe. We can only hope that dropbox will remove that data from their servers, but I wouldn't bet on it.
+3. Rename your &amp;quot;dropbox&amp;quot; folder into &amp;quot;Spideroak&amp;quot; if you really want to remove all dropbox references.
+4. [Sign up at Spideroak with this referal link](https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4), and use the promocode &amp;quot;worldbackupday&amp;quot; to increase your storage for free to 5GB for one year, PLUS 1GB of free storage if you used my referal link. That's a total of 6 free GB!
+5. Download the client for your platform(s) and install it on all machines where you had dropbox running (no reboot required).
+6. After installation, click on the &amp;quot;backup&amp;quot; tab, click on the &amp;quot;advanced&amp;quot; button on the right, and select your Spideroak (former dropbox) folder. Click save. Spideroak should now start backing up that folder.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="1-backup-tab.png">&lt;img src="1-backup-tab.png?w=300" alt="Selecting the sync folder for backup">
+&lt;/a>
+7. Syncing this folder with other computers is a bit strange in Spideroak, since you need to &amp;quot;pair&amp;quot; folders. I choose to have one &amp;quot;central&amp;quot; computer, which is my Mac Mini, which is always on and will serve as the &amp;quot;center&amp;quot; of the synchronization setup. It does not have to be always on, it's just administrative convenience. You will not notice the difference later on, don't worry.
+8. Repeat the installation process on any other computer you removed dropbox from.
+9. Now for the crucial part: On one of your computers, click on the &amp;quot;Sync&amp;quot; tab and connect all the Spideroak folders on your machines in one sync job.
+&lt;a href="spideroak-sync.png">&lt;img src="spideroak-sync.png" alt="How to synchronize multiple machines with Spideroak">
+&lt;/a>&lt;a href="2-sync-tab.png">
+&lt;/a> In the screenshot above I have four machines/devices. To add a fifth, I would have to click the little &amp;quot;+&amp;quot; to add a sync folder and select the folder on the fifth machine.
+10. Once the backup is complete, Spideroak will start syncing all your synced folders to all machines.&lt;/p>
+&lt;p>If everything went as planned,  Spideroak will now act as dropbox. You'll have a local folder where you can put stuff in, and it will get magically transferred in the background to all your devices. Please note that this will not be as fast as you were used to with dropbox.&lt;/p>
+&lt;p>I've written a feature request to Spideroak to make a simple client which just syncs a folder to &lt;em>any&lt;/em> machine in the account, without exposing all this setup trickery to the end user. If you want to help promote that feature request, drop them a line and refer to ticket &lt;strong>[SOS #56358]&lt;/strong>. Because in the end, all the world wants is a safe, simple dropbox.&lt;/p>
+&lt;p>From now on, you never have to worry about the brilliant people who invented dropbox, surrounded by the incompitent idiots and lawyers which will ruin the company for good.&lt;/p>
+&lt;p>Goodbye dropbox, sorry to see you go.&lt;/p></description></item><item><title>^H(eaven) key binding in Eclipse</title><link>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</link><pubDate>Sun, 19 Jun 2011 19:21:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</guid><description>
+&lt;p>&lt;a href="search-window.png">&lt;img src="search-window.png?w=150" alt="Eclipse File Search Window">
+&lt;/a>As a long time user of Eclipse, I have never understood the any of the tabs of the Search panel in Eclipse. JavaScript search, Java Search, Remote Search, they all make no sense to a modern man who is used to a single search box which searches everything. So I always use the &amp;quot;File Search&amp;quot; Tab, which does exactly what I want 99% of the time.&lt;/p>
+&lt;p>File Search always requires mouseclicks. To open the Search window and select the correct tab. It was not until recently that I realized that I could actually reassign the ^H (Control - H) key combination to pop up the File Search tab. If you are an avid Eclipse user you've probably already done this, or know how to do this. If you are new to eclipse, or lazy like me, read on to see how you can re-map this key binding.&lt;/p>
+&lt;!-- more -->
+&lt;p>To remap ^H to &amp;quot;File Search&amp;quot;, do the following:&lt;/p>
+&lt;p>Open Eclipse preferences and go to &amp;quot;General -&amp;gt; keys&amp;quot;. You should see the following settings screen:&lt;/p>
+&lt;p>&lt;a href="eclipse-settings-key-binding.png">&lt;img src="eclipse-settings-key-binding.png?w=300" alt="Eclipse Key Bindings Preference page">
+&lt;/a>&lt;/p>
+&lt;pre>&lt;code> * In the filter text, type &amp;quot;file search&amp;quot;. The command list should now contain only one entry, &amp;quot;File Search&amp;quot;.
+* Highlight the &amp;quot;File Search&amp;quot; command
+* Click in the &amp;quot;Binding&amp;quot; field and press ^H. You should now see that you've created a conflict with the &amp;quot;Open Search Dialog&amp;quot; in the &amp;quot;conflicts&amp;quot; list on the right.
+* Select the conflict you want to remove, and empty the key binding field.
+* Press the &amp;quot;Ok&amp;quot; button to close the preferences screen.
+&lt;/code>&lt;/pre>
+&lt;p>Now you're all done. When you're in an editor and want to see if selected text is present in other parts of your project&lt;/p>
+&lt;p>Let's say you are looking at Java source of an Ibatis SqlMapClient and want to find the matching statement in any of the the SqlMap.xml files. You can now simply select the text in the Java file, hit ^H, Enter, and voila, you get a list of all files with that same text in it, anywhere in your enclosing project or workspace, without copy-pasting or even touching the mouse.&lt;/p>
+&lt;p>Now go play with your new found piece of heaven.&lt;/p></description></item><item><title>A Brighter Prius Dashboard</title><link>https://realrolfje.github.io/rolfje.com/2010/08/07/a-brighter-prius-dashboard/</link><pubDate>Sat, 07 Aug 2010 15:39:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/08/07/a-brighter-prius-dashboard/</guid><description>
+&lt;p>When you drive a Prius (like me), and you always have your lights on (like me), you probably have been irritated by the dimmed speedometer and unreadable display in bright sunlight (like me). If you didn't read the owners manual (like me), you also probably didn't know about this trick to get the brightness back (like me). Here's how:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1236&amp;quot; align=&amp;quot;alignleft&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Lights on, dark dashboard&amp;quot;]&lt;a href="img_0241.jpg">&lt;img src="img_0241.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1237&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Hold for two seconds&amp;quot;]&lt;a href="img_0243.jpg">&lt;img src="img_0243.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1238&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Voila, full brightness.&amp;quot;]&lt;a href="img_0242.jpg">&lt;img src="img_0242.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+You need to do this every time you start the car or turn on/off the lights. Return to a dimmed dashboard while driving by pressing the brightness selector briefly.</description></item><item><title>Problem Solving for Dummies</title><link>https://realrolfje.github.io/rolfje.com/2010/07/15/problem-solving-for-dummies/</link><pubDate>Thu, 15 Jul 2010 20:12:06 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/07/15/problem-solving-for-dummies/</guid><description>
+&lt;p>Some people can not seperate cause and effect when solving problems, and every now and then you run into a great example.&lt;/p>
+&lt;table align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td >If this is your problem...
+&lt;/td>
+&lt;td >this is not your solution
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[![Some people are still trying here...](img_8018.jpg?w=200)
+](img_8018.jpg)
+&lt;/td>
+&lt;td >[!["It is not allowed to throw paper towels into the toilet."](img_7048.jpg)
+](img_7048.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The towel bin is next to the sink. Why would anyone walk all the way back to the toilet to throw their paper towel in there? Well maybe it's because they have nowhere to put it? There is a simple solution to solving problems with other people's behavior, without having to put up signs and making up silly rules:
+&lt;h2 id="make-the-right-thing-to-do">Make the right thing to do&lt;/h2>
+&lt;h2 id="the-easy-thing-to-do">the easy thing to do.&lt;/h2>
+&lt;p>spacing&lt;/p></description></item><item><title>Anti-fog Helmet Visor Tip</title><link>https://realrolfje.github.io/rolfje.com/2010/04/19/anti-fog-helmet-visor-tip/</link><pubDate>Mon, 19 Apr 2010 20:39:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/04/19/anti-fog-helmet-visor-tip/</guid><description>
+&lt;p>&lt;img src="accessories-icon-street-helmet-universal-original-shield-fog-free-light-smoke.jpg" alt="">
+In some biker magazines you'll see some cheap journalists write that the &amp;quot;dish washing soap anti-fog is an urban myth&amp;quot;, and that it will &amp;quot;blur your vision&amp;quot;, some may even say it's downright dangerous. This blogpost is to show that if done right, dish washing soap is actually the absolute best anti-fog treatment money can buy. If you've tried this and still don't like it, there are some easier alternatives at the bottom for your convenience.&lt;/p>
+&lt;!-- more -->**Why this post**
+&lt;p>The Netherlands. A damp and cold country where even the most high-tech coated visors fog up at the most inconvenient moments. Particulary at the start of this season it was terrible. Because of the longer and colder than normal winter, I was very eager to get on the bike early. As soon as the snow was gone, I was riding. Because I forgot to take care of the visor, it fogged up. Badly.&lt;/p>
+&lt;p>I went out to find ways of preventing the fogging up of the visor. A friend told me that pinlock works, but when the airtight seal is gone, you're in deep trouble. It also adds extra layers of Lexan, meaning more glare. Then, &lt;a href="http://twitter.com/cityjohn">@CityJohn&lt;/a> pointed me to FogTech wipes. I ordered a few at &lt;a href="visorvision.co.uk">Visorvision&lt;/a>, and got them very promptly (customer service is A-ok at Visorvision, thanks again Paul!). The wipes work as advertised and add almost unvisible glare to the visor. Good value for money, but the wipes themselves dry out quickly. To keep the effect you have to re-apply the coat, but you will rarely find yourself using the same wipe twice. Not that the price is a problem, but it may become a burden on roadtrips.&lt;/p>
+&lt;p>To my surprise, I found a longer lasting solution on my kitchen sink. I heard of the dish washing soap tip before but never actively tried it. To my surprise, with a little care, you can coat the inside of your helmet with this stuff, it will be invisible, and will stay on for at least a week. Even better: your visor will actually become clearer when you breathe against it.&lt;/p>
+&lt;p>&lt;strong>Before you do anything:&lt;/strong>_ Check if your visor has a special coating. If this is the case, you are probably better off just cleaning it according to the owners manual. If you're not sure, try this stuff on a small unused part of the visor._&lt;/p>
+&lt;p>&lt;strong>Step 1: Clean your visor&lt;/strong>&lt;/p>
+&lt;p>[caption id=&amp;quot;attachment_1175&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;140&amp;quot; caption=&amp;quot;The clean visor should fog up evenly when breathing against it&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-30-46.png">&lt;img src="schermafbeelding-2010-04-19-om-21-30-46.png?w=200" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;p>Before applying any product to your visor, you need to carefully clean it. Taking the visor off and washing it with a soft detergent is probably best. On the road this can be a bit more problematic, so you might want to consider taking a damp sponge with you in a watertight bag, and some dry wipes.&lt;/p>
+&lt;p>You can test if your visor is clean by breathing on it. If it fogs up nice and evenly, it's clean enough for the next step.&lt;/p>
+&lt;p>&lt;strong>Step 2: Apply (very little!) dishwashing soap&lt;/strong>
+Take a soft rag (cotton t-shirt or such) and put a small  drop of washing up liquid on it. The less you apply, the easier the final step will be.&lt;/p>
+&lt;table width="100%" align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1177&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;60&amp;quot; caption=&amp;quot;The Magic Stuff&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-48.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-48.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1178&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;Apply a very small drop of detergent on a soft rag to the inside of the visor.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-12.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-12.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1179&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;After applying, your visor now looks somewhat smudgy, like this.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-38.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-38.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Step 3: Buffing**
+Take a new, clean, soft rag and gently rub the inside of your visor. You'll see the detergent disappear, and the visor will become clear. As soon as the visor is clear, stop. You don't want to remove all the detergent.
+&lt;table width="100%" align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1181&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Buff the inside of the visor with a clean soft rag&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-08.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-08.png?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1182&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;99&amp;quot; caption=&amp;quot;Stop when you think it's clear enough&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-33.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-33.png?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1183&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;120&amp;quot; caption=&amp;quot;The result. No visible traces of detergent, clear vision for at least a week.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-41.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-41.png?w=120" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Now try it. Put your helmet on, close the visor and breathe on it like your neighbors dog after a run in the park. It will not fog up. Nice huh? Imagine how many coats you can do with one bottle of dish washing soap? And you don't even have to take it on the road trip, because every household, hotel or grocery store will have this!
+&lt;p>&lt;strong>Advanced tips:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. After a while, very small dirt particles from your breath will attach to the detergent. This can be seen as a light mist, like you also see on the inside of the windshield of your car. You can re-buff the inside of the visor at least once before re-applying the soap, but it has to be absolutely dry before buffing.
+2. When you are riding, you might notice you didn't buff the inside quite enough. If it bothers you too much, breathe against your visor to clear it up. Yes, with soap on the visor it will actually become clearer when breathing against it.
+3. If you don't have the time to do all this, and are going for quick-and-easy, I'd recommend the FogTech wipes, as mentioned earlier.
+&lt;/code>&lt;/pre>
+&lt;p>Ride safely.&lt;/p></description></item><item><title>The rumors can stop now. iPad is here.</title><link>https://realrolfje.github.io/rolfje.com/2010/01/27/the-rumors-can-stop-now-ipad-is-here/</link><pubDate>Wed, 27 Jan 2010 20:19:44 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/01/27/the-rumors-can-stop-now-ipad-is-here/</guid><description>
+&lt;p>&lt;a href="schermafbeelding-2010-01-27-om-21-18-02.png">&lt;img src="schermafbeelding-2010-01-27-om-21-18-02.png?w=119" alt="">
+&lt;/a>So the word is finally out, it's going to be the &lt;a href="http://www.apple.com/ipad/">iPad&lt;/a>. I was kind of worried about this, and my worries are not completely taken away by the news currently oozing out of the Apple keynote. I see some problems with this device, although they are well hidden under Steve's reality distortion field, the Apple secret sauce and the &amp;quot;gee why didn't we think of that&amp;quot; features.&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> * The dock for the iPad is has me worried about mechanical failure. A large device resting on a small connector.
+* Most people I know have a macbook and/or an iPhone. The iPad overlaps both the macbook and the iPhone in functionality, and it requires an extra data subscription. So they will probably hold out for a bit.
+* Although the rest of the pad looks beautiful, the &amp;quot;home&amp;quot; button makes it into a big iPhone which I personally think is not a plus.
+* The carriers will try to sell you the 3G models, subsidized. Don't go for that, buy the wifi instead, or try to get the wifi+3G sim-lock free. I'm glad Apple did not go for the carrier lock in construction on this one.
+&lt;/code>&lt;/pre>
+&lt;p>I admit, the video looks stunning. The UI is very polished (look at the pinch to peek in a stack of photo's), the device is nice and thin. Notice how the screen does not go all the way to the edge, so that you can put your thumb somewhere to hold it. And although it lacks a camera, it has all other iPhone features (yes, including GPS) so almost all iPhone apps will work on it.&lt;/p>
+&lt;p>The additional $130 for the 3G option may be a bit steep, but the overall pricing is pretty good, almost competing with the netbooks, &lt;a href="http://www.apple.com/ipad/pricing/">starting at $499&lt;/a> at the 16GB wifi only model.&lt;/p>
+&lt;p>Judging from the very young information right now, I understand that I may not be target audience for this advice. I need a keyboard and a large screen. But if you're in the (American) market for a netbook or something to browse a bit on the couch, have a look at &lt;a href="http://www.apple.com/ipad/ipad-video/#medium">the video&lt;/a>.&lt;/p></description></item><item><title>Design Gripes</title><link>https://realrolfje.github.io/rolfje.com/2009/04/08/design-gripes/</link><pubDate>Wed, 08 Apr 2009 21:46:09 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/04/08/design-gripes/</guid><description>
+&lt;p>Dear Akio Morita,&lt;/p>
+&lt;p>&lt;a href="http://www.theonion.com/content/video/sony_releases_new_stupid_piece_of">&lt;img src="2009-04-08-234308.png" alt="Onion News Network on Sony products">
+&lt;/a>Lately I have some small issues with a lot of design decisions being made by the company you founded a while ago. If you look at my irritations seperately they're just small gripes of a grumpy old customer. But the increasing number of design mistakes have me worried about your user acceptance testing and quality assurance processes. Given the sheer size of your company, and the fact that the very same people who are sabotaging your overall product quality can silently delete my complaint, I thought I'd share it with you here, on my very private blog.  Nobody else will read this. Honest.&lt;/p>
+&lt;!-- more -->Let me start by saying that I love my Playstation 3. No wait, let me rephrase that. I love playing games on my playstation 3. Because the playstation 3 itself is absolutely not intuitive, logical or even pleasant to use. Both hardware and software wise.
+&lt;p>I am very fortunate to have a loving wife who bought a PS3 for me. Because she did not expect to have to do in-depth research about the differences between the models, she bought the 80GB PS3 for me. It was the biggest drive in the store, so she thought that was the best.&lt;/p>
+&lt;p>I was/am really happy with the very nice present. Not having any PS3 games yet, I slapped in a PS2 game, fully expecting that it would play. Not so. As it turns out, only the 60GB model plays &lt;em>some&lt;/em> of the PS2 games, and most of the time not even perfectly. What's with that? Can this 3-Cell processor huge 80GB machine with metric craploads of memory not emulate the outdated PS2? Did nobody at Sony realize that they can capitalize on people upgrading from the PS2? Not even now that the &lt;a href="http://ps3finder.com/">60GB models actually sell for more money than the 80GB&lt;/a> model retail price?&lt;/p>
+&lt;p>Disapointedly leaving the PS2 compatibility issue, &lt;a href="http://rolfje.wordpress.com/2009/01/31/dlna-on-osx-done-right/">I got a DLNA server running&lt;/a> on my Mac. When I want to view media on that server, I have to use your &amp;quot;X media bar&amp;quot; menu. For some reason, some designer came up with the brilliant idea to seperate music, photo's and video's in that menu. This means that before browsing my DLNA server, I have to decide what filetype I'm going to browse. If I have folders containing both video and photo's of the same birthday party, I constantly have to back out of the photo viewing mode, get into the video mode, browse all the way back to the folder, and view the video. It's like having to fill in a form to flip the channel on your TV.&lt;/p>
+&lt;p>And what's with the forgetting of discovered DLNA servers? The PS3 takes ages to re-discover my DLNA server on the network each time I turn the PS3 on, or return to the menu from a game.&lt;/p>
+&lt;p>To make it even more cringeworthy, the PS3 scares the crap out of me each time I browse to a folder to see that &amp;quot;There are no files...&amp;quot;. The PS3 is lying ofcourse, what it means is that there are MPG's and AVI's there, but I'm in photo viewing mode. The whole X-media-bar design must have never been usability tested by random customers. It's a very common practice nowadays which I can really recommend.&lt;/p>
+&lt;p>By now, I had scored some PS3 games (&lt;a href="http://www.ps3home.nl/products/playstation-3-games/alle-games-a-tot-z/moto-gp-2008-ps3.htm">Moto GP&lt;/a> and &lt;a href="http://www.tombraiderunderworld.com">Tomb Raider: Underworld&lt;/a>). After a nice evening of gaming,  I discover that the controller battery is running low. So I connect it to the PS3, and put the PS3 in standby mode, expecting my controller to be charged the next morning. To my huge disapointment, the controller does not charge when the PS3 is not fully on. That strikes me as really strange. To charge my wireless controller, I have to connect it during gaming. Now how did someone on your design team did not notice that?&lt;/p>
+&lt;p>We had a big old Phillips Matchline TV which worked fine, but was getting a bit dated. The thought of being able to play games in full HD 1080p resolution was very tempting, so I bought a new model Sony Bravia 40 inch TV, thinking that it would interface nicely with the PS3. To my absolute horror, the PS3 video signal looked horrible on this new TV. As it turned out, you are shipping this full HD 300+ dollar gaming machine with a crappy composite video cable. Oh boy. Now I know why people think the difference between a Wii and a PS3 is not that huge. Another obvious commercial win down the drain.&lt;/p>
+&lt;p>I googled around and I discovered that HDMI is the best way to go. I bought an HDMI cable and connected the PS3 to the TV with that. The TV manual said it could use some HDMI protocol to discover HDMI connected devices. Surely enough, my brandnew Sony Bravia does not recognize my Sony PS3. How nice is that? Luckaly, after some manual fiddling with the absolutely horrid X-media bar-like menu's in the TV and the PS3, I got everything to play in full HD. Finally.&lt;/p>
+&lt;p>What strikes me as another design flaw is the size of the screen fonts. On my big TV everything looks nice, but I can imagine that the paperboy who emptied his piggybank to get a PS3, and connects it to his little TV in his room, can not read any of the menu items. I take it that the Sony testing department only has Full HD TV's with HDMI cables, right?&lt;/p>
+&lt;p>And then there's the whole casing design thing. Come on. Rounded top? I can not even place a controller on there, it slides off. The ventilation holes are on the side, which makes it imposible to put the PS3 with it's right side against the cupboard. The USB ports are recessed in such a way that if you place the PS3 low to the ground (which happens most), you can not see the ports without having to lie down on the floor eyeballing them.&lt;/p>
+&lt;p>While you're down there, you can als see the rediculously thick and sturdy mains cable. It can transport enough current to power my microwave. Does the PS3 really use that much current? Now be honest. You could have selected a thinner, more flexible mains lead, and maybe it would even have been cheaper. The current lead almost pushes the PS3 out from the wall. Good thing the PS3 is so heavy.&lt;/p>
+&lt;p>When waking the PS3 from it's sleep mode, there is another interesting thing that strikes me as odd. There is a green and a blue led next to eachother on the top of the button pannel. Not only are those two colors looking horrible next to eachother, and the fact that I have come to loathe any product with a blue led, there is absolutely no way that colorblind people are going to notice the difference in color, which makes them pointless.&lt;/p>
+&lt;p>As I said, this is just a selection of the gripes I have with the design. For instance, the fact that game makers are allowed to play sounds and video as soon as a game is inserted, is just terrible. It scares the crap out of me each time I insert &lt;a href="http://www.racedrivergrid.com/">Race Driver:GRID&lt;/a>, and there is no way I can turn it off.&lt;/p>
+&lt;p>&lt;a href="photo.jpg">&lt;img src="photo.jpg" alt="Sony Bravia remote button misplacement">
+&lt;/a>The nicest example of hardware design failure by Sony is the remote control of the Sony Bravia TV. The buttons you use most are in fact unreachable when holding the remote in your hand. The least used buttons are right there by your thumb. What was this designer thinking? Oh and never mind pressing the buttons, because this TV, which can interpolate frames of a 24fps source into 100fps fluid motion while dynamically adjusting sound and backlight, has a very hard time to display a menu or react to the remote. This is absolutely mind boggling to me. It's like a race car which can go from 0 to 300mph in 2 seconds but takes 5 seconds to react to the brakes.&lt;/p>
+&lt;p>Yes, I bought all this Sony stuff. I know, I could have bought something else. But there are reasons for me to put up with all this crap. OTHER manufacturers make such great stuff for Sony devices. The games on the PS3 are absolutely beautiful and brilliant. Watching video on the PSP on an airplane is great. Looking at a bluray at 100Hz 1080p on the Bravia is eye-popping.&lt;/p>
+&lt;p>So, dear mr. Morita, please, please make the people at Sony aware of these details. They're important. Solving them will set your product apart from the competition in a large way. People may not be able to tell why, but they will like your product better. This is what good designers do. Make a product have a good &amp;quot;feel&amp;quot;.&lt;/p>
+&lt;p>It will also rid you of online video's describing your products as... well... you've already seen &lt;a href="http://www.theonion.com/content/video/sony_releases_new_stupid_piece_of">that video&lt;/a>, right?&lt;/p>
+&lt;p>Thanks for reading this rant.
+Rolf&lt;/p></description></item><item><title>Clonezilla: m4d Sk!lZ</title><link>https://realrolfje.github.io/rolfje.com/2007/11/06/clonezilla-m4d-sklz/</link><pubDate>Tue, 06 Nov 2007 00:09:50 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/11/06/clonezilla-m4d-sklz/</guid><description>
+&lt;p>A few weeks ago, my Dad and my Brother both bought identical Windows Vista machines, at the same shop, at the same time. Although the hardware specs of these computers were terrific, the performance of Windows Vista was &amp;quot;moderate&amp;quot; to say the least. An even bigger problem was that some of the older XP programs my dad had been using did no longer work on the shiny new Vista machine. The shiny 3D effects had to go in favour of something that &amp;quot;just worked&amp;quot;.&lt;/p>
+&lt;!-- more -->Having just spent a lot of cash on these now paperweights, a new Apple was not an option (hey, I tried). So my dad bought a Windows XP install CD and started installing on his machine. The shiny new hardware was so new, that the XP divers were hard to find, if they existed at all. After 2 weeks of fiddling with drivers, the machine was "up and limping". The display was at a nice resolution, and it could produce a sort of audio, and the prio 1 software packages were installed and working (mainly some simple calendar and assembly-development tools).
+&lt;p>My brother also was fed up with Vista, and asked if we could mirror the harddisk in my dad's machine to his machine. I figured that this should be no problem, since the machines were exactly identical. Because of earlier problems with Norton Ghost and SATA drives, I decided to give Clonezilla a try.&lt;/p>
+&lt;p>Please note that I am NOT linking to the Clonezilla site in this article, which is for your own good. Why? I will tell you why! For people who are so smart that they can read partition tables before morning coffee, understand 32 different partition types, and can do on-the-fly custom compression of a datastream to an USB disk, they shure have never heard of &amp;quot;user experience&amp;quot;. There is absolutely no way that normal people are ever getting this thing to work.&lt;/p>
+&lt;p>...You may take a pause here to reflect on that if you like...&lt;/p>
+&lt;p>When booting the Clonezilla CD, it shows you what it's doing my scrolling text accross your screen at a speed at which you need bionical implants to be able to follow. I did manage to catch a few lines, and I must not be smart enough because I don't know what &amp;quot;Loading NVIDIA Video Driver&amp;quot; and &amp;quot;Setting System Clock&amp;quot; have to do with reading bits from a disk and writing them to another disk.&lt;/p>
+&lt;p>&lt;a href="1.png">&lt;img src="1.thumbnail.png" alt="Clonezilla splash screen">
+&lt;/a>After the frantic scrolling is done, you are presented with an ever so nice menu screen, designed by a colorblind handicapped rhinoceros with a Sinus problem. The first time I looked at this sceen I waited for a menu option to get highlighted, and before I realized that the light pink bar was the highlighted menu item, it started booting by itself. Yes, if you do nothing, it does &amp;quot;something&amp;quot; but since you're not sure what, you have to reboot and start over again.&lt;/p>
+&lt;p>The other fun part of this menu screen is that it gives you no less than 8 options to boot your system, 4 of which are Clonezilla. There's even an option which contains the word &amp;quot;framebuffer&amp;quot;, which is a video card thing and again has absolutely no other purpose than to confuse you. Framebuffers have nothing to do with (re)storing disk partitions.&lt;/p>
+&lt;p>&lt;a href="2.png">&lt;img src="2.thumbnail.png" alt="Clonezilla language options">
+&lt;/a>After having made the right choice (I took a wild guess) you are presented with another nice screen. The design of this screen is from a whole different erra, almost van-Gogh-esque. All the video drivers which were loaded during the &amp;quot;frantic scrolling&amp;quot; fase earlier are clearly working together on this screen to present you the nicest resolution and the clearest colors, so that you can peruse the long list of language options available to perfectly support you during the following screens. At the bottom of the menu are two aptly named &lt;ok> and &lt;cancel> buttons, start over if you didn't use the correct one.&lt;/p>
+&lt;p>&lt;a href="3.png">&lt;img src="3.thumbnail.png" alt="Keymap menu">
+&lt;/a>Now that the Clonezilla is running in the language of your choice (which is very likely not to be traditional Chinese), you'd expect to enter the realm of disk options. Not so. Take out your &amp;quot;Linux Unleashed&amp;quot; books class, because we're presented with... nobody? no? The keymap option! Yes, that's right. No program can start without asking what keymap it should use. Turn to page 346 of the &amp;quot;Advanced&amp;quot; section to find out what keymap the &amp;quot;Kernel keymap&amp;quot; is.&lt;/p>
+&lt;p>After reading the instructions 3 times you learn that you can just hit &amp;quot;enter&amp;quot; on this screen, just like you did on the silly language options menu.&lt;/p>
+&lt;p>&lt;a href="4.png">&lt;img src="4.thumbnail.png" alt="Start Clonezilla?">
+&lt;/a>Off to cloning, right? Wrong. Clonezilla will ask you if you'd want to start Clonezilla, or just enter the prompt. Exactly the one credible extra option on the first &amp;quot;designer&amp;quot; screen is presented after 3 menus. And no, we don't want a prompt, so it's not a good option here.&lt;/p>
+&lt;p>I'll spare you the rest of the menus. There are just way too much, containing anything ranging from spelling and grammar errors, to cryptic messages and listing command line options to tools you've never heard of.&lt;/p>
+&lt;p>Okay one more small example: In stead of using the screen real-estate and the nice fonts to indicate what disks are in the system and what partitions are on there, it just lists &amp;quot;sda1, sda2, sda5, sde1&amp;quot; and their formats. When you are a windows user, and are backing up or restoring your precious data, you are likely to stop here. How do you know for sure that you're reading from and writing to the right disk?&lt;/p>
+&lt;p>If Clonezilla was made for people, I would have expected a list according to these lines:&lt;/p>
+&lt;pre>&lt;code>Harddisk 1 (320GB Seagate, SATA)
+Partition 1 (120GB, FAT32, Volume label &amp;quot;My Windows&amp;quot;)
+Partition 2 (100GB, NTFS, Volume label &amp;quot;My Data&amp;quot;)
+Partition 3 (100GB, NTFS, Volume label &amp;quot;My Music&amp;quot;)
+Harddisk 2 (500GB Iomega, USB)
+Partition 1 (500GB, FAT32, Volume label &amp;quot;Backupdisk&amp;quot;)
+&lt;/code>&lt;/pre>
+&lt;p>Anyway, struggling through the menu's, reading through command line options and Googling for manual pages on the used commands I eventually got Clonezilla to make a backup of the entire disk of my Dad's XP installation. The disk image was stored on a large harddrive, and we took it to my brother's machine to restore it.&lt;/p>
+&lt;p>Before restoring the XP disk image, we made another disk image, from the original Vista installation on my brothers machine. Should something happen, we would have an option to restore the machine to it's prestine state.&lt;/p>
+&lt;p>We restored the XP image on my brothers Vista machine (which was, like I said, an exactly identical machine). And you guessed it: it failed. We tried playing with the MBR and Grub options, and every try we neede to wait the full 20 minutes only to find out that the restore did not work. We even tried restoring the partition tables and/or MBR's using the Windows XP installation disk.&lt;/p>
+&lt;p>After 6 frustrating hours on Saturday, and another 3 gruelling hours today, we gave up. Clonezilla is now restoring Vista to my brother's computer, and I sure hope that will work, but wether it does or doesn't, it leaves him with a useless computer. Either way we're destined to use &lt;a href="http://en.wikipedia.org/wiki/Leet">&amp;quot;m4d sk!lz&amp;quot;&lt;/a> to get it running normally again, just like we need &amp;quot;m4d sk!lz&amp;quot; to be able to use Clonezilla.&lt;/p>
+&lt;p>&lt;em>Sidenote to Linux developers: Just because you know a lot about Linux or any freaking back-from-the-60's command line tool there is out there, doesn't mean you can expect others to have that same knowledge. As long as Linux fanboys are creating these crappy user interfaces, Linux is not going to stand up against Microsoft or Apple on the desktop. Ever. And creating &amp;quot;Yet Another Window Manager&amp;quot; will also not help. Period. Together you stand, &lt;a href="http://apcmag.com/6735/interview_con_kolivas">devided you'll fall&lt;/a>. So far, devision by childish stubborn ego flamewars is where every non-commercial Linux project has ended.&lt;/em>&lt;/p>
+&lt;p>Next option for my brother and dad is to buy Norton Ghost 12, and hope that the people at Norton understand how to make a user interface, and working software.&lt;/p>
+&lt;p>With the arrival of Vista, Windows more and more turning into a Tamagochi, where you are spending more time maintaining the system, than working &lt;em>with&lt;/em> the system. I'm glad I dumped Windows a long time ago. For those who are thinking of switching: I can promise you that Switching from XP to Vista will give you &lt;a href="http://apcmag.com/6649/vista_150_problems_0_solutions">more problems&lt;/a> than &lt;a href="http://www.utilware.com/switching.html">switching from XP to Mac&lt;/a>. And once you go Mac...&lt;/p></description></item><item><title>Technology does not sell</title><link>https://realrolfje.github.io/rolfje.com/2007/05/09/technology-does-not-sell/</link><pubDate>Tue, 08 May 2007 20:36:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/05/09/technology-does-not-sell/</guid><description>
+&lt;p>&lt;a href="http://sethgodin.typepad.com/">Seth Godin&lt;/a> did a talk at Google campus in Februari last year. I recently stumbled upon &lt;a href="http://video.google.nl/videoplay?docid=-6909078385965257294">this video of his talk&lt;/a>, in which he explains to the Google people why Google sells.&lt;/p>
+&lt;p>He is very clear in explaining to technology people that &lt;strong>technology does not sell&lt;/strong>. It's technology that gives you a shot at marketing, nothing more. He makes some very good points which I'll try to summarize, because the video takes 48 minutes to watch :-)&lt;!-- more -->&lt;/p>
+&lt;pre>&lt;code> * People don't care about cool technology, they care about their problem being solved.
+* When buying a product, people actually are buying a feeling or experience. Apple and Google are good examples of &amp;quot;solve the problem&amp;quot; products, which gives more &amp;quot;feeling&amp;quot; than &amp;quot;product&amp;quot;.
+* People who buy &amp;quot;feeling&amp;quot; and are happy with that, will market the product for you. You just plant a seed, and if the product is good enough for the right people, it will sel itself
+* You can only sell answers to people who have questions. The classic &amp;quot;tv show interruption commercial&amp;quot; is way less efficient than the [Add-Sense](https://www.google.com/adsense) commercials which presents relevant products to people who are searching.
+&lt;/code>&lt;/pre>
+&lt;p>When reading back this list, I think it is clear that Seth should speak to you, and not me ;-). My summary is lousy compared to the talk, maybe you're better of watching it. But the main conclusion for me still is that technology does not sell, nor does a product. It's the (happy) feeling people get from buying the product, making them want to tell other people about it.&lt;/p>
+&lt;p>He brings up a nice example still true today: If you wanted to search for something on the web, and go to &lt;a href="http://www.yahoo.com/">Yahoo!&lt;/a>, you'll see a page with 100 links, and somewhere on the page (you have to look for it) is a search query entry field and a search button. When you go too &lt;a href="http://www.google.com/">Google&lt;/a>, it's very clear that you can search there. Almost no links, and the search functionality is in the middle of the page and everybody knows how to use it. This will make you come back at that page, and even better: If your friends wanted to search for something, you'd send them to Google, because you know they will know how to use that page, and not come bother you with questions about it.&lt;/p>
+&lt;p>Google's page is becomming slightly more cluttered with links, I just hope they paid attention to Seth and will remove some soon. :-)&lt;/p>
+&lt;p>&lt;strong>Edit:&lt;/strong> This is also a nice addition of Seth. Only 10 minutes, about &lt;a href="http://video.google.nl/videoplay?docid=-4101280286098310645">stuff that's &amp;quot;broken&amp;quot;&lt;/a>. I whish people would not only watch it and laugh, but actually use it while designing/building/doing things! You can also visit his website on &lt;a href="http://broken.typepad.com/">Stuff that's broken&lt;/a>.&lt;/p></description></item><item><title>Thoughts on Widgets, Gadgets, Screenlets</title><link>https://realrolfje.github.io/rolfje.com/2007/04/11/thoughts-on-widgets-gadgets-screenlets/</link><pubDate>Tue, 10 Apr 2007 21:14:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/04/11/thoughts-on-widgets-gadgets-screenlets/</guid><description>
+&lt;p>Just now, I was listening to the &lt;a href="http://javaposse.com/">Java Posse podcast&lt;/a> about the ab5k screenlet framework for Java, and I am finally convinced that software developers are a bunch of crazy, unrealistic, memory-hungry, cpu cycle stealers and by lack of normal people telling them otherwise are proud of it, too. The problem? Look at this list (no particular order):&lt;/p>
+&lt;pre>&lt;code> * [Linux screenlets or applets](http://kde.org/screenshots/images/3.5/35-superkaramba.png)
+* [Windows Sidebar Gadgets](http://www.microsoft.com/windows/products/windowsvista/features/details/sidebargadgets.mspx)
+* [Apple Dashboard Widgets](http://developer.apple.com/macosx/dashboard.html)
+* [Google Desktop Gadgets](http://desktop.google.com/nl/?utm_campaign=nl&amp;amp;utm_source=nl-ha-emea-nl-google&amp;amp;utm_medium=ha&amp;amp;utm_term=google%20widgets)
+* [Yahoo Widgets](http://widgets.yahoo.com/)
+* and recently added: [ab5k.org java screenlets](http://www.ab5k.org/)
+&lt;/code>&lt;/pre>
+&lt;!-- more -->As you can see, this list shows what modern OS's are offering to the user as an extra desktop with little applications on them like clocks, calculators, rss readers or whatever small tool you can think of. Aside from having a polished look and feel, looking good in screenshots, and -in the case of OSX- animations, all these share the same problems:
+&lt;pre>&lt;code> * Usage of CPU cycles while not visible/used (and I don't care how few, there are some!)
+* Usage of wired memory (memory which is not swapped out to disk for windows users), even while being inactive
+* Slow loading times when restoring swapped-out widgets (memory swapped to disk which needs to be loaded back into memory)
+* While resembling in name (screenlets, widgets, gadgets) not really portable between systems (although ab5k is about to solve that one)
+&lt;/code>&lt;/pre>
+&lt;p>I was triggered by the &lt;a href="http://javaposse.com/index.php?post_id=201631">Java Posse podcast on ab5k&lt;/a>, where one of the developers said that when the screenlet container was swapped out, it &amp;quot;only&amp;quot; used 24 megs of memory. That 24 megs could be just that 24 meg which makes windows swap out Photoshop to disk. 24 megs is a considerable amount of memory, for something which does absolutely nothing. An argument for *lets is probably the fast load time, but if all of them get swapped out, it would be just as fast just to start them, wouldn't it?&lt;/p>
+&lt;p>On my Mac, the dashboard looks great, and the widgets do what they promise. But apart from using it simply because it was new, I really don't use it that much nowadays. Once the coolfactor wears off, you just want it to work, and I think I like it better to have my utilities on the desktop, where I am working, rather than on a seperate cool looking transparent overlay from which I can not drag and drop easily into an application on the desktop.&lt;/p>
+&lt;p>Another thing that I realized while listening is that a lot of the functionality of these widgets are developer driven, not end user driven. I think half of the widgets are build by tech-nerds, but only 10% of the widgets actually end up being used by normal end-users.&lt;/p>
+&lt;p>My point is: Can we please stop using the dashboard containers and just build these utilities so they are normal, small, self-contained, fast loading applications which just do what they are designed for, and exit (as in: die and free up memory) when closed? I think this will free up a lot of memory on a lot of systems, and puts CPU cycles to a better use, giving the user more control of what the computer is doing for him, and what he doesn't want the computer to do for him. And if these utilities are in a self-contained package like Apple applications, people can actually uninstall them without leaving a lot of crap behind on the system. Say no to setup.exe!&lt;/p>
+&lt;p>I guess the faster computers we buy, the greedier developers get.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>javascript on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/javascript/</link><description>Recent content in javascript on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Wed, 11 Mar 2009 22:54:53 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/javascript/index.xml" rel="self" type="application/rss+xml"/><item><title>Javascript Window Shake</title><link>https://realrolfje.github.io/rolfje.com/2009/03/12/javascript-window-shake/</link><pubDate>Wed, 11 Mar 2009 22:54:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/03/12/javascript-window-shake/</guid><description>
+&lt;p>This evening I came accross the window.moveBy() JavaScript function and thought it would be cool to shake the browser window when a user fails to &lt;a href="http://rolfje.wordpress.com/2006/11/02/it-aint-what-you-do/">log in&lt;/a>. It turns out that I was not the only one thinking this, but none of the examples worked for me. Some had &lt;a href="http://javascript.internet.com/image-effects/shake-screen.html">no proper delays&lt;/a>, others only worked from the page header, and some were &lt;a href="http://www.permadi.com/tutorial/jsquake/index.html">plain unreadable&lt;/a>.&lt;/p>
+&lt;p>I'm no Javascript guru, but I hacked this together which is working pretty nicely. It is in fact almost undistinguishable from the Apple login window shake at a login failure:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;script type=&amp;quot;text/javascript&amp;quot;&amp;gt;
+if (window.moveBy) {
+delay = 70;
+shakes = 3;
+window.moveBy(-10, 0);
+for (j = shakes; j &amp;gt; 0; j--) {
+setTimeout( &amp;quot;window.moveBy(20, 0)&amp;quot;, j*delay );
+setTimeout( &amp;quot;window.moveBy(-20, 0)&amp;quot;,
+j*delay+(delay/2));
+}
+setTimeout( &amp;quot;window.moveBy(10, 0)&amp;quot;, (shakes+1)*delay );
+}
+&amp;lt;/script&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>In my case, I surrounded this code with a Tapestry @Conditional and made it into a reusable Tapestry component so that I can make any window shake as soon as it contains an error.&lt;/p>
+&lt;p>The code will work anywhere on your page, but I advise you to put it at the bottom of the HTML. This will make sure that the content is shown in the browser before you shake it.&lt;/p>
+&lt;p>It's visually much stronger than just adding an errortext to the page. If people log in a couple of times a day, they don't even notice extra text on the screen. This will &amp;quot;shake&amp;quot; them awake :-)&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item></channel></rss>

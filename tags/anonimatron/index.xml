@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Anonimatron on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/anonimatron/</link><description>Recent content in Anonimatron on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 26 Apr 2018 20:38:12 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/anonimatron/index.xml" rel="self" type="application/rss+xml"/><item><title>Travis CI and Dependabot added to Anonimatron</title><link>https://realrolfje.github.io/rolfje.com/2018/04/26/travis-ci-and-dependabot-added-to-anonimatron/</link><pubDate>Thu, 26 Apr 2018 20:38:12 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/04/26/travis-ci-and-dependabot-added-to-anonimatron/</guid><description>
+&lt;p>&lt;figure class="float_left">&lt;a href="https://www.youtube.com/watch?v=wEhu57pih5w">&lt;img src="travis-ci-anonimyzed.png" width="80"/>&lt;/a>
+&lt;/figure>
+With new &lt;a href="https://www.eugdpr.org/">European rules like the GDPR&lt;/a> and local variations like the &lt;a href="https://autoriteitpersoonsgegevens.nl/nl/onderwerpen/avg-nieuwe-europese-privacywetgeving">Dutch AVG&lt;/a>, interest in &lt;a href="https://realrolfje.github.io/anonimatron/">Anonimatron&lt;/a> is increasing. Although I do not keep track of who is using it and where, sometimes new requirements do pop up. Recently a feature was added to &lt;a href="https://github.com/realrolfje/anonimatron/releases">Anonimatron 1.9.2&lt;/a> to also anonymize files.&lt;/p>
+&lt;p>In the wake of those additions, I planned to give &lt;a href="https://travis-ci.org/">Travis CI&lt;/a> a try to automate the builds. It turns out that Travis CI integrates beautifully with GitHub, and automatically builds branches and pull requests right out of the box.&lt;/p>
+&lt;p>At the office, we had a discussion about keeping libraries up to date with the maven dependency plugin for our client projects. We came up with a system to use the maven dependency plugin on a separate branch to automatically do that on our buildserver. It turns out that there is a service called &lt;a href="https://dependabot.com/">Dependabot&lt;/a> which does nearly the same thing. Dependabot looks at your GitHub project, and creates &lt;a href="https://github.com/realrolfje/anonimatron/pull/10">pull requests for each library it upgrades&lt;/a>.&lt;/p>
+&lt;p>All these services are free for Open Source projects, so Anonimatron would be a great candidate for testing them. I am pretty happy with the way it currently works, and getting this up and running was really simple:&lt;/p>
+&lt;ol>
+&lt;li>Make sure your Open Source project builds with any of the main stream build tools supported by Travis CI
+like Maven or Gradle. Try to keep the build as simple as possible.&lt;/li>
+&lt;li>Create an account with &lt;a href="https://travis-ci.org/">Travis CI&lt;/a> with your GitHub account. After registration,
+Travis CI shows you a list of your projects. Select one and follow the steps. After a few mouse clicks
+Travis CI should be building your project.&lt;/li>
+&lt;li>Create an account with &lt;a href="https://dependabot.com/">Dependabot&lt;/a>. As in step 2, select your project and
+follow the Dependabot guide to setting it up.&lt;/li>
+&lt;li>After a while you should see pull request arriving in your GitHub project, one for each upgraded library.
+Travis CI immediately builds those Pull Requests and a
+&lt;a href="https://github.com/realrolfje/anonimatron/branches">green tickmark or red cross&lt;/a> shows next to the branch.&lt;/li>
+&lt;/ol>
+&lt;p>There you go, your project now has automatic builds and automatic version upgrades, like a pro. Please note that in order to confidently upgrade libraries, you need to have proper tests! Look at the
+&lt;a href="https://github.com/realrolfje/anonimatron/tree/master/src/test/java/com/rolfje/anonimatron">Anonimatron Test Suite&lt;/a> to get an idea.&lt;/p>
+&lt;p>Happy coding!&lt;/p></description></item><item><title>Anonimatron: Quick Start</title><link>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</link><pubDate>Sun, 03 Nov 2013 14:33:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=opk4x7jzRS4">&lt;img src="homer.png" alt="Anonymous customer">
+&lt;/a>After reading my last blogpost on Anonimatron, you must have asked yourself &amp;quot;Great, but how do I actually use Anonimatron to de-personalize my database&amp;quot;? I tried my best to make basic Anonimatron configuration as self-explanatory as possible, just start it without any command line arguments and it will tell you.&lt;/p>
+&lt;p>Less adventurous or in a big hurry? This blogpost will show how simple it is to install and configure Anonimatron on an example MySQL database.&lt;/p>
+&lt;!-- more -->**Setting up a test database**
+&lt;p>To demonstrate what Anonimatron can do to your data, we will create a little test database to play with. Anonimatron connects to all kinds of databases, including MySQL, Postgress and Oracle. In this example, we use MySQL. Here are all the statements you need to create a little database with 2 tables, a user, and some &amp;quot;private&amp;quot; data:&lt;/p>
+&lt;p>[code lang=&amp;quot;sql&amp;quot; gutter=&amp;quot;false&amp;quot;]
+create database mydb;
+create user myuser identified by 'mypassword';
+grant all privileges on &lt;em>.&lt;/em> to 'myuser'@'localhost'
+identified by 'mypassword' with grant option;&lt;/p>
+&lt;p>create table mydb.userdata (
+id int not null auto_increment primary key,
+firstname varchar(20),
+lastname varchar(20),
+creditcardnr varchar(20)
+);&lt;/p>
+&lt;p>create table mydb.lastnames (
+id int not null auto_increment primary key,
+lastname varchar(20)
+);&lt;/p>
+&lt;p>insert into mydb.userdata
+(firstname,lastname, creditcardnr)
+values ('Homer', 'Simpson','1234'),
+('Marge', 'Simpson','5678'),
+('Ned', 'Flanders','3456'),
+('Charles', 'Burns','3456');&lt;/p>
+&lt;p>insert into mydb.lastnames (lastname)
+values ('Simpson'), ('Flanders'), ('Burns');
+[/code]&lt;/p>
+&lt;p>After all the hard work, you should be able to connect to the database with 'myuser' and see the &amp;quot;private&amp;quot; data in there:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Homer
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >1234
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Marge
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >5678
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ned
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Charles
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+[code language="sql" light="true"]
+select * from mydb.lastnames;
+[/code]
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Let's pretend that this is a copy of a production database, and you want to de-personalize or anonymize it.
+&lt;p>&lt;strong>Installing Anonimatron&lt;/strong>
+To anonymize your data,  &lt;a href="http://http://anonimatron.sourceforge.net">download Anonimatron&lt;/a> and unzip it in a directory of your choice. You should find an &amp;quot;anonimatron.sh&amp;quot; and &amp;quot;anonimatron.bat&amp;quot; file there. Depending on your system, run it without arguments. If you have java installed on your system you should see something like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh&lt;/p>
+&lt;p>This is Anonimatron 1.7, a command line tool to consistently
+replace live data in your database with data data which
+can not be traced back to the original data.
+You can use this tool to transform a dump from a production
+database into a large representative dataset you can
+share with your development and test team.
+Use the -configexample command line option to get an idea of
+what your configuration file needs to look like.&lt;/p>
+&lt;p>usage: java -jar anonimatron.jar
+-config The XML Configuration file describing what to
+anonymize.
+-configexample Prints out a demo/template configuration file.
+-dryrun Do not make changes to the database.
+-synonyms The XML file to read/write synonyms to. If the file
+does not exist it will be created.
+[/code]&lt;/p>
+&lt;p>Victory! You've installed Anonimatron. Yes, life can really be that easy.&lt;/p>
+&lt;p>&lt;strong>Configuring Anonimatron&lt;/strong>
+Next, we need to tell Anonimatron how to connect to our database, and which tables and columns to process and how. The hardest part of this is probably figuring out how to create a jdbc connect string. Anonimatron can help you with that. If you start anonimatron with the &amp;quot;-configexample&amp;quot; parameter, it will scan the jdbcdrivers directory for available and supported drivers, and will show you how a jdbc URL for any of these should look:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -configexample&lt;/p>
+&lt;p>Supported Database URL formats:
+Jdbc URL format By Driver
+jdbc:oracle:oci8:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@[HOST]:[PORT]:[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:oci:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:postgresql://[HOST]:[PORT]/[DB] org.postgresql.Driver
+jdbc:mysql://[HOST]:[PORT]/[DB] org.gjt.mm.mysql.Driver&lt;/p>
+&lt;p>Anonimatron will try to autodetect drivers which are
+stored in the lib directory. Add you driver there.&lt;/p>
+&lt;p>...
+[/code]&lt;/p>
+&lt;p>In this example, we have just created a MySQL database, so we'll use that URL and fill in the blanks. We use the rest of the configuration example and with some copy-pasting we come up with the following configuration:&lt;/p>
+&lt;p>[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;configuration jdbcurl="jdbc:mysql://localhost:3306/mydb"
+userid="mydata" password="mypassword">&lt;/p>
+&lt;table name="userdata">
+&lt;column name="firstname" type="ROMAN_NAME" />
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;column name="creditcardnr" type="RANDOMDIGITS"/>
+&lt;/table>
+&lt;table name="lastnames">
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;/table>
+&lt;/configuration>
+[/code]
+&lt;p>This simple configuration file will tell Anonimatron the following things:&lt;/p>
+&lt;pre>&lt;code> * How to connect to the mydb database
+* The values in username.firstname should be processed with the ROMAN_NAME Anonymizer. Anonymizers are little plugins which are able to generate data with certain properties, sometimes based on the original data. This particular Anonymizer generates Roman Names by picking syllables from a builtin list.
+* The values in username.lastname should be replaced by Elven names. This is almost identical to Roman names but with a different Syllable file.
+* The userdata.creditcardnr should be replaced by a set of random digits of the same length. In our case, 4 digits will be replaced by 4 differnt digits. Should you really need numbers which are semantically correct credit card numbers, you could write your own Anonymizer plugin. We'll cover that in a later blogpost.
+* The lastnames.lastname column is also an Elven name. Because of the way Anonimatron handles data, strings in this column will be processed exactly the same way as the userdata.lastname column, as we will see below.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Anonymize!&lt;/strong>
+Now that we have configured Anonimatron, it's time to start it up and tell it to use our configuration file and store synonyms. It will be finished in the blink of an eye, and your output should look somewhat like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -config config.xml -synonyms synonyms.xml&lt;/p>
+&lt;p>Anonymization process started&lt;/p>
+&lt;p>Jdbc url : jdbc:mysql://localhost:3306/mydb
+Database user : mydata
+To do : 2 tables.&lt;/p>
+&lt;p>Anonymizing table 'lastnames', total progress [100%, ETA 11:36:56 PM]
+Anonymization process completed.&lt;/p>
+&lt;p>Writing Synonyms to synonyms.xml ...[done].
+[/code]&lt;/p>
+&lt;p>If Anonimatron complains or does not run, you might want to check out the &lt;em>anonimatron.log&lt;/em> file for clues. Most log entries will be pretty self-explanatory. If not, please register an issue and we'll see what we can do to fix that.&lt;/p>
+&lt;p>Let's check the results. First, we can check what synonyms were generated by looking into the synonyms.xml file we told it to create:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ cat synonyms.xml
+[/code]
+[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;synonyms>
+&lt;string type="ELVEN_NAME" from="QnVybnM=" to="RGhvZWxsaWFu"/>
+&lt;string type="ELVEN_NAME" from="RmxhbmRlcnM=" to="QWhlbGhhbGRldGhlc3M="/>
+&lt;string type="ELVEN_NAME" from="U2ltcHNvbg==" to="QWhkdWxlbGhhbGVs"/>
+&lt;string type="ROMAN_NAME" from="SG9tZXI=" to="QmVudWxhdWJlbGl1cw=="/>
+&lt;string type="ROMAN_NAME" from="TmVk" to="RWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="TWFyZ2U=" to="QWxudWxhdWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="Q2hhcmxlcw==" to="QWxudXM="/>
+&lt;string type="RANDOMDIGITS" from="NTY3OA==" to="ODY5OA=="/>
+&lt;string type="RANDOMDIGITS" from="MTIzNA==" to="NDM0Mw=="/>
+&lt;string type="RANDOMDIGITS" from="MzQ1Ng==" to="NjEyNQ=="/>
+&lt;/synonyms>
+[/code]
+&lt;p>You'll note that the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; values look a bit garbled. This is because Anonimatron used Base64 encoding to store values of synonyms. This is so that we can store the values bit for bit, without worying about encodings. If you wanted to, you could easily decode these strings by writing a little program.&lt;/p>
+&lt;p>Even without decoding we can see some interesting things about this file. Remember we had lastnames configured as Elven names? Although we have 4 entries in the username table, we see only 3 Elven names. That is because Homer and Marge have the same lastname. These same synonyms are also used by the lastnames.lastname column. The same goes for the creditcard numbers. As might have noticed that Ned Flanders and Charles Burns used the same credit card number in this system.&lt;/p>
+&lt;p>Enough staring at XML. Let's get to what matters most: our database. First, let's see if the names and numbers have changed:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Benulaubelius
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >4343
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Alnulaucus
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >8698
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ecus
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Alnus
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+That looks much better. The first and lastnames are (almost) pronounceable names which probably would look realistic in a screenshot or testcase, yet there is no trace left of the original data that was there. When we check the lastnames table we see that lastnames are being translated consistently with the userdata table:
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.lastnames;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+This consistent behavior makes sure that queries where the userdata table and the lastnames table are joined based on lastname will still work.
+&lt;p>If you want to play some more with Anonimatron, recreate the original tables, add additional (overlapping) data and re-run anonimatron against it with the synonym file you just created. You'll notice that any &amp;quot;Simpson&amp;quot; lastname will be translated to &amp;quot;Ahdulelhalel&amp;quot; constently on each run. If you don't want that to happen, simply throw away the synonym file or don't tell Anonimatron to use it. You can also generate the synonym file first without doing anything to the database by using the -dryrun option, and later do the same run based on the synonyms generated earlier.&lt;/p>
+&lt;p>Remember: The private data &amp;quot;moved&amp;quot; from the database into the synonyms.xml file we created. So that becomes the new data to watch. Store it in a safe place where nobody can access it.&lt;/p>
+&lt;p>Have fun experimenting!&lt;/p></description></item><item><title>Anonimatron: Overview</title><link>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</link><pubDate>Thu, 31 Oct 2013 20:42:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</guid><description>
+&lt;p>&lt;a href="http://anonimatron.sf.net/">&lt;img src="itsthelaw.png" alt="It's the Law">
+&lt;/a>In every software project, there comes a time where a bug pops up, nobody knows how to reproduce it, and somebody says &amp;quot;I know, let's test this against a copy of the production database&amp;quot;. Even with the best intentions, once production data leaves the production machine with all its safeguards it becomes really hard to do access control on that data.&lt;/p>
+&lt;p>Most of the time, it's not even needed to have that data. Developers just need a data set which resembles the production scenario close enough. Some brave souls have mixed succes with data generators, but those generators usually are tedious to maintain and die a slow death under the pressure of the daily grind.&lt;/p>
+&lt;p>In some ambitious projects automated integration testcases are built on top of the data which was inserted by the data generators. As the generators die, so die the tests. If you recognize this pattern, &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> might be the answer for you.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;img src="1-dataindb.png" alt="Customer data in the database.">&lt;/p>
+&lt;p>So let's say you're working on release 5 of a big webshop, and because of the succes of the shop, it runs into performance problems. There's no time or budget to build a data generator, and before you can say no, you have a copy of the production data on some development server, containing the creditcard data of your customers. What do you do?&lt;/p>
+&lt;p>This is where Anonimatron comes in. Anonimatron can de-personalize or anonymize your data for you, give you total control over what gets anonymized, and how, and thinks of data types as &amp;quot;color&amp;quot; or &amp;quot;address&amp;quot; instead of &amp;quot;int&amp;quot; and &amp;quot;String&amp;quot;. Here's how that works:&lt;/p>
+&lt;p>&lt;img src="2-anonimatron.png" alt="Anonimatron data flow">&lt;/p>
+&lt;p>For every distinct, unique value A, Anonimatron creates a replacement value X, and writes that back to the database. It stores the A=X relation in a Synonym, and consistently applies those Synonyms throughout all tables in the database.&lt;/p>
+&lt;p>By using synonyms, Anonimatron makes sure that your database is still statistically roughly the same as before anonymization, and also makes sure that if you have two tables with a &amp;quot;lastname&amp;quot; column, matching records will actually still match.&lt;/p>
+&lt;p>Anonimatron (optionally) stores these synonyms for later use, so it can be consistent between different runs. New production data? No problem. Load it, tell Anonimatron to use the old synonyms, and the old data will be Anonymized exactly the same as the last time. Only new records will generate new synonyms, which of course will be added to the synonym file for the next run.&lt;/p>
+&lt;p>This feature also enables you to write testscripts based on anonymized production data. Your scripts will not easily break, because new production copies are anonymized very consistently.&lt;/p>
+&lt;p>&lt;img src="3-datainsynonims.png" alt="Data in Synonyms">&lt;/p>
+&lt;p>After the anonymization process, the private data will be in the synonym file. This file needs to be put in a (very) safe place, and only the people that import production data and run Anonimatron should be able to access this file.&lt;/p>
+&lt;p>After anonymization, developers can access the database without immediately being exposed to private addresses of customers, bank accounts, or whatnot. Of course this all depends on what you tell Anonimatron to do, and what to anonymize.&lt;/p>
+&lt;p>Remember, with great power comes great responsibility. Try to stay away from customer data as much as you can, and handle it with deep respect when you get it, delete it or depersonalize it as soon as you can. Use &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> wisely.&lt;/p>
+&lt;h2 id="its-the-law">&lt;strong>It's the Law.&lt;/strong>&lt;/h2></description></item></channel></rss>

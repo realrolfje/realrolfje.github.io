@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>osx on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/osx/</link><description>Recent content in osx on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 12 Nov 2016 19:47:52 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/osx/index.xml" rel="self" type="application/rss+xml"/><item><title>macOS Sierra SSH "Permission Denied"</title><link>https://realrolfje.github.io/rolfje.com/2016/11/12/macos-sierra-ssh-permission-denied/</link><pubDate>Sat, 12 Nov 2016 19:47:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2016/11/12/macos-sierra-ssh-permission-denied/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/BweBCNBxJxM">&lt;img src="keychain-mac-tuto.png" alt="keychain-mac-tuto">
+&lt;/a>If you used DSA keys to log in to your SSH server and have upgraded your client machine to macOS Sierra (or OSX Sierra if you like), you probably ran into this problem:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_dsa
+Permission denied (publickey).
+[/sourcecode]&lt;/p>
+&lt;p>The answer to this problem is replacing the DSA key with an RSA key, but how do you do on the server when your only means for connecting is the OSX client machine you just upgraded? Here's how:&lt;/p>
+&lt;!-- more -->First, create a new 4096 bit RSA keypair on the local machine (don't delete your DSA keys yet!). Don't use anything less than 4096 bits, and protect it with a lengthy passphrase. This key will replace the DSA key later on.
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:OA3Vx8qb4kKRWYs8qsq5/EywaLLdwZdlCIITFPnRtt8 &lt;a href="mailto:george@macbook.local">george@macbook.local&lt;/a>
+The key's randomart image is:
++---[RSA 4096]----+
+|ooo . .. . |
+| + . o .. . o |
+|o o +.o= o o |
+| . o oB=. o |
+| . .=oS o |
+|. o.. .&lt;em>.Eo |
+|oo oo.o. . |
+|=o=. o. . |
+|o&lt;/em>+o. . |
++----[SHA256]-----+
+[/sourcecode]&lt;/p>
+&lt;p>Don't worry about that long passphrase, Sierra now &lt;a href="https://personalresearchblog.wordpress.com/2016/09/28/macos-sierra-ssh-key-passphrase-and-the-keychain/">stores that in your Keychain&lt;/a>. Now, log into your server by temporarily enabling ssh-dss public key support on the ssh command line, like so:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_dsa &lt;br>
+-o PubkeyAcceptedKeyTypes=+ssh-dss
+[/sourcecode]&lt;/p>
+&lt;p>If all went well, you should now be connected to your server, but with your old DSA key. The DSA support was disabled in Sierra because it is &lt;a href="https://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys#5100">no longer considered to be a safe option&lt;/a> as it is based on the discrete logarithm problem and the key is required to be just 1024 bits long.&lt;/p>
+&lt;p>What we need to do now is remove the DSA public key from the server and add the newly created RSA key. Start your editor with:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+server$ vim ~/.ssh/authorized_keys
+[/sourcecode]&lt;/p>
+&lt;p>Find the old DSA public key, remove it. Add the contents of the &lt;code>id_rsa.pub&lt;/code> on your client machine to this file on the server. Save the file with &lt;code>&amp;lt;esc&amp;gt;:wq&amp;lt;enter&amp;gt;&lt;/code>.&lt;/p>
+&lt;p>Now exit the server and reconnect with your new RSA key from the client:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+server$ exit
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_rsa
+[/sourcecode]&lt;/p>
+&lt;p>You should now see the welcome message from the server and the command prompt. Please note that the -i option is here for clarity; if your key is in &lt;code>~/.ssh/id_rsa&lt;/code> it will be used as default identity.&lt;/p>
+&lt;p>If everything worked, please delete the id_dsa key to prevent confusion. All operations should now be back to normal (but safer).&lt;/p>
+&lt;p>&lt;strong>Bonus 1: Tab-completion for SSH&lt;/strong>
+If you are tired of typing the long ssh commands and remembering ip addresses and key files, create a file called &lt;code>~/.ssh/config&lt;/code> and give it the following contents:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;h1 id="my-super-secret-server">My Super secret server&lt;/h1>
+&lt;p>Host secret-server
+HostName 10.0.0.1
+Port 8123
+User george
+IdentityFile ~/.ssh/id_rsa
+[/sourcecode]&lt;/p>
+&lt;p>After saving the file, you can use tab completion after the ssh command, and you will notice that the following command will work:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh secret-server
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Bonus 2: Per-server identity&lt;/strong>
+With the powers of the config file mentioned earlier, there is no longer a reason to have one key file or one userid per server. Suppose somebody accidentally gets a hold of a key file, or someone figures out a way to find a key for a bunch of packets between two machines. This would mean immediate compromise of all machines. Because there is no extra effort in using multiple keys, I use a new private key for each server. My &lt;code>~/.ssh/config&lt;/code> file looks similar to this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;h1 id="my-super-secret-server-1">My Super secret server&lt;/h1>
+&lt;p>Host secret-server
+HostName 10.0.0.1
+Port 8123
+User george
+IdentityFile ~/.ssh/id_george_secret_rsa&lt;/p>
+&lt;h1 id="the-dmz-firewall">The DMZ firewall&lt;/h1>
+&lt;p>Host dmz-firewall
+HostName 10.0.0.21
+Port 8623
+User jack
+IdentityFile ~/.ssh/id_jack_dmz_fw_rsa
+[/sourcecode]&lt;/p>
+&lt;p>Because just like passwords, I never use the same private key twice.&lt;/p></description></item><item><title>BaseCamp Import problem [fixed]</title><link>https://realrolfje.github.io/rolfje.com/2013/05/03/basecamp-import-problem-fixed/</link><pubDate>Fri, 03 May 2013 19:38:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/05/03/basecamp-import-problem-fixed/</guid><description>
+&lt;p>&lt;a href="screen-shot-2013-05-03-at-20-32-43.png">&lt;img src="screen-shot-2013-05-03-at-20-32-43.png" alt="route.gdb not found">
+&lt;/a>On Mac OSX, when installing Garmin BaseCamp 4.1.2 from the Appstore, there is a chance that importing downloaded routes in gdb or gpx files from your local machine will not work. The error you'll get is &amp;quot;[filename].gdb not found&amp;quot;, in a popup much like the one shown here. If you open the console app, you'll see the following error in the logfile:&lt;/p>
+&lt;pre>&lt;code>sandboxd[28092]: ([27931]) Garmin BaseCamp(27931) deny file-read-data /Users/rolf/Desktop
+&lt;/code>&lt;/pre>
+&lt;p>This means that the OSX Sandbox mechanism does not allow Garmin BaseCamp to read files in that folder. I have briefly searched documentation on how to grant BaseCamp the rights to read files there, but I couldn't find anything that would work. I did find a way to work around this problem though: Garmin BaseCamp does have rights to read your Garmin device. So here we go:&lt;/p>
+&lt;pre>&lt;code> 1. Temporarily copy the files you want to import in Garmin BaseCamp onto your device (or in my case: the extra SD card in the device).
+2. Start Garmin BaseCamp, and select &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import…&amp;quot;.
+3. Browse to the Garmin SD card and select the gdb file to import. Voila. That will get it into BaseCamp.
+4. Delete the gdb file from the Garmin. We don't need it anymore, the Garmin was just a place where BaseCamp could read the file.
+&lt;/code>&lt;/pre>
+&lt;p>From here on, everything should work as normal. This is just a workaround. If anybody finds out how to really fix this problem let me know.&lt;/p></description></item><item><title>Fixing Photo Creation Dates</title><link>https://realrolfje.github.io/rolfje.com/2011/08/15/fixing-photo-creation-dates/</link><pubDate>Sun, 14 Aug 2011 22:34:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/15/fixing-photo-creation-dates/</guid><description>
+&lt;p>&lt;a href="http://www.perpetualkid.com/beach-vacation-countdown-timer.aspx">&lt;img src="timr-1003.jpeg" alt="Count down to your vacation">
+&lt;/a>You know how it is on vacation. You take your camera, shoot pictures, and when you get home you see that you forgot to set the date/time on your camera. Even worse: your wife also took a camera with her, and she actually read the manual and set the time correctly. So now you have two sets of photos with mismatching date/times. Now what?&lt;/p>
+&lt;p>It turns out that there is actually a pretty simple trick to solve this, and you don't even haven to install &lt;a href="http://www.sno.phy.queensu.ca/~phil/exiftool/index.html">exiftool&lt;/a> or do funny command line voodo. If you have iPhoto and a mouse, here's what you do:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. [![The Apple Clock](schermafbeelding-2011-08-14-om-23-13-28.png)
+&lt;/code>&lt;/pre>
+&lt;p>](schermafbeelding-2011-08-14-om-23-13-28.png)Open &amp;quot;Date &amp;amp; Time Preferences&amp;quot; on your Mac and click on the &amp;quot;Date &amp;amp; Time&amp;quot; tab. You should see a clock like the one on the right. With each camera you took on your trip, take a picture of this clock. You don't have to press the shutters all at once, just do this one camera at a time. It also doesn't have to be your Mac's clock, as long as you shoot the same clock with all the cameras.
+2. Import the images of all the cameras in iPhoto.
+3. Make smart albums (File, New, Smart album…)per Camera type. So if you have a Canon and an Olympus, make one smart album called &amp;quot;Canon&amp;quot; with only the Canon's photos in it, and one &amp;quot;Olympus&amp;quot; smart album with only the Olympus photo's in it:[&lt;img src="screen-shot-2011-08-15-at-00-01-57.png?w=300" alt="iPhoto Smart Album for Canon">&lt;/p>
+&lt;p>](screen-shot-2011-08-15-at-00-01-57.png)
+4. For each smart album, reverse the sort order so that the photo of the clock you just took is the first in the album. (View, Sort order, Descending).
+5. Select all the photo's in the &amp;quot;Canon&amp;quot; smart album, open the &amp;quot;Photos&amp;quot; menu, and select &amp;quot;Adjust date and time&amp;quot;. You'll see the clock you shot with this camera in the thumbnail. Copy the time of the clock in the &amp;quot;Adjusted:&amp;quot;field. All other photo's for that camera will be adjusted, because you selected all photo's in the album:[&lt;img src="screen-shot-2011-08-14-at-23-47-15.png" alt="iPhoto set date and time">&lt;/p>
+&lt;p>](screen-shot-2011-08-14-at-23-47-15.png)
+6. Repeat step 5 for the &amp;quot;Olympus&amp;quot; smart album.
+7. Click on the iPhoto &amp;quot;Photos&amp;quot; library where all your photos are. Your photos should now sync up perfectly.&lt;/p>
+&lt;p>There are some caveats with this procedure you should remember:&lt;/p>
+&lt;pre>&lt;code> * This only works if nobody changed the date/time settings in the camera between the time they took the photo's and the time you are importing them in iPhoto.
+* When cameras are in different time zones, the times will still be off. You'll have to compensate this yourself by adding/subtracting the timezone difference between the camera and the clock of your Mac.
+* Remember to select all photos of a specific camera before adjusting the time, or the trick won't work.
+&lt;/code>&lt;/pre>
+&lt;p>Happy editting!&lt;/p></description></item><item><title>Why some App Store apps won't install</title><link>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</link><pubDate>Sun, 09 Jan 2011 13:37:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</guid><description>
+&lt;p>&lt;a href="http://pcweenies.com/tag/mac-app-store-comics/">&lt;img src="schermafbeelding-2011-01-09-om-12-28-53.png" alt="App Store Icon">
+&lt;/a>I was happily playing around with the appstore, and came across this funny free game called &amp;quot;Hedgewars&amp;quot;. Originally a free Linux game, it apparently got ported to the Mac and put in the App Store, just as a slew of Flash-based games (yes, Steve has some 'splainin' to do).&lt;/p>
+&lt;p>I tried to install Hedgewars on my trusty Mac Mini and got this message saying &amp;quot;This Application can not be installed on this machine&amp;quot;:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2011-01-08-om-16-45-40.png">&lt;img src="schermafbeelding-2011-01-08-om-16-45-40.png?w=300" alt="">
+&lt;/a>&lt;/p>
+&lt;!-- more -->There was no additional information on what was causing this. So the first thing I did was check out my computer information and the requirements for running this game, which seemed to check out fine:
+&lt;table width="100%" class="aligncenter" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](schermafbeelding-2011-01-09-om-00-40-38.png?w=122)
+](schermafbeelding-2011-01-09-om-00-40-38.png)
+&lt;/td>
+&lt;td >[![](schermafbeelding-2011-01-09-om-12-15-55.png)
+](schermafbeelding-2011-01-09-om-12-15-55.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+I was running the correct version of OSX, so what was the problem here? My neighbor came over and I showed him this funny problem. He found out that Hedgewars could be downloaded from the developers site, and so we did. After opening the DMG, we were greeted with the funny Application Icon decoration show on the right:
+&lt;p>&lt;a href="schermafbeelding-2011-01-09-om-12-18-25.png">&lt;img src="schermafbeelding-2011-01-09-om-12-18-25.png" alt="">
+&lt;/a>Usually this means that the application is compiled for a different system than you're trying to run it on. This can happen when you have an older generation PowerPC processor and try to run a non-universal-binary Intel application. So we checked the properties on the application, and it looked like OSX had it wrong. It's an Intel app, and we're running an Intel Mac. So what gives?&lt;/p>
+&lt;p>The next step was to open the Terminal so we could dissect this app on the command line, showing it's inner guts. Apps have all kinds of interesting XML and plist files telling the operating system what to do and how to start it up. Here's what we found:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,2,8&amp;quot;]
+rolf@Mac-mini$ cd Hedgewars.app/Contents/MacOS/
+rolf@Mac-mini$ ls -l
+total 21344
+-rwxr-xr-x 1 rolf admin 2627208 27 dec 21:39 hedgewars
+-rwxr-xr-x@ 1 rolf admin 5913164 27 dec 21:37 hedgewars-server
+-rwxr-xr-x@ 1 rolf admin 2381240 27 dec 21:37 hwengine&lt;/p>
+&lt;p>rolf@Mac-mini$ file *
+hedgewars: Mach-O 64-bit executable x86_64
+hedgewars-server: Mach-O executable i386
+hwengine: Mach-O universal binary with 1 architecture
+hwengine (for architecture x86_64): Mach-O 64-bit executable x86_64
+[/sourcecode]&lt;/p>
+&lt;p>The Hedgewars package has 3 executables, one 64-bit x86, one i386, and one universal binary which only contains an executable for 64-bit x86. We guess the developers made a bit of a mess of this. As expected, we could start the i386 executable just fine:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1&amp;quot;]
+rolf@Mac-mini$ ./hedgewars-server
+Listening on port 46631
+^C
+[/sourcecode]&lt;/p>
+&lt;p>But the x86_64 executable and the universal binary would not start:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,4&amp;quot;]
+rolf@Mac-mini$ ./hedgewars
+-bash: ./hedgewars: Bad CPU type in executable&lt;/p>
+&lt;p>rolf@Mac-mini$ ./hwengine
+-bash: ./hwengine: Bad CPU type in executable
+[/sourcecode]&lt;/p>
+&lt;p>Because this Mac Mini runs a Core Duo, we figured the x86 was okay, but we weren't sure about the 64-bit architecture. A quick peek at &lt;a href="http://en.wikipedia.org/wiki/Intel_Core">Wikipedia&lt;/a> confirmed our suspicion: The Intel Core Duo is not a 64 bit processor. In fact, 64-bit is the major difference between &amp;quot;Core Duo&amp;quot; and &amp;quot;Core 2 Duo&amp;quot;. Additional &amp;quot;Googling&amp;quot; showes that &lt;a href="http://support.apple.com/kb/ht3696">Apple Support knows that&lt;/a>, too.&lt;/p>
+&lt;p>So there you have it. The Mac App Store does not tell you what the problem really is, but chances are that if you get the &amp;quot;Could not install this Application on this machine&amp;quot; error, you have 32-bit architecture (the Core Duo) and the developer compiled the application for 64-bit architecture (the Core 2 Duo).&lt;/p>
+&lt;p>Why in god's name hedgewars has to be a 64-bit application beats me, but that's something I'm not going to change I'm afraid. It turns out that this as been &lt;a href="http://code.google.com/p/hedgewars/issues/detail?id=147&amp;amp;q=core%20duo">reported as a bug&lt;/a> to the Hedgewars team, which hasn't been picked up yet.&lt;/p>
+&lt;p>The good news for older model Intel Mac Mini Core Duo owners out there: You can replace your CPU with a Core 2 Duo processor. You'll need one of these:&lt;/p>
+&lt;ul>
+&lt;li>Core 2 Duo T7200 (2.00Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7400 (2.16Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7600 (2.33Ghz).&lt;/li>
+&lt;/ul>
+&lt;p>The processors are quite pricey, our quick check showed that they're all above the $200 price mark, which may be a bit steep for a processor upgrade. We expected about half that, so that was a bummer. Should you want to upgrade your CPU, buy thermal paste, and follow a good howto. To get a feeling of what you're getting into, check out the &lt;a href="http://www.ifixit.com/Teardown/Mac-mini-Model-A1283-Teardown/659/1">iFixit teardown of the Mac Mini&lt;/a>.&lt;/p>
+&lt;p>The other option would be to trade in your Core Duo Mac Mini for a Core 2 Duo Mac mini. It's safer and probably about as costly as buying one of the strangely priced Core 2 Duo processors.&lt;/p></description></item><item><title>Move Time Machine data to a Drobo</title><link>https://realrolfje.github.io/rolfje.com/2010/12/30/move-time-machine-data-to-a-drobo/</link><pubDate>Thu, 30 Dec 2010 21:05:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/12/30/move-time-machine-data-to-a-drobo/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=6xe7bIfj7VM">&lt;img src="time-machine-drobo.png" alt="Remember, even Drobo's can die. Make sure your files are in at least three different physical locations, one of which preferably off-site.">
+&lt;/a>If Santa treated you particularly well this season, or you have put some of your savings to good use, chances are that you have a brand-new Drobo looking at you right now. Meanwhile, your Mac is happily making Time Machine backups to that trusty old local USB disk. So you want to use that new Drobo for Time Machine backups, but don't want to loose history? Here's how (baby steps, no tools required, screenshots included):&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Connect the Drobo (in my case a Drobo FS) to the network and configure an Administrator password for it. You should now have a working Drobo, with at least 2 drives in it, and it shares a &amp;quot;Public&amp;quot; share on the network.
+2. Make sure that the free space reported by the Drobo Dashboard is at least as big as your old USB Time Machine drive. Add drives to the Drobo as needed.
+3. In the Drobo Dashboard, click on &amp;quot;Advanced Controls&amp;quot;, go to the &amp;quot;Tools&amp;quot; tab, click on &amp;quot;Settings...&amp;quot; and then select the &amp;quot;Shares&amp;quot; tab.
+4. Create a new user for your Time Machine backup. It's important to create a non-admin user to keep your data safe. Trust me, you'll thank me later.
+5. Create a new Drobo share (the &amp;quot;+&amp;quot; on the bottom left), give it a meaningful name and select &amp;quot;Enable Time Machine on this drive&amp;quot;. Be careful in choosing the size, you can't change this later!
+6. Remove &amp;quot;Everyone&amp;quot; from the allowed users for this share (the &amp;quot;-&amp;quot; bottom right) and add the user you just created (the &amp;quot;+&amp;quot; on the bottom right). You should now have something like this:[![Create Time Machine share on the Drobo FS screenshot](schermafbeelding-2010-12-28-om-20-03-55.png?w=300)
+&lt;/code>&lt;/pre>
+&lt;p>](schermafbeelding-2010-12-28-om-20-03-55.png)
+7. Close Drobo Dashboard, we won't be needing it anymore.
+8. Open System Preferences on your Mac, and select &amp;quot;Time Machine&amp;quot;
+9. Click on the &amp;quot;Select Disk&amp;quot; option. Don't worry, we're not damaging or loosing your existing backup by doing this.
+10. In the popup, you'll see your newly created Time Machine share on the Drobo. Select this share and fill in the Userid and Password you just created on the Drobo.&lt;a href="schermafbeelding-2010-12-28-om-20-05-39.png">&lt;img src="schermafbeelding-2010-12-28-om-20-05-39.png" alt="Select Drobo Time Machine share">
+&lt;/a>
+11. Wait for Time Machine to start, or force it by using the &amp;quot;Backup now&amp;quot; menu option. Time Machine will first try to create a sparse bundle and calculate what to back up. As soon as you see the backup starting (the &amp;quot;zebra&amp;quot; stripes turn into a normal progress bar), click on the cancel button. We only used Time Machine to create a sparse bundle with the correct settings.
+12. In System Preferences, switch Time Machine off.
+13. Go to the Drobo Time Machine share you just created and mount the sparse bundle you see there.
+14. Open Disk Utility and select the USB Time Machine disk.
+15. Click on &amp;quot;Restore&amp;quot; and drag the partition of the old USB Time Machine drive to the &amp;quot;Source&amp;quot; box. Drag the partition on the mounted Drobo Time Machine disk to the &amp;quot;Destination&amp;quot; box. Double check my screen shot, it's important to get this right. Drag the partitions, not the disks itself. If you're not able to drag the disks as described, you may want to unmount your old Time Machine drive, remount it, and restart Disk Utility.&lt;a href="schermafbeelding-2010-12-28-om-20-17-22.png">&lt;img src="schermafbeelding-2010-12-28-om-20-17-22.png" alt="Drag partitions in Disk Utility">
+&lt;/a>
+16. Make sure &amp;quot;Erase Target&amp;quot; is selected and press &amp;quot;Restore&amp;quot;. Disk Utility may ask for your password.
+17. Prepare for a long wait. If you have more than a 500GB backup drive, you wish you had invested in Gigabit Ethernet right now (yes that speeds it up tremendously). My restore of 800GB over a 100Mb network took more than 2 days.
+18. Once the process is finished, do not forget to switch Time Machine back on in the System Preferences.&lt;/p>
+&lt;p>That's it. Time Machine will automatically mount the Drobo Share if needed. The first backup will take a bit more time, I think Apple built in a file check to see if the backup is still ok after moving it to another disk.&lt;/p>
+&lt;p>&lt;em>&lt;strong>Tip 1:&lt;/strong> Keep your old USB Time Machine disk next to the Drobo, even if you have an empty slot. By doing this, you can instantly replace a faulty drive without running to the store. Always keep a spare!&lt;/em>&lt;/p>
+&lt;p>&lt;em>&lt;strong>Tip 2:&lt;/strong> Storing data on your Drobo, and then backing up to a Time Machine bundle on that same Drobo is not a backup. A file is only safe if it is stored in 3 different physical locations, one of which is preferably off-site.&lt;/em>&lt;/p>
+&lt;p>Happy Drobo days!&lt;/p></description></item><item><title>Starting Java app from Applescript</title><link>https://realrolfje.github.io/rolfje.com/2009/06/11/starting-java-app-from-applescript/</link><pubDate>Thu, 11 Jun 2009 20:36:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/06/11/starting-java-app-from-applescript/</guid><description>
+&lt;p>Suppose you have a Java Swing application which you can start by typing the following on the command line:&lt;/p>
+&lt;p>&lt;em>java -jar myTerrificSwingApp.jar&lt;/em>&lt;/p>
+&lt;p>If you want to make that application start from the Finder in OSX, there are a lot of options which range from ugly to convoluted. If you need a quick fix, here's how to do it.&lt;/p>
+&lt;!-- more -->Open ScriptEditor.app on your Mac, and copy paste:
+&lt;blockquote>
+&lt;blockquote>
+&lt;p>-- Get path to this script using &amp;quot;/&amp;quot; in stead of &amp;quot;:&amp;quot; as seperators&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>set&lt;/strong> myPath &lt;strong>to&lt;/strong> POSIX path &lt;strong>of&lt;/strong> (path to &lt;strong>me&lt;/strong> as string)&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>-- Save text item delimiters and set it to &amp;quot;/&amp;quot;&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>set&lt;/strong> delims &lt;strong>to&lt;/strong> AppleScript's text item delimiters&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>set&lt;/strong> AppleScript's text item delimiters &lt;strong>to&lt;/strong> &amp;quot;/&amp;quot;&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>-- Get the whole string except the last token, and add a &amp;quot;/&amp;quot;&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>set&lt;/strong> myFolder &lt;strong>to&lt;/strong> (text 1 &lt;strong>thru&lt;/strong> text item -2 &lt;strong>of&lt;/strong> myPath) &amp;amp; &amp;quot;/&amp;quot; ¬&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>** as** Unicode text&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>-- Restore default text item delimiters (being tidy)&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>set&lt;/strong> AppleScript's text item delimiters &lt;strong>to&lt;/strong> delims&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>-- Start java from this directory, as nohup and background&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>-- so this applescript can disapear from the Dock&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>do shell script ¬&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&amp;quot;cd &amp;quot; &amp;amp; myFolder &amp;amp; ¬&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&amp;quot;; nohup java -jar myTerrificSwingApp.jar &amp;amp;&amp;quot;&lt;/p>
+&lt;/blockquote>
+&lt;/blockquote>
+&lt;p>Save the script as &amp;quot;Application Bundle&amp;quot; and don't forget to un-check the startup window option. If you have some extra time, you can open the package contents of the app, and replace the Contents/Resources/applet.icns with your own icon.&lt;/p>
+&lt;p>There are a lot more ways to do this, for instance you can also put your jar file inside the app bundle, or build a double-clickable jar file, or bundle a complete application. You can find more info on all these options on the &lt;a href="http://developer.apple.com/documentation/Java/Conceptual/Java14Development/03-JavaDeployment/JavaDeployment.html">Apple developer website&lt;/a>.&lt;/p></description></item><item><title>Migrate from Password Gorilla to KeePass</title><link>https://realrolfje.github.io/rolfje.com/2009/05/12/migrate-from-password-gorilla-to-keepass/</link><pubDate>Tue, 12 May 2009 09:36:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/05/12/migrate-from-password-gorilla-to-keepass/</guid><description>
+&lt;p>&lt;a href="http://keepass.info/">&lt;img src="keepass.png" alt="KeePass logo">
+&lt;/a>I used to use &lt;a href="http://fpx.de/fp/Software/Gorilla/">Password Gorilla&lt;/a> to store my passwords, because it can run on both Mac and Windows. Because my password database keeps growing, Password Gorilla is becomming a very slow starter, even on my new solid state disk. A few weeks ago I learned that KeePass is a much more modern application, and is available for both Mac and Windows. Here's what I did to get all my passwords into KeePass:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Download [KeePass 1.05](http://sourceforge.net/project/downloading.php?group_id=95013&amp;amp;filename=KeePass-1.05.zip&amp;amp;a=41072444) (this is an older version, but required by the following plugin)
+2. Download the [PwSafeDbImport ](http://keepass.info/plugins.html#pwsafedbimport)plugin.
+3. Unzip both zipfiles.
+4. Put the PwSafeDbImport.dll file in the directory where KeePass.exe is.
+5. Start KeePass.exe
+6. Click on &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Plugins&amp;quot; and right-click on the PwSafeDbImport plugin, select &amp;quot;enable&amp;quot;
+7. Stop KeePass, and start it again.
+8. Create a new KeePass password file (Ctrl-N)
+9. Select &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import from&amp;quot; -&amp;gt; &amp;quot;PwSafe database&amp;quot;
+10. Select the Password Gorilla database you want to import from
+11. Enter your Password Gorilla database password
+12. Check (some of) the new entries in KeePass to verify the import went smoothly
+13. Save the KeePass file.
+&lt;/code>&lt;/pre>
+&lt;p>Now that you're done, you can upgrade to the &lt;a href="http://keepass.info/download.html">latest KeePass version&lt;/a>. The KeePass database stays compatible between versions, information on that is on the KeePass website.&lt;/p></description></item><item><title>How to put DVD's on your iPhone (for free)</title><link>https://realrolfje.github.io/rolfje.com/2009/02/28/how-to-put-dvds-on-your-iphone-for-free/</link><pubDate>Fri, 27 Feb 2009 22:19:23 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/02/28/how-to-put-dvds-on-your-iphone-for-free/</guid><description>
+&lt;p>&lt;img src="afbeelding-13a1.png" alt="For A Few Dollars More">&lt;/p>
+&lt;p>A lot of companies like to sell you applications to put DVD's on your iPhone. Usually these apps are just wrappers around existing tools, and are pretty expensive if you consider you can do it for free. And you don't need to be a computer wizard either! The steps are simple:&lt;/p>
+&lt;pre>&lt;code> 1. Use [Handbrake](http://handbrake.fr/?article=download) to rip the DVD to iPhone format
+2. Drag the generated mp4 file into iTunes
+3. Sync it to your iPhone like all other content
+&lt;/code>&lt;/pre>
+&lt;p>To show you exactly how this is done, I've  written up this &amp;quot;babystep-by-babystep&amp;quot; tutorial. Let me show you how I ripped &lt;a href="http://www.amazon.com/Few-Dollars-More-Clint-Eastwood/dp/0792839056">&amp;quot;For A Few Dollars More&amp;quot;&lt;/a> and put it on my iPhone:&lt;/p>
+&lt;p>**Disclaimer: **The DVD I ripped is bought and payed for. This article does not relief you of your responsibility to obey the law, so please be careful. And be nice, don't pirate.&lt;/p>
+&lt;p>&lt;strong>&lt;!-- more -->What You Need&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * [Handbrake](http://handbrake.fr/?article=download) for ripping the DVD
+* [VLC](http://www.videolan.org/vlc/), which is used by handbrake for DVD's with encodings not supported by Handbrake. You don't always need it, but download and install it anyway, just to be sure.
+* Some patience.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Step 1: Rip the DVD to an MP4&lt;/strong>
+Put a DVD in your Mac, and stop the DVD player application if it opens automatically.&lt;/p>
+&lt;p>&lt;a href="afbeelding-6.png">&lt;img src="afbeelding-6.png?w=128" alt="Select VIDEO_TS folder">
+&lt;/a>Start Handbrake. A selection window will open, use it to browse to the DVD, and select the VIDEO_TS folder (just select it, no need to go into it) and then press &amp;quot;Open&amp;quot;.&lt;/p>
+&lt;p>&lt;a href="afbeelding-7.png">&lt;img src="afbeelding-7.png" alt="Select Title and Chapters">
+&lt;/a>Handbrake will briefly scan the DVD for titles. In the &amp;quot;Source:&amp;quot; section of the screen, select a title and the chapters you want to rip. Usually Handbrake guesses that it's the longest title, with the most chapters you want to rip. Let's go with those defaults.&lt;/p>
+&lt;p>&lt;a href="afbeelding-81.png">&lt;img src="afbeelding-81.png?w=44" alt="Presets Selection Drawer">
+&lt;/a>Press the &amp;quot;Toggle Presets&amp;quot; button on the top right, and select &amp;quot;iPhone&amp;quot; from the list that pops out on the right side of the Handbrake window.&lt;/p>
+&lt;p>&lt;a href="afbeelding-10.png">&lt;img src="afbeelding-10.png?w=120" alt="Select Audio and Subtitles">
+&lt;/a>Next, click the &amp;quot;Audio and Subtitles&amp;quot; tab and select the audio and subtitles you want to listen and read in the ripped video. You can NOT change audio and subtitles later on your iPhone, so choose wisely. This is usually the step I forget, which requires me to wait for the whole ripping process again.&lt;/p>
+&lt;p>&lt;img src="afbeelding-12.png" alt="afbeelding-12">&lt;/p>
+&lt;p>Make sure the destination file is where you want it, and press the green &amp;quot;Start&amp;quot; icon. Handbrake will start reading the DVD and create an MP4 file. This can take a while, so you might want to get a cocktail. Handbrake will show a progress bar in the icon in the dock.
+ 
+&lt;strong>Step 2: Import into iTunes&lt;/strong>
+After the ripping is done, you can add your mp4 file to the iTunes library by simply dragging the video file into iTunes. There you can set the title, year, genre and illustration exactly as you did with your music files.&lt;/p>
+&lt;p>&lt;img src="afbeelding-14.png" alt="iTunes showing ripped DVD">&lt;/p>
+&lt;p>&lt;strong>Step 3: Putting it on your iPhone&lt;/strong>
+Plug in you iPhone. Go to the iPhone configuration and click on the &amp;quot;Video&amp;quot; tab. Scroll down, and select the video you just imported:&lt;/p>
+&lt;p>&lt;a href="afbeelding-15.png">&lt;img src="afbeelding-15.png" alt="Sync the movie to the phone">
+&lt;/a>&lt;/p>
+&lt;p>When you press &amp;quot;Apply&amp;quot;, iTunes will immediately start copying the movie over to the iPhone, where you can find it in your iPhone in your iTunes library.&lt;/p>
+&lt;p>&lt;strong>Advanced Tips:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * [![Few Dollars More on iPhone](img_0005.png)
+&lt;/code>&lt;/pre>
+&lt;p>](img_0005.png)The DVD I just converted (For A Few Dollars More) averaged out to about 3,5MB per minute. That's about 5 hours of video per GB, but your mileage may vary. On average you should be able to take at least one or to movies with you on your iPhone. If your music is in the way, you can &lt;a href="http://rolfje.wordpress.com/2007/08/01/ipod-synchronization-techniques/">use these tips&lt;/a> to make iTunes organize your music for you.
+* Handbrake has an &amp;quot;Add To Queue&amp;quot; button which lets you convert multiple movies in a row. In order for that to work you need to copy the VIDEO_TS folders of multiple DVD's onto a harddrive. Now you can convert multiple DVD's overnight.&lt;/p></description></item><item><title>Remote Desktop Connection updated</title><link>https://realrolfje.github.io/rolfje.com/2009/01/25/remote-desktop-connection-updated/</link><pubDate>Sun, 25 Jan 2009 01:00:37 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/01/25/remote-desktop-connection-updated/</guid><description>
+&lt;p>&lt;img src="afbeelding-2.png" alt="Remote Desktop Connection icon">&lt;/p>
+&lt;p>&amp;quot;Remote Desktop Connection.app&amp;quot; allows you to see the desktop of a remote Windows machine on your mac. This application will not update itself automatically, unless you have it installed as part of the Microsoft Office for Mac suite. If you've downloaded the 1.0.3 version you probably did not notice that &amp;quot;Remote Desktop Connection.app&amp;quot; was updated somewhere last year by microsoft.&lt;/p>
+&lt;p>You can find the latest version of Remote Desktop Connection on the &lt;a href="http://www.microsoft.com/mac/products/remote-desktop/default.mspx">Microsoft Mactopia&lt;/a> site. Version 2 is an improvement over 1.0.3 (which I had). Notable differences are:&lt;/p>
+&lt;pre>&lt;code> * Nicer configuration screens, makes configuring your resolution and shares easier.
+* Now a Universal Binary, which should improve performance on Intel Macs. I have not noticed improvement, but that's probably because the network is the bottleneck.
+* Supports the new RDC 6.0 protocol used by Vista.
+* Can do authentication of the remote machine (if it's a Vista machine).
+* Your Mac printer can be exposed to the Windows machine so you can print documents on your local printer.
+&lt;/code>&lt;/pre>
+&lt;p>I played with it for a while, and apart form the new looks I can not say it's very different from the 1.0.x version. It could load my old RDC 1.0.3 configuration files. If you need to connect to a Windows desktop from your Mac, this does the job just fine.&lt;/p></description></item><item><title>Automount network shares</title><link>https://realrolfje.github.io/rolfje.com/2009/01/18/automount-network-shares/</link><pubDate>Sun, 18 Jan 2009 01:00:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/01/18/automount-network-shares/</guid><description>
+&lt;p>&lt;a href="http://www.macupdate.com/info.php/id/29844/bonjour-mounter">&lt;img src="29844.png" alt="Bonjour Mounter icon">
+&lt;/a>There is a nice and clean way to automatically mount network shares each time you log into your Mac. It's called the &lt;a href="http://www.macupdate.com/info.php/id/29844/bonjour-mounter">&amp;quot;Bonjour Mounter&amp;quot;&lt;/a>, a simple application which runs on login, and mounts the drives you configured it to mount. No more, no less.&lt;/p></description></item><item><title>Choose: AFP or SMB</title><link>https://realrolfje.github.io/rolfje.com/2009/01/11/choose-afp-or-smb/</link><pubDate>Sun, 11 Jan 2009 01:00:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/01/11/choose-afp-or-smb/</guid><description>
+&lt;p>&lt;a href="afp-or-smb.png">&lt;img src="afp-or-smb.png" alt="Choose AFP or SMB, not both.">
+&lt;/a>&lt;/p>
+&lt;p>I recently upgraded the operating system on my trusty &lt;a href="http://rolfje.wordpress.com/2006/09/20/tryout-mac-mini-as-fileserver/">Mac Mini G4 home fileserver&lt;/a> from Tiger to Leopard. In addition to the &lt;a href="http://en.wikipedia.org/wiki/Time_Machine_%28Apple_software%29">out-of-the-box backup&lt;/a>, I no longer have to use &lt;a href="http://www.hornware.com/sharepoints/">SharePoints&lt;/a> to manage my network shares. In Leopard, I can just right-click them and arrange the sharing.&lt;/p>
+&lt;p>In doing so, I decided to switch on both SMB and AFP sharing for all shares. The idea was that my Macs all would use AFP automatically, and all Windows machines would see the SMB mounts. After a few hours, iTunes began acting up on me, because it decided to switch between the SMB and AFP protocol (or so it seemed). Finder also seems to have some trouble listing network shares if the exact same name on the same server is shared with two different protocols.&lt;/p>
+&lt;p>Because there are people on my network with Windows machines, I decided to switch off the AFP protocol and only go with SMB. I haven't had problems since.&lt;/p>
+&lt;p>If you're sharing drives like I'm doing, go for SMB. It may not be the technically superior solution, but it will &amp;quot;just work&amp;quot;. You can easily switch to AFP when the world is freed of Windows machines. ;-)&lt;/p></description></item><item><title>"Instruments" - Application monitor</title><link>https://realrolfje.github.io/rolfje.com/2009/01/02/instruments-application-monitor/</link><pubDate>Thu, 01 Jan 2009 23:00:55 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/01/02/instruments-application-monitor/</guid><description>
+&lt;p>&lt;a href="afbeelding-3.png">&lt;img src="afbeelding-3.png?w=128" alt="Instruments">
+&lt;/a>Did you know that your installation of Leopard comes with a built-in performance monitor? It's called &amp;quot;Instruments&amp;quot; and you can attach it to any process currently running. In the screenshot you see here I attached it to an instance of Eclipse while running some unittests.&lt;/p>
+&lt;p>Instruments has some nice templates for you to choose from, and you can monitor CPU activity per thread, disk I/O, User Interface activity, Object allocations, and leaks. Just so you know, it might come in handy.&lt;/p></description></item><item><title>Eclipse 3.4.1, OSX and Java 1.6</title><link>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</link><pubDate>Sun, 28 Dec 2008 14:05:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</guid><description>
+&lt;p>&lt;img src="afbeelding-22.png" alt="Eclipse application icon">&lt;/p>
+&lt;p>I recently downloaded &lt;a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/ganymede/SR1/eclipse-java-ganymede-SR1-macosx-carbon.tar.gz">Eclipse 3.4.1 for Mac OSX&lt;/a>, and tried starting it using the eclipse.app icon. It did not work, and I noticed a message in /var/log/system.log telling me that the JVM could not be loaded.&lt;/p>
+&lt;!-- more -->After some Googling, I found out that Eclipse is not compatible with the new 64bit version of JDK 1.6 for the Mac. After switching back to 1.5 (luckaly Apple ships all JVM's with it's OS) it all worked. Here's how you switch back to JDK 1.5 on a Mac:
+&lt;pre>&lt;code>cd /System/Library/Frameworks/JavaVM.framework/Versions
+sudo ln -fhsv 1.5 CurrentJDK
+&lt;/code>&lt;/pre>
+&lt;p>This makes the CurrentJDK link to point to the 1.5 installation of the Java JDK.&lt;/p>
+&lt;p>Bonus tip for today: While you're at it, increase the memory used by eclipse by opening the eclipse.app bundle (right click -&amp;gt; show package contents) and edit Contents/MacOS/eclipse.ini. Change the &amp;quot;-Xmx256m&amp;quot; line to read &amp;quot;-Xmx512m&amp;quot;, and eclipse should be much happier with you.&lt;/p>
+&lt;p>Ofcourse there's &lt;a href="http://help.eclipse.org/stable/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/running_eclipse.htm">lots more you can do there&lt;/a>, but I always say &amp;quot;keep it simple&amp;quot;.&lt;/p></description></item><item><title>Hex color picker for OSX</title><link>https://realrolfje.github.io/rolfje.com/2008/12/24/hex-color-picker-for-osx/</link><pubDate>Wed, 24 Dec 2008 20:20:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/24/hex-color-picker-for-osx/</guid><description>
+&lt;p>&lt;a href="afbeelding-11.png">&lt;img src="afbeelding-11.png?w=182" alt="Hex Color Picker Screenshot">
+&lt;/a>If you're working on some source code and you quickly need to insert a hexadecimal color code for a color you currently have on your screen, then here is a neat little trick I found:&lt;/p>
+&lt;p>First, install &lt;a href="http://wafflesoftware.net/hexpicker/">Hex Color Picker&lt;/a> by Waffle software. It will add an extra option to the built-in OSX color picker to show you the selected color in Hex.&lt;/p>
+&lt;p>To reach the color picker, you usually start up any application which uses the standard OSX color picker and just choose &amp;quot;choose color&amp;quot;. What you can also do, is have the OSX color picker behave as a &lt;a href="http://www.macosxhints.com/article.php?story=20060408050920158&amp;amp;lsrc=osxh">standalone application&lt;/a> in 3 simple steps:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Open &amp;quot;ScriptEditor&amp;quot;, the Applescript editor.
+2. In the main window, type &amp;quot;choose color&amp;quot;
+3. Save the script as an application.
+&lt;/code>&lt;/pre>
+&lt;p>The saved application will, you guessed it, show you the standard color picker. Add it to the dock and you will be a happy developer.&lt;/p>
+&lt;p>&lt;strong>Please note&lt;/strong>**:** If you are really being a perfectionist, it is possible this will not work for you because the color profiles of you monitor and possibly the profiles which are applied by Safari will introduce errors, because the color picker shows you the color which is on the screen, not the original color coming from the application. There's a whole slew of documentation on color profiles and I do have a whole rant which I will save you from reading (for now).&lt;/p>
+&lt;p>Merry Christmas!&lt;/p></description></item><item><title>A Bigger Time Machine without Changing History</title><link>https://realrolfje.github.io/rolfje.com/2008/09/07/a-bigger-timemachine-without-changing-history/</link><pubDate>Sun, 07 Sep 2008 20:31:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/09/07/a-bigger-timemachine-without-changing-history/</guid><description>
+&lt;p>I had a 160GB drive holding my &lt;a href="http://rolfje.wordpress.com/2007/12/11/backup-guru-give-me-a-break/">Time Machine backups&lt;/a>. Because I wanted to backup external disks, and still wanted to be able to travel about a year back in time, I bought a &lt;a href="http://rolfje.wordpress.com/2008/09/07/osx-format-1tb-usb-drive/">1TB USB disk&lt;/a>. Stephen Foskett wrote a &lt;a href="http://blog.fosketts.net/2008/07/26/how-to-move-os-x-time-machine-backups-to-a-new-disk/">great article&lt;/a> about how he migrated his TimeMachine backup to a larger disk, but it's lengthy and misses one essential step.&lt;/p>
+&lt;p>I decided to give you the short version, this blog post describes how I migrated Time Machine to the new disk without losing any data in 11 easy steps.&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Get a new, big, empty drive with a single Mac Journaled partition on it. Give it a good name so you can keep it apart from the original Time Machine drive.
+2. Open the Time Machine configuration screen, and turn off Time Machine.
+3. Unmount and remount the Time Machine drive, it should show up as an ordinary orange drive on your desktop.
+4. Open Disk Utility, and click the &amp;quot;Restore&amp;quot; Tab.
+5. [![](copy-timemachine-drive.png)
+&lt;/code>&lt;/pre>
+&lt;p>](copy-timemachine-drive.png)Drag the &amp;quot;TimeMachine&amp;quot; partition which is on the old drive to the &amp;quot;Source&amp;quot; box.
+6. Drag the large partition on the new drive to the &amp;quot;Target&amp;quot; box.
+7. Select &amp;quot;Erase Target&amp;quot;. If you do not check this, the disc copy will fail. This is the essential step I mentioned earlier.
+8. Click &amp;quot;Restore&amp;quot;, double check the popup warning to see if you are doing the right thing and press &amp;quot;Restore&amp;quot; again. After a number of hours, depending on the speed of your USB hub and the size of the disks, you will see 2 identical drives on your desktop. The new drive should have a lot more space available. In my case, it took 5 hours to migrate 160GB to the new drive.
+9. Unmount the old Time Machine drive, physically disconnect it to be sure.
+10. Open the Time Machine configuration screen, and turn on Time Machine.
+11. In the Time Machine configuration screen, press &amp;quot;Change drive&amp;quot; and select the new drive. You will see the disk icon turn into the green TimeMachine drive icon. You're done.&lt;/p>
+&lt;p>You can test Time Machine now by clicking the Time Machine icon in your dock and see that you still have all your history. Once you've verified that all your history is still there, you can use your old Time Machine drive for something else (reformat it).&lt;/p>
+&lt;p>You might also want to check your spotlight settings to not include your Time Machine drive for searching. Because I did not touch the volume name on the new drive, I didn't have to change any settings, but I checked to be sure.&lt;/p>
+&lt;p>&lt;strong>Bonus tip:&lt;/strong>
+Now that you've got a large backup drive, maybe it's time to think about backing up your external drives. Make sure all the drives you want to backup are connected, and open the Time Machine configuration screen. Click on &amp;quot;Options...&amp;quot; and remove the drives you want to back up from that list.&lt;/p></description></item><item><title>OSX: Formatting a 1TB USB Drive</title><link>https://realrolfje.github.io/rolfje.com/2008/09/07/osx-format-1tb-usb-drive/</link><pubDate>Sun, 07 Sep 2008 11:50:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/09/07/osx-format-1tb-usb-drive/</guid><description>
+&lt;p>I just bought a Maxtor Basics 1TB drive, and found that I could not seem to format it using the Leopard Diskutility. Then, I found &lt;a href="http://en.kioskea.net/forum/affich-4848-wd-my-book-formattin">this page&lt;/a> which contained the golden tip. I'll save you some reading:&lt;/p>
+&lt;pre>&lt;code> 1. Open Apple's Disk Utility
+2. Click on the drive (not the partition in it, if there is any), and select &amp;quot;Partitioning&amp;quot;.
+3. Select &amp;quot;1 partition&amp;quot; and then press &amp;quot;Options&amp;quot;.
+4. You'll see that &amp;quot;MBR&amp;quot; is the default, which is what's causing the problem. Select the middle option &amp;quot;Apple Partition&amp;quot; and you're good to go.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="afbeelding-2.png">&lt;img src="afbeelding-2.png" alt="">
+&lt;/a>&lt;a href="afbeelding-3.png">&lt;img src="afbeelding-3.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Screenshots included. It's in Dutch, but the location of the buttons are identical for all languages.&lt;/p></description></item><item><title>Remove formatting from clipboard</title><link>https://realrolfje.github.io/rolfje.com/2008/09/05/remove-formatting-from-clipboard/</link><pubDate>Fri, 05 Sep 2008 19:29:58 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/09/05/remove-formatting-from-clipboard/</guid><description>
+&lt;p>In Windows, there is a great tool called &lt;a href="http://www.stevemiller.net/puretext/">&amp;quot;PureText&amp;quot;&lt;/a> which sits in your tray, and can remove formatting from copy/paste actions if you want to. In stead of pasting into notepad, and then copying it again, you now can use the Windows-V combination to paste without formatting. It works in any program, and I'm a fond user of this little gem at work.&lt;/p>
+&lt;p>In OSX, you can do this with a key combination, Option-Shift-Command-V. Besides being the silliest and most awkward key combination ever to do a simple paste-action, it does not always do the job properly. I found this &lt;a href="http://homepage.mac.com/simx/technonova/C488455530/E20071125225334/index.html">great tip&lt;/a> where a simple applescript removes formatting from the items in your clipboard.&lt;/p>
+&lt;!-- more -->If you don't know how to save this script, do the following:
+&lt;pre>&lt;code> 1. Open the Apple Script Editor (use Spotlight if you don't know where to look for it)
+2. In the editor window, paste the following text:set the clipboard to «class ktxt» of ((the clipboard as text) as record)
+&lt;/code>&lt;/pre>
+&lt;p>beep
+3. Click &amp;quot;Compile&amp;quot; and then select &amp;quot;Archive -&amp;gt; Save As...&amp;quot;
+4. Save the script as an application (anywhere you think is appropriate)
+5. Drag the resulting app into your dock to have it handy.&lt;/p>
+&lt;p>It looks like a lot of work, but these are the absoluut smallest steps I can help you with. It's really simple. When you're done, select any text you want to copy, and press Command-C to copy it. Then, before pasting, start the app you just made. You'll here the system beep indicating that it's ready. Now you can use Command-V and presto, plain text, no formatting!&lt;/p>
+&lt;p>I use this a lot to copy text from mails and documents into my Evernote, and it works fine. The only small irritation is the extra mouseclick.&lt;/p></description></item><item><title>Get an Onscreen Keyboard in OSX</title><link>https://realrolfje.github.io/rolfje.com/2008/04/29/get-an-onscreen-keyboard-in-osx/</link><pubDate>Mon, 28 Apr 2008 20:38:59 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/29/get-an-onscreen-keyboard-in-osx/</guid><description>
+&lt;p>Always forgetting how to do accents on characters, or where the euro sign (€) is? Use the on-screen keyboard and see where the special characters are while holdin down the option key, or the shift-option combination. Read the small tutorial on HackAddict.net on &lt;a href="http://hackaddict.blogspot.com/2007/06/tutorial-get-onscreen-keyboard-in-osx.html">How to Get an Onscreen Keyboard in OSX&lt;/a>.&lt;/p>
+&lt;p>Orange highlighted characters are the combinations. So do an Option-E, let go, and then an &amp;quot;o&amp;quot; to get &amp;quot;ó&amp;quot;. Have fun finding all the combo's. Using the keyboard viewer is faster than the character palette, and in addition learns you the key combinations for often used characters.&lt;/p></description></item><item><title>OSX 10.5.2 Solved SMB problems (for me)</title><link>https://realrolfje.github.io/rolfje.com/2008/03/16/1052-solved-smb-problems-for-me/</link><pubDate>Sat, 15 Mar 2008 20:47:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/03/16/1052-solved-smb-problems-for-me/</guid><description>
+&lt;p>In a &lt;a href="http://rolfje.wordpress.com/2007/11/16/osx-1051-update-still-smb-problems/">previous post&lt;/a> on this blog, I indicated that the 10.5.1. update of Apple's OSX did not fix my network and SMB problems with my Iomega drive. In the comments underneath, some readers kindly pointed out that &lt;a href="http://download.iomega.com/english/storcenter_home_firmware-k104w11.bin">Iomega's K104w11 Firmware update&lt;/a> is available for the Iomega drive I have. Now that 10.5.2 is out, I reconnected the Iomega drive to my network. And suddenly the world changed...&lt;/p>
+&lt;!-- more -->I didn't upgrade the drive, because I thought that was rediculous. It works with Windows, it works with Tiger, why shouldn't it work with Leopard? Right now I'm glad that I didn't go through the trouble of upgrading my drive:
+&lt;p>With the OSX release 10.5.2, my Iomega drive is accesable, and I can drag files on and off as I like.&lt;/p>
+&lt;p>I have created a &amp;quot;sparse bundle&amp;quot; disk image on the drive, so that I can copy files onto it which are bigger than 4GB, and have (very very) long names. So it's finally there: A network mounted 500GB HPS+ partition to which I can backup my backups using an rsync script.&lt;/p>
+&lt;p>Now that everything works, I might even be tempted to do that Iomega software upgrade, but then again: &amp;quot;if it ain't broke, don't try to fix it&amp;quot;.&lt;/p>
+&lt;p>Next thing on my list to find out: What if I upgraded my Tiger fileserver to Leopard, and had TimeMachine running there. Could I rsync the TimeMachine disk to an off-site location without sending the double-hardlinked files twice?&lt;/p></description></item><item><title>Easy Image Resizing in OSX</title><link>https://realrolfje.github.io/rolfje.com/2007/12/31/easy-image-resizing-in-osx/</link><pubDate>Mon, 31 Dec 2007 16:24:56 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/12/31/easy-image-resizing-in-osx/</guid><description>
+&lt;p>A little heads-up for Apple OSX users who have lots of images to resize. There's a free tool available to do this at &lt;a href="http://www.eagle-of-liberty.com/resizeemall/">http://www.eagle-of-liberty.com/resizeemall/&lt;/a>. It's donationware, if you like it you can send the author money by paypal.&lt;/p>
+&lt;p>I've used it, and it works as advertised. Drag a bunch of images on the application, and batch-resize them without touching your originals. You can save the images with a postfix, and even in a different format if you like. Very easy for mailing a bunch of photo's.&lt;/p></description></item></channel></rss>

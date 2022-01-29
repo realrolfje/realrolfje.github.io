@@ -1,0 +1,1650 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/java/</link><description>Recent content in Java on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 04 Sep 2015 21:16:29 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>How to get your users to install JCE</title><link>https://realrolfje.github.io/rolfje.com/2015/09/04/how-to-get-your-users-ton-install-jce/</link><pubDate>Fri, 04 Sep 2015 21:16:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/09/04/how-to-get-your-users-ton-install-jce/</guid><description>
+&lt;p>&lt;a href="https://en.wikipedia.org/wiki/Cryptography">&lt;img src="220px-lorenz-sz42-2.jpg" alt="220px-Lorenz-SZ42-2">
+&lt;/a>In every Java project where I need to do strong cryptography, I run into these dreaded unreadable stacktraces which send you into the woods. After a long search I usually discover that the Unlimited Strength &lt;a href="https://en.wikipedia.org/wiki/Java_Cryptography_Extension">Java Cryptography Extensions&lt;/a> are not installed. To prevent frustration of users of your software, you can simply add a bit of informative logging to help him/her solve it when the solution is known.&lt;/p>
+&lt;!-- more -->Add the following code to help your admins solve the limited cryptography problem without having to ask you:
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+public static void validateJCEUnlimited() {
+final int unlimited = 2_147_483_647; /* 32 bit max int */&lt;/p>
+&lt;p>// Ciphers to check for installation of the Java
+// Cryptography Extension (JCE) unlimited strength
+// jurisdiction policy files
+final String[] ciphers = {
+&amp;quot;AES&amp;quot;, &amp;quot;BouncyCastle&amp;quot;, &amp;quot;X.509&amp;quot;,
+&amp;quot;PKCS12&amp;quot;, &amp;quot;BCPKCS12&amp;quot;, &amp;quot;PKCS12-DEF&amp;quot;,
+&amp;quot;DES&amp;quot;, &amp;quot;DESEDE&amp;quot;, &amp;quot;RSA&amp;quot;, &amp;quot;DSA&amp;quot;,
+&amp;quot;SHA-1&amp;quot;, &amp;quot;SHA-256&amp;quot;, &amp;quot;SHA-512&amp;quot;
+};&lt;/p>
+&lt;p>for (String cipher : ciphers) {
+int keyLength = 0;
+try {
+keyLength = Cipher.getMaxAllowedKeyLength(cipher);
+} catch (NoSuchAlgorithmException e) {
+throw new RuntimeException(&amp;quot;Problem while checking the maximum key length of cipher &amp;quot; + cipher + &amp;quot;.&amp;quot;, e);
+}&lt;/p>
+&lt;pre>&lt;code>if (keyLength &amp;lt; unlimited) {
+String msg = String.format(&amp;quot;The maximum allowed key length for cipher %s was %d.\n&amp;quot; +
+&amp;quot;This indicates that you might not have installed the Java Cryptography \n&amp;quot; +
+&amp;quot;Extension (JCE) unlimited strength jurisdiction policy files in your JVM.\n&amp;quot; +
+&amp;quot;To do so, download these policy files at:\n\n&amp;quot; +
+&amp;quot;Java 6: http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html\n&amp;quot; +
+&amp;quot;Java 7: http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html\n&amp;quot; +
+&amp;quot;Java 8: http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html\n\n&amp;quot; +
+&amp;quot;Then, copy local_policy.jar and US_export_policy.jar extracted from above zip file to\n&amp;quot; +
+&amp;quot;the $JAVA_HOME/jre/lib/security directory.\n&amp;quot;, cipher, keyLength);
+throw new RuntimeException(msg);
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+}
+[/sourcecode]&lt;/p>
+&lt;p>Happy coding,
+Rolf&lt;/p></description></item><item><title>Solving the JAXB "unexpected element" problem</title><link>https://realrolfje.github.io/rolfje.com/2015/06/08/solving-the-jaxb-unexpected-element-problem/</link><pubDate>Mon, 08 Jun 2015 21:43:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/06/08/solving-the-jaxb-unexpected-element-problem/</guid><description>
+&lt;p>&lt;a href="1.jpg">&lt;img src="1.jpg?w=135" alt="-1">
+&lt;/a>If you are using &lt;a href="https://en.wikipedia.org/wiki/Java_Architecture_for_XML_Binding">JAXB&lt;/a> in a maven/java project to unmarshal an XML document and you get:&lt;/p>
+&lt;blockquote>javax.xml.bind.UnmarshalException: unexpected element (uri:"urn:iso:std:somestuff:xsd:somestuff", local:"Document"). Expected elements are (none)&lt;/blockquote>
+&lt;p>Or if you are using JAXB to marshal an XML document and you get:&lt;/p>
+&lt;blockquote>com.sun.istack.internal.SAXException2: unable to marshal type "generated.somestuff.Document" as an element because it is missing an @XmlRootElement annotation&lt;/blockquote>
+&lt;p>You have probably fallen victim of the fact that JAXB does not do &amp;quot;Simple Binding&amp;quot; by default. If your project is a maven project and you generated classes based on an xsd file, this is how you fix it (without changing the xsd file):&lt;/p>
+&lt;!-- more -->Tell JAXB to do "simple binding". To do so, create a binding file called src/main/resources/jaxb/simple-binding.xml with the following contents:
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot;]
+&amp;lt;jaxb:bindings jaxb:extensionBindingPrefixes=&amp;quot;xjc&amp;quot; version=&amp;quot;2.1&amp;quot;
+xmlns:jaxb=&amp;quot;http://java.sun.com/xml/ns/jaxb&amp;quot;
+xmlns:xjc=&amp;quot;http://java.sun.com/xml/ns/jaxb/xjc&amp;quot;&amp;gt;
+&lt;a href="jaxb:globalBindings">jaxb:globalBindings&lt;/a>
+&lt;a href="xjc:simple/">xjc:simple/&lt;/a>
+&amp;lt;/jaxb:globalBindings&amp;gt;
+&amp;lt;/jaxb:bindings&amp;gt;
+[/sourcecode]&lt;/p>
+&lt;p>Then, add the following options to the execution of your jaxb2-maven-plugin (highlighted):&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; highlight=&amp;quot;13,14,15&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.codehaus.mojo&lt;/groupId>
+&lt;artifactId>jaxb2-maven-plugin&lt;/artifactId>
+&lt;version>1.5&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>somestuff&lt;/id>
+&lt;goals>
+&lt;goal>xjc&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;clearOutputDir>false&lt;/clearOutputDir>
+&lt;extension>true&lt;/extension>
+&lt;bindingDirectory>${basedir}/src/main/resources/jaxb&lt;/bindingDirectory>
+&lt;bindingFiles>simple-binding.xjb&lt;/bindingFiles>
+&lt;staleFile>${project.build.directory}/jaxb2/.somestuff.StaleFlag&lt;/staleFile>
+&lt;packageName>generated.somestuff&lt;/packageName>
+&lt;schemaDirectory>${basedir}/src/main/resources/schemas&lt;/schemaDirectory>
+&lt;schemaFiles>somestuff.xsd&lt;/schemaFiles>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>You should be able to re-generate the jaxb code now, and parsing should work. In order to test if you have this problem, and to ensure that it does not come back after somebody changes your build file, create a unittest which marshals a java object into xml, and then unmarshalls the generated xml back into an object:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot;]
+// Create document objects (JAXB Generated classes)
+Document sourceDocument = new Document();
+sourcedocument.setSomeElement(new SomeElement());&lt;/p>
+&lt;p>JAXBContext jaxbContext = JAXBContext.newInstance(Document.class);&lt;/p>
+&lt;p>// Write Document
+File file = File.createTempFile(&amp;quot;sometempstuff&amp;quot;, &amp;quot;.xml&amp;quot;);
+FileWriter fileWr = new FileWriter(file);
+XMLOutputFactory xml = XMLOutputFactory.newFactory();
+XMLStreamWriter xmlStrWr = xml.createXMLStreamWriter(fileWr);
+xmlStrWr.writeStartDocument(&amp;quot;UTF-8&amp;quot;, &amp;quot;1.0&amp;quot;);
+Marshaller marshaller = jaxbContext.createMarshaller();
+marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+marshaller.marshal(sourceDocument, xmlStrWr);
+xmlStrWr.writeEndDocument();
+fileWr.close();&lt;/p>
+&lt;p>// Read Document
+FileInputStream fileInpStr = new FileInputStream(file);
+Unmarshaller unm = jaxbContext.createUnmarshaller();
+Document result = (Document) unm.unmarshal(fileInpStr);&lt;/p>
+&lt;p>// Test the parsedDocument here if you like.
+...&lt;/p>
+&lt;p>// Cleanup
+file.delete();
+[/sourcecode]&lt;/p>
+&lt;p>The reason for this blog is of course the fact that I expected this &amp;quot;Simple Binding&amp;quot; to be the default, as 80% of the people will want to do exactly this. I've found a lot of people suffering from this problem, and I found the documentation to be not very helpful.&lt;/p>
+&lt;p>I hope this blog post helps you get on with more important stuff.&lt;/p>
+&lt;p>Have fun!
+Rolf&lt;/p></description></item><item><title>Import/export an Oracle Schema using JDBC</title><link>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</link><pubDate>Fri, 02 Jan 2015 09:51:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=3j3tj1kV1hs">&lt;img src="61c1ee2ce9d31c894d188b7b17cacee90ffdece8bc4c4798d10100b7515820de.jpg" alt="Everybody gets a database!">
+&lt;/a>When doing integration testing or fixing a bug in a piece of Java code that uses Oracle as a database, being able to do quick exports and imports of your schema can be a big help. Sometimes just calling Oracle's imp/exp commandline tools from your code can be of help, but I was looking for something a bit more portable and less demanding on my local development machine. I found that Oracle's datapump functionality can be called from stored procedures, which in turn can be called from a normal JDBC statement.&lt;/p>
+&lt;!-- more -->Combining Oracle's information and questions like this one on StackOverflow, I've come up with a solution that allows me to call Java methods to import and export a database schema to a dumpfile, like so:
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; light=&amp;quot;true&amp;quot;]
+import(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+export(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+[/sourcecode]&lt;/p>
+&lt;p>These methods make use of regular JDBC calls, are implemented as follows:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot;]
+public static final String EXPORT_DIR = &amp;quot;/tmp&amp;quot;;&lt;/p>
+&lt;p>public void export(String schema, String fileName)
+throws SQLException, IOException {
+String sql = getFileContents(&amp;quot;export.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schema.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>public void import(String schema, String fileName)
+throws IOException, SQLException {
+String sql = getFileContents(&amp;quot;import.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schemaName.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>private String getFileContents(String fileName)
+throws IOException {
+InputStream in = this.getClass()
+.getResourceAsStream(fileName);
+return IOUtils.toString(in, &amp;quot;UTF-8&amp;quot;);
+}
+[/sourcecode]&lt;/p>
+&lt;p>As you can see in the code, I create prepared statements from two sql files which are located in the same Java package. The &amp;quot;export.sql&amp;quot; contains the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100)
+:= 'EXPORT_DIR_' || schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'EXPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump export schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.export.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>The &amp;quot;import.sql&amp;quot; looks very similar, containing the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100) := 'EXPORT_DIR_'
+|| schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'IMPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump import schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.import.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.SET_PARAMETER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'table_exists_action',
+value =&amp;gt; 'REPLACE');&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>I recommend reading the Oracle Datapump documentation (albeit dangerously enterprisey) to see what exactly happens when these scripts run. For instance, dumpfiles are reused (overwritten) without notice, and logfiles are created next to the dumpfile.&lt;/p>
+&lt;p>In this example, I write the dumpfiles to the &amp;quot;/tmp&amp;quot; directory on the database server. You can change this to any directory you like, but please make sure that the directory exists, and that the oracle user or orainst group has write access in that directory. A good way to start is first make it work with the /tmp directory, as in this example. If Oracle can not (over)write a file for any reason, you will get incomprehensible error messages about incorrect parameters in the dbms.datapump.add_file() calls.&lt;/p>
+&lt;p>Enjoy your Oracle-free development environment!&lt;/p></description></item><item><title>Open a port in OSX Mavericks' Firewall</title><link>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</link><pubDate>Sat, 10 May 2014 13:57:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?feature=player_embedded&amp;amp;v=at6HrV5CTo8">&lt;img src="security.png" alt="Firewall">
+&lt;/a>The new firewall in Mavericks is great. For the common user. For a developer, not so much. If you are a Java developer like me, and you just need to open one port (say, 8080) so that the web application you’re working on is accessable from another computer, you can’t. I disabled the Firewall altogether for a few days, but it didn't feel right.&lt;/p>
+&lt;p>I googled around and to make a long story short, here’s how to open port 8080 on any interface to any application on your OSX Mavericks installation in 3 steps:&lt;/p>
+&lt;p>&lt;code>sudo vim /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Then add the following lines at the end of the file:&lt;/p>
+&lt;p>&lt;code># Open port 8080 for TCP on all interfaces pass in proto tcp from any to any port 8080&lt;/code>&lt;/p>
+&lt;p>Test (and, according to the documentation, load) your edits with:&lt;/p>
+&lt;p>&lt;code>sudo pfctl -vnf /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Reboot.&lt;/p>
+&lt;p>(I have found at least 5 pieces of voodoo to make the Firewall restart and reload, but none of them seemed to work reliably, so pardon the reboot)&lt;/p>
+&lt;p>You can close it by commenting out the lines in pf.conf and reboot again. If anybody knows of an easier way to do this, preferably in one terminal command, and without rebooting, let me know.&lt;/p>
+&lt;p>Hope this helps.&lt;/p></description></item><item><title>Anonimatron: Quick Start</title><link>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</link><pubDate>Sun, 03 Nov 2013 14:33:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=opk4x7jzRS4">&lt;img src="homer.png" alt="Anonymous customer">
+&lt;/a>After reading my last blogpost on Anonimatron, you must have asked yourself &amp;quot;Great, but how do I actually use Anonimatron to de-personalize my database&amp;quot;? I tried my best to make basic Anonimatron configuration as self-explanatory as possible, just start it without any command line arguments and it will tell you.&lt;/p>
+&lt;p>Less adventurous or in a big hurry? This blogpost will show how simple it is to install and configure Anonimatron on an example MySQL database.&lt;/p>
+&lt;!-- more -->**Setting up a test database**
+&lt;p>To demonstrate what Anonimatron can do to your data, we will create a little test database to play with. Anonimatron connects to all kinds of databases, including MySQL, Postgress and Oracle. In this example, we use MySQL. Here are all the statements you need to create a little database with 2 tables, a user, and some &amp;quot;private&amp;quot; data:&lt;/p>
+&lt;p>[code lang=&amp;quot;sql&amp;quot; gutter=&amp;quot;false&amp;quot;]
+create database mydb;
+create user myuser identified by 'mypassword';
+grant all privileges on &lt;em>.&lt;/em> to 'myuser'@'localhost'
+identified by 'mypassword' with grant option;&lt;/p>
+&lt;p>create table mydb.userdata (
+id int not null auto_increment primary key,
+firstname varchar(20),
+lastname varchar(20),
+creditcardnr varchar(20)
+);&lt;/p>
+&lt;p>create table mydb.lastnames (
+id int not null auto_increment primary key,
+lastname varchar(20)
+);&lt;/p>
+&lt;p>insert into mydb.userdata
+(firstname,lastname, creditcardnr)
+values ('Homer', 'Simpson','1234'),
+('Marge', 'Simpson','5678'),
+('Ned', 'Flanders','3456'),
+('Charles', 'Burns','3456');&lt;/p>
+&lt;p>insert into mydb.lastnames (lastname)
+values ('Simpson'), ('Flanders'), ('Burns');
+[/code]&lt;/p>
+&lt;p>After all the hard work, you should be able to connect to the database with 'myuser' and see the &amp;quot;private&amp;quot; data in there:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Homer
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >1234
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Marge
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >5678
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ned
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Charles
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+[code language="sql" light="true"]
+select * from mydb.lastnames;
+[/code]
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Let's pretend that this is a copy of a production database, and you want to de-personalize or anonymize it.
+&lt;p>&lt;strong>Installing Anonimatron&lt;/strong>
+To anonymize your data,  &lt;a href="http://http://anonimatron.sourceforge.net">download Anonimatron&lt;/a> and unzip it in a directory of your choice. You should find an &amp;quot;anonimatron.sh&amp;quot; and &amp;quot;anonimatron.bat&amp;quot; file there. Depending on your system, run it without arguments. If you have java installed on your system you should see something like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh&lt;/p>
+&lt;p>This is Anonimatron 1.7, a command line tool to consistently
+replace live data in your database with data data which
+can not be traced back to the original data.
+You can use this tool to transform a dump from a production
+database into a large representative dataset you can
+share with your development and test team.
+Use the -configexample command line option to get an idea of
+what your configuration file needs to look like.&lt;/p>
+&lt;p>usage: java -jar anonimatron.jar
+-config The XML Configuration file describing what to
+anonymize.
+-configexample Prints out a demo/template configuration file.
+-dryrun Do not make changes to the database.
+-synonyms The XML file to read/write synonyms to. If the file
+does not exist it will be created.
+[/code]&lt;/p>
+&lt;p>Victory! You've installed Anonimatron. Yes, life can really be that easy.&lt;/p>
+&lt;p>&lt;strong>Configuring Anonimatron&lt;/strong>
+Next, we need to tell Anonimatron how to connect to our database, and which tables and columns to process and how. The hardest part of this is probably figuring out how to create a jdbc connect string. Anonimatron can help you with that. If you start anonimatron with the &amp;quot;-configexample&amp;quot; parameter, it will scan the jdbcdrivers directory for available and supported drivers, and will show you how a jdbc URL for any of these should look:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -configexample&lt;/p>
+&lt;p>Supported Database URL formats:
+Jdbc URL format By Driver
+jdbc:oracle:oci8:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@[HOST]:[PORT]:[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:oci:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:postgresql://[HOST]:[PORT]/[DB] org.postgresql.Driver
+jdbc:mysql://[HOST]:[PORT]/[DB] org.gjt.mm.mysql.Driver&lt;/p>
+&lt;p>Anonimatron will try to autodetect drivers which are
+stored in the lib directory. Add you driver there.&lt;/p>
+&lt;p>...
+[/code]&lt;/p>
+&lt;p>In this example, we have just created a MySQL database, so we'll use that URL and fill in the blanks. We use the rest of the configuration example and with some copy-pasting we come up with the following configuration:&lt;/p>
+&lt;p>[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;configuration jdbcurl="jdbc:mysql://localhost:3306/mydb"
+userid="mydata" password="mypassword">&lt;/p>
+&lt;table name="userdata">
+&lt;column name="firstname" type="ROMAN_NAME" />
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;column name="creditcardnr" type="RANDOMDIGITS"/>
+&lt;/table>
+&lt;table name="lastnames">
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;/table>
+&lt;/configuration>
+[/code]
+&lt;p>This simple configuration file will tell Anonimatron the following things:&lt;/p>
+&lt;pre>&lt;code> * How to connect to the mydb database
+* The values in username.firstname should be processed with the ROMAN_NAME Anonymizer. Anonymizers are little plugins which are able to generate data with certain properties, sometimes based on the original data. This particular Anonymizer generates Roman Names by picking syllables from a builtin list.
+* The values in username.lastname should be replaced by Elven names. This is almost identical to Roman names but with a different Syllable file.
+* The userdata.creditcardnr should be replaced by a set of random digits of the same length. In our case, 4 digits will be replaced by 4 differnt digits. Should you really need numbers which are semantically correct credit card numbers, you could write your own Anonymizer plugin. We'll cover that in a later blogpost.
+* The lastnames.lastname column is also an Elven name. Because of the way Anonimatron handles data, strings in this column will be processed exactly the same way as the userdata.lastname column, as we will see below.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Anonymize!&lt;/strong>
+Now that we have configured Anonimatron, it's time to start it up and tell it to use our configuration file and store synonyms. It will be finished in the blink of an eye, and your output should look somewhat like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -config config.xml -synonyms synonyms.xml&lt;/p>
+&lt;p>Anonymization process started&lt;/p>
+&lt;p>Jdbc url : jdbc:mysql://localhost:3306/mydb
+Database user : mydata
+To do : 2 tables.&lt;/p>
+&lt;p>Anonymizing table 'lastnames', total progress [100%, ETA 11:36:56 PM]
+Anonymization process completed.&lt;/p>
+&lt;p>Writing Synonyms to synonyms.xml ...[done].
+[/code]&lt;/p>
+&lt;p>If Anonimatron complains or does not run, you might want to check out the &lt;em>anonimatron.log&lt;/em> file for clues. Most log entries will be pretty self-explanatory. If not, please register an issue and we'll see what we can do to fix that.&lt;/p>
+&lt;p>Let's check the results. First, we can check what synonyms were generated by looking into the synonyms.xml file we told it to create:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ cat synonyms.xml
+[/code]
+[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;synonyms>
+&lt;string type="ELVEN_NAME" from="QnVybnM=" to="RGhvZWxsaWFu"/>
+&lt;string type="ELVEN_NAME" from="RmxhbmRlcnM=" to="QWhlbGhhbGRldGhlc3M="/>
+&lt;string type="ELVEN_NAME" from="U2ltcHNvbg==" to="QWhkdWxlbGhhbGVs"/>
+&lt;string type="ROMAN_NAME" from="SG9tZXI=" to="QmVudWxhdWJlbGl1cw=="/>
+&lt;string type="ROMAN_NAME" from="TmVk" to="RWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="TWFyZ2U=" to="QWxudWxhdWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="Q2hhcmxlcw==" to="QWxudXM="/>
+&lt;string type="RANDOMDIGITS" from="NTY3OA==" to="ODY5OA=="/>
+&lt;string type="RANDOMDIGITS" from="MTIzNA==" to="NDM0Mw=="/>
+&lt;string type="RANDOMDIGITS" from="MzQ1Ng==" to="NjEyNQ=="/>
+&lt;/synonyms>
+[/code]
+&lt;p>You'll note that the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; values look a bit garbled. This is because Anonimatron used Base64 encoding to store values of synonyms. This is so that we can store the values bit for bit, without worying about encodings. If you wanted to, you could easily decode these strings by writing a little program.&lt;/p>
+&lt;p>Even without decoding we can see some interesting things about this file. Remember we had lastnames configured as Elven names? Although we have 4 entries in the username table, we see only 3 Elven names. That is because Homer and Marge have the same lastname. These same synonyms are also used by the lastnames.lastname column. The same goes for the creditcard numbers. As might have noticed that Ned Flanders and Charles Burns used the same credit card number in this system.&lt;/p>
+&lt;p>Enough staring at XML. Let's get to what matters most: our database. First, let's see if the names and numbers have changed:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Benulaubelius
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >4343
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Alnulaucus
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >8698
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ecus
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Alnus
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+That looks much better. The first and lastnames are (almost) pronounceable names which probably would look realistic in a screenshot or testcase, yet there is no trace left of the original data that was there. When we check the lastnames table we see that lastnames are being translated consistently with the userdata table:
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.lastnames;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+This consistent behavior makes sure that queries where the userdata table and the lastnames table are joined based on lastname will still work.
+&lt;p>If you want to play some more with Anonimatron, recreate the original tables, add additional (overlapping) data and re-run anonimatron against it with the synonym file you just created. You'll notice that any &amp;quot;Simpson&amp;quot; lastname will be translated to &amp;quot;Ahdulelhalel&amp;quot; constently on each run. If you don't want that to happen, simply throw away the synonym file or don't tell Anonimatron to use it. You can also generate the synonym file first without doing anything to the database by using the -dryrun option, and later do the same run based on the synonyms generated earlier.&lt;/p>
+&lt;p>Remember: The private data &amp;quot;moved&amp;quot; from the database into the synonyms.xml file we created. So that becomes the new data to watch. Store it in a safe place where nobody can access it.&lt;/p>
+&lt;p>Have fun experimenting!&lt;/p></description></item><item><title>Anonimatron: Overview</title><link>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</link><pubDate>Thu, 31 Oct 2013 20:42:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</guid><description>
+&lt;p>&lt;a href="http://anonimatron.sf.net/">&lt;img src="itsthelaw.png" alt="It's the Law">
+&lt;/a>In every software project, there comes a time where a bug pops up, nobody knows how to reproduce it, and somebody says &amp;quot;I know, let's test this against a copy of the production database&amp;quot;. Even with the best intentions, once production data leaves the production machine with all its safeguards it becomes really hard to do access control on that data.&lt;/p>
+&lt;p>Most of the time, it's not even needed to have that data. Developers just need a data set which resembles the production scenario close enough. Some brave souls have mixed succes with data generators, but those generators usually are tedious to maintain and die a slow death under the pressure of the daily grind.&lt;/p>
+&lt;p>In some ambitious projects automated integration testcases are built on top of the data which was inserted by the data generators. As the generators die, so die the tests. If you recognize this pattern, &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> might be the answer for you.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;img src="1-dataindb.png" alt="Customer data in the database.">&lt;/p>
+&lt;p>So let's say you're working on release 5 of a big webshop, and because of the succes of the shop, it runs into performance problems. There's no time or budget to build a data generator, and before you can say no, you have a copy of the production data on some development server, containing the creditcard data of your customers. What do you do?&lt;/p>
+&lt;p>This is where Anonimatron comes in. Anonimatron can de-personalize or anonymize your data for you, give you total control over what gets anonymized, and how, and thinks of data types as &amp;quot;color&amp;quot; or &amp;quot;address&amp;quot; instead of &amp;quot;int&amp;quot; and &amp;quot;String&amp;quot;. Here's how that works:&lt;/p>
+&lt;p>&lt;img src="2-anonimatron.png" alt="Anonimatron data flow">&lt;/p>
+&lt;p>For every distinct, unique value A, Anonimatron creates a replacement value X, and writes that back to the database. It stores the A=X relation in a Synonym, and consistently applies those Synonyms throughout all tables in the database.&lt;/p>
+&lt;p>By using synonyms, Anonimatron makes sure that your database is still statistically roughly the same as before anonymization, and also makes sure that if you have two tables with a &amp;quot;lastname&amp;quot; column, matching records will actually still match.&lt;/p>
+&lt;p>Anonimatron (optionally) stores these synonyms for later use, so it can be consistent between different runs. New production data? No problem. Load it, tell Anonimatron to use the old synonyms, and the old data will be Anonymized exactly the same as the last time. Only new records will generate new synonyms, which of course will be added to the synonym file for the next run.&lt;/p>
+&lt;p>This feature also enables you to write testscripts based on anonymized production data. Your scripts will not easily break, because new production copies are anonymized very consistently.&lt;/p>
+&lt;p>&lt;img src="3-datainsynonims.png" alt="Data in Synonyms">&lt;/p>
+&lt;p>After the anonymization process, the private data will be in the synonym file. This file needs to be put in a (very) safe place, and only the people that import production data and run Anonimatron should be able to access this file.&lt;/p>
+&lt;p>After anonymization, developers can access the database without immediately being exposed to private addresses of customers, bank accounts, or whatnot. Of course this all depends on what you tell Anonimatron to do, and what to anonymize.&lt;/p>
+&lt;p>Remember, with great power comes great responsibility. Try to stay away from customer data as much as you can, and handle it with deep respect when you get it, delete it or depersonalize it as soon as you can. Use &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> wisely.&lt;/p>
+&lt;h2 id="its-the-law">&lt;strong>It's the Law.&lt;/strong>&lt;/h2></description></item><item><title>Non-Java Binary Dependencies in Maven</title><link>https://realrolfje.github.io/rolfje.com/2013/07/18/non-java-binary-dependencies-in-maven/</link><pubDate>Thu, 18 Jul 2013 20:48:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/07/18/non-java-binary-dependencies-in-maven/</guid><description>
+&lt;p>&lt;a href="http://http://www.thinkgeek.com/">&lt;img src="binary-pillow.jpg" alt="binary-pillow">
+&lt;/a>Suppose you have a Java Server application, and some of the runtime binaries in that application are external to your application. Generated image files, compiled Silverlight components in your pages, or resource files which are managed by an external team.&lt;/p>
+&lt;p>Much like the jar files used by your application, these external binaries can be seen as dependencies, with versions. This blogpost assumes your project is built with Maven 2, because the real world &lt;a href="http://rolfje.wordpress.com/2012/12/02/the-world-is-not-a-green-field/">isn't always a greenfield project&lt;/a>.&lt;/p>
+&lt;p>Because Maven is designed around jar file dependencies, and a lot of it's internal decisions are based on file extensions, it looks like this problem can not be tackled with Maven. But there is a way to do this. It will decouple your sub-projects and make version and dependency management much better.&lt;/p>
+&lt;!-- more -->**Uploading the binaries files in a remote repository**
+&lt;p>The hardest part of this problem is getting the binary uploaded to your maven repository. It seems that there is no other way than disquising it as a jar file, which only leads to confusion. But it turns out that you can, actually upload a .exe file to the repository. To do so, place a pom.xml file in the root of the project from which you want to upload the binary file. You do not have to mavenize the whole project, we only use Maven to do the upload to the repository.&lt;/p>
+&lt;p>Find the file you want to deploy. It can be placed anywhere but I prefer to use the target directory so it looks maven-esque. Make sure you choose the &amp;quot;pom&amp;quot; packaging type so maven does not generate a jar for you.&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;11,16,23,24&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]&lt;project>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;packaging>pom&lt;/packaging>
+&lt;version>1.0-SNAPSHOT&lt;/version>
+&lt;name>Some executable component&lt;/name>
+&lt;build>
+&lt;plugins>
+&lt;plugin>
+&lt;groupId>org.codehaus.mojo&lt;/groupId>
+&lt;artifactId>build-helper-maven-plugin&lt;/artifactId>
+&lt;version>1.8&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>attach-artifacts&lt;/id>
+&lt;phase>package&lt;/phase>
+&lt;goals>
+&lt;goal>attach-artifact&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifacts>
+&lt;artifact>
+&lt;file>${basedir}/target/myexecutable.exe&lt;/file>
+&lt;type>exe&lt;/type>
+&lt;/artifact>
+&lt;/artifacts>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+&lt;/plugins>
+&lt;/build>
+&lt;/project>
+[/sourcecode]&lt;/p>
+&lt;p>When you run &amp;quot;maven install&amp;quot;, your exe file will be pushed to your local repository (more on using a remote repository further down).&lt;/p>
+&lt;p>&lt;strong>Downloading the binaries files from the remote repository&lt;/strong>
+In the project that will depend on your binary file, you want to copy it from your repository into your target directory at the compile stage. You can do this by adding the following plugin configuration to your pom:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;14,15,16,17,18&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+&lt;artifactId>maven-dependency-plugin&lt;/artifactId>
+&lt;executions>
+&lt;execution>
+&lt;id>copy-dependency&lt;/id>
+&lt;phase>compile&lt;/phase>
+&lt;goals>
+&lt;goal>copy&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifactItems>
+&lt;artifactItem>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;type>exe&lt;/type>
+&lt;overWrite>true&lt;/overWrite>
+&lt;outputDirectory>target&lt;/outputDirectory>
+&lt;/artifactItem>
+&lt;/artifactItems>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Multiple artifacts in a single dependency&lt;/strong>
+When the non-java project produces multiple files with the same extension, you will notice that the trick I just described will not work because you can only specify one file with one extension. This is because maven uses the extension to locate the exact file.&lt;/p>
+&lt;p>In order to deploy multiple files, it is best you bundle them in a zip and unpack them at the other end. In the non-java project, add the assembly plugin:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;2,15,17&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;artifactId>maven-assembly-plugin&lt;/artifactId>
+&lt;version>2.2-beta-2&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>generate-assembly&lt;/id>
+&lt;phase>package&lt;/phase>
+&lt;goals>
+&lt;goal>single&lt;/goal>
+&lt;/goals>
+&lt;/execution>
+&lt;/executions>
+&lt;configuration>
+&lt;descriptors>
+&lt;descriptor>src/maven/descriptor.xml&lt;/descriptor>
+&lt;/descriptors>
+&lt;finalName>${artifactId}&lt;/finalName>
+&lt;outputDirectory>target&lt;/outputDirectory>
+&lt;/configuration>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>We use so the zipfile will always have the same name in the target directory, which will make build-helper-maven-plugin configuration easier. It also makes it easier for non-maven scripts to find the file. Upon deploying to the repository, maven will fix the filename so don't worry about that too much.&lt;/p>
+&lt;p>The contents of src/maven/descriptor.xml can look like this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;21,22&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;assembly xmlns="http://maven.apache.org/POM/4.0.0"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/xsd/assembly-1.0.0.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">&lt;/p>
+&lt;formats>
+&lt;format>zip&lt;/format>
+&lt;/formats>
+&lt;p>&lt;includeBaseDirectory>false&lt;/includeBaseDirectory>&lt;/p>
+&lt;fileSets>
+&lt;fileSet>
+&lt;directory>target/binaries&lt;/directory>
+&lt;outputDirectory>&lt;/outputDirectory>
+&lt;includes>
+&lt;include>*.exe&lt;/include>
+&lt;include>*.dll&lt;/include>
+&lt;/includes>
+&lt;/fileSet>
+&lt;/fileSets>
+&lt;/assembly>
+[/sourcecode]
+&lt;p>In the java project, you don't need to change much. Instead of &amp;quot;copy&amp;quot;, you tell the dependency plugin to unzip the file into a directory:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;3,9,16,18&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+&lt;artifactId>maven-dependency-plugin&lt;/artifactId>
+&lt;executions>
+&lt;execution>
+&lt;id>copy-dependency&lt;/id>
+&lt;phase>compile&lt;/phase>
+&lt;goals>
+&lt;goal>unpack&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifactItems>
+&lt;artifactItem>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;type>zip&lt;/type>
+&lt;overWrite>true&lt;/overWrite>
+&lt;outputDirectory>target/unpacked&lt;/outputDirectory>
+&lt;/artifactItem>
+&lt;/artifactItems>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Deploying to a remote repository&lt;/strong>
+If the two builds run on two different machines, you may need an external repository. For larger projects, I'd recommend an external, locally managed repository not just for disctribution, but also for speed. Your team will have almost instant access to libraries, speeding up your (initial) builds. Installing a local &lt;a href="http://www.jfrog.com/home/v_artifactory_opensource_overview">jFrog Artifactory&lt;/a> is a good choice.&lt;/p>
+&lt;p>To make deployment to this external repository work, you need to add the following to your non-java pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;distributionManagement>&lt;/p>
+&lt;!-- final releases will be deployed to this repository -->
+&lt;repository>
+&lt;id>artifactory.releases&lt;/id>
+&lt;name>Artifactory releases&lt;/name>
+&lt;url>http://myartifactory.example.com/artifactory/libs-release-local&lt;/url>
+&lt;/repository>
+&lt;!-- snapshot releases will be deployed to this repository -->
+&lt;snapshotRepository>
+&lt;id>artifactory.snapshots&lt;/id>
+&lt;name>Artifactory snapshots&lt;/name>
+&lt;url>http://myartifactory.example.com/artifactory/libs-snapshots-local&lt;/url>
+&lt;/snapshotRepository>
+&lt;/distributionManagement>
+[/sourcecode]
+&lt;p>If you get an error like:&lt;/p>
+&lt;blockquote>Error deploying artifact: Failed to transfer file: ://myartifactory.example.com/artifactory/libs-snapshots-local/com.rolfje.example/1.0-SNAPSHOT/executablestuff-1.0-20130604.103146-1.pom. Return code is: 401&lt;/blockquote>
+&lt;p>Your artifactory is probably not configured to do anonymous deployments. Make sure you can access the artifactory with a userid and password, and add those to the ~/.m2/settings.xml of the machine which will deploy the binary artifacts.&lt;/p>
+&lt;p>I advise to use a special &amp;quot;deployment user&amp;quot; to do this, so you can share this configuration between builds and not depend on a user changig his password. The correct way to store a password for the Artifactory is &lt;a href="http://wiki.jfrog.org/confluence/display/RTF20/Using+Secured+Passwords+in+Settings.xml">explained here&lt;/a>.  Using the DESede encrypted password on your Artifactory profile page, the maven settings.xml file of the buildserver user can look like this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;settings>
+&lt;server>
+&lt;id>artifactory.releases&lt;/id>
+&lt;username>your-repository-username&lt;/username>
+&lt;password>{DESede}kIniw826kaluA1OPa865A==&lt;/password>
+&lt;/server>
+&lt;server>
+&lt;id>artifactory.snapshots&lt;/id>
+&lt;username>your-repository-username&lt;/username>
+&lt;password>{DESede}kIniw826kaluA1OPa865A==&lt;/password>
+&lt;/server>
+&lt;/settings>
+[/sourcecode]&lt;/p>
+&lt;p>And then, of course, you need your java project to know where to download the dependencies so add this to the pom.xml file in your binary project:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;repositories>
+&lt;repository>
+&lt;id>central&lt;/id>
+&lt;url>&lt;a href="http://myartifactory.example.com/repo">http://myartifactory.example.com/repo&lt;/a>&lt;/url>
+&lt;releases>
+&lt;enabled>true&lt;/enabled>
+&lt;checksumPolicy>fail&lt;/checksumPolicy>
+&lt;/releases>
+&lt;snapshots>
+&lt;enabled>true&lt;/enabled>
+&lt;checksumPolicy>fail&lt;/checksumPolicy>
+&lt;/snapshots>
+&lt;/repository>
+&lt;/repositories>
+[/sourcecode]&lt;/p>
+&lt;p>If you've reached the end of this blogpost without problems, you should now be able to build your binaries, have them uploaded with correct versions to your external repository, and your Maven/Java build server will download the correct versions of these dependencies at build time. Switching back and forth between tags on your Java project will automatically fetch the correct versions of the binaries, the same way as it does for your jar dependencies.&lt;/p>
+&lt;p>Happy coding!&lt;/p></description></item><item><title>Why you should not use SOAP Headers</title><link>https://realrolfje.github.io/rolfje.com/2012/12/24/why-you-should-not-use-soap-headers/</link><pubDate>Mon, 24 Dec 2012 18:52:30 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/12/24/why-you-should-not-use-soap-headers/</guid><description>
+&lt;p>&lt;img src="container1.png" alt="container">&lt;/p>
+&lt;p>In the project I am working on right now we use apache XCF and Spring to provide a SOAP service to our customers. As part of the messages, there is a userid/password combo telling the application which user sent the request. I struggled with that today because I think that userid/password info should actually be in the SOAP Header, cleaning up my API, enable me to implement different authentication techniques in the future and generally be more &amp;quot;compliant&amp;quot; to the SOAP standard. Boy was I wrong.&lt;/p>
+&lt;!-- more -->First I needed to figure out how to get the userid/password info into the Header. Apache has [some information](https://cxf.apache.org/docs/ws-security.html) on this which is supposed to be "very good" according to the web but I had quite a bit of trouble because it misses quite a bit of context.
+&lt;p>At first, it took me ages to find out that I need to add this to my maven pom.xml file to actually &amp;quot;get&amp;quot; the security stuff onto my classpath:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]
+&lt;dependency>
+&lt;groupId>org.apache.cxf&lt;/groupId>
+&lt;artifactId>cxf-rt-ws-security&lt;/artifactId>
+&lt;version>2.5.1&lt;/version>
+&lt;/dependency>
+[/sourcecode]&lt;/p>
+&lt;p>I could find NO tutorial online telling me this, so I guess I saved you a good 20 minutes of searching right there.&lt;/p>
+&lt;p>Then, I needed to change the Spring configuration to &lt;a href="http://www.benmccann.com/dev-blog/apache-cxf-tutorial-ws-security-with-spring/">include the mysterious &amp;quot;WSS4JInInterceptor&amp;quot;&lt;/a> of which nobody understands what it does because it is an overdesigned elephant which implements obscure standards nobody seems to be using:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]
+&amp;lt;jaxws:endpoint id=&amp;quot;myCoolSOAPService&amp;quot; implementor=&amp;quot;#myCoolService&amp;quot; address=&amp;quot;/mycoolservice&amp;quot;&amp;gt;
+&lt;a href="jaxws:inInterceptors">jaxws:inInterceptors&lt;/a>
+&lt;ref bean="wss4jinterceptor"/>
+&amp;lt;/jaxws:inInterceptors&amp;gt;
+&amp;lt;/jaxws:endpoint&amp;gt;&lt;/p>
+&lt;bean id="wss4jinterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+&lt;constructor-arg>
+&lt;map>
+&lt;entry key="action" value="UsernameToken" />
+&lt;entry key="passwordType" value="PasswordDigest" />
+&lt;entry key="passwordCallbackRef">
+&lt;ref bean="myPasswordCallback" />
+&lt;/entry>
+&lt;/map>
+&lt;/constructor-arg>
+&lt;/bean>
+[/sourcecode]
+&lt;p>As you can see, the WSS4JInterceptor is configured to accept Usernames and passwords (albeit in deeply, convoluted nested elements adding humongous amounts of XML bloat to your Header).&lt;/p>
+&lt;p>To be able to take the userid/password combo I dutifully started writing my password handler:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;java&amp;quot; gutter=&amp;quot;false&amp;quot;]
+public class UseridPasswordCallback implements CallbackHandler {&lt;/p>
+&lt;pre>&lt;code> @Override
+public void handle(Callback[] arg0)
+throws IOException, UnsupportedCallbackException {
+// Not implemented yet
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+[/sourcecode]&lt;/p>
+&lt;p>You can see that my handle(Callback) method is not implemented. And there is a good reason for that.&lt;/p>
+&lt;p>Just before implementing all the code, I checked the wiring of all this stuff. The application started up beautifully, and I pointed SOAPUI to the WSDL to generate some example requests. To my horror, SOAPUI did not generate example headers. For some reason, the whole CXF stack just &amp;quot;forgets&amp;quot; to put that info in the WSDL, or maybe the specs don't leave room to have that information in the WSDL, I don't know.&lt;/p>
+&lt;p>So I set out to see how to build that Soap Security header. It was nuts. Not only did I need to figure this out from crude and incomplete examples, reverse engineer xsd's, and hand-craft it into the SOAPUI messages, I also had to deal with the awful error messages that gave me &amp;quot;Could not read XMReader&amp;quot; and the very helpful &amp;quot;ns1:InvalidSecurity&amp;quot;.&lt;/p>
+&lt;p>After an afternoon of absolute madness on something that should actually be infinitesimally simple, I gave up. I added the userid/password back into the functional calls (as part of my method signatures). And for a couple of very good reasons:&lt;/p>
+&lt;pre>&lt;code> 1. The first an most important one: If I as a developer have this much trouble wading to the poorly documented, underutilized, astrophysics-level complexity just to add a freakin' userid/password field to a SOAP message, how can I expect my users to ever accomplish this without rage-calling our helpline every 4 seconds?
+2. By making the fields part of the API, they become part of the WSDL, which immediately makes it clear what to add and where. SOAPUI even generates nice placeholders for it.
+3. I added an Aspect with an around advice intercepting the userid/password combo, use it to authenticate the user and immediately remove the password from memory. Simple, readable, effective and easily debuggable for any developer on the project.
+4. The pom.xml and the Spring configuration immediately become much simpler and gets rid of a few idiot acronyms in the process.
+&lt;/code>&lt;/pre>
+&lt;p>So there. Want to do SOAP Security as it was intended? Do yourself and your customers a favor: Don't.&lt;/p>
+&lt;p> &lt;/p></description></item><item><title>Distributed jMeter through VPN and SSL</title><link>https://realrolfje.github.io/rolfje.com/2012/02/16/distributed-jmeter-through-vpn-and-ssl/</link><pubDate>Thu, 16 Feb 2012 21:49:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/02/16/distributed-jmeter-through-vpn-and-ssl/</guid><description>
+&lt;p>&lt;a href="http://knowyourmeme.com/memes/lolgraphs">&lt;img src="a-graph.png" alt="">
+&lt;/a>This week I created a jMeter test setup for distributed testing. I thought it would be straight forward but I ran into some interesting things you might want to know if you are considering distributed testing using jMeter.&lt;/p>
+&lt;p>In my case, I had to test an application which was inside our corporate network, while working from home through a VPN and a firewall. Normally that is no problem, but jMeter has this funny construction where the slave (jMeter server) wants to connect back to the master (jMeter gui). It took some fiddling with iptables, the jMeter configuration and ssh tunneling to get it to work. Here's my setup:&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;a href="network-setup.png">&lt;img src="network-setup.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Getting this all to behave nicely wasn't trivial. All the information can be found, but it took me quite some time to piece it all together. If your setup looks like the one above, or if your setup involves having your jMeter master machine on a different subnet and/or behind a firewall, here's what you need to do.&lt;/p>
+&lt;p>&lt;strong>Step 1: Configuring the slaves&lt;/strong>
+In most jMeter setups, the slaves are Linux machines (any flavor will do, mine are redhat). Create a &amp;quot;jmeter&amp;quot; user on each of the machines so that you don't have to run the jMeter process as a root user.&lt;/p>
+&lt;pre>&lt;code> 1. [Download jmeter](http://jmeter.apache.org/download_jmeter.cgi) as a zip file and unzip it on each of the jMeter slave machines. At the time of this writing I am using jMeter 2.6. Make sure that the files in the bin directory are executable with
+chmod +x *.sh jmeter jmeter-server
+2. On the first machine, edit the jmeter.properties file in the /bin folder of the unpacked jMeter installation and uncomment the line containing the server.rmi.localport setting. I changed mine to read:
+server.rmi.localport=50000
+3. Save the jmeter.properties file and copy it over to all the other machines (in the correct location).
+4. As &amp;quot;root&amp;quot; user, edit the iptables configuration in /etc/sysconfig/iptables and add the following lines, just above the first &amp;quot;REJECT&amp;quot; line (the order is important here):
+# Start jmeter ports
+-A RH-Firewall-1-INPUT -p udp -m udp --dport 1099 -j ACCEPT
+-A RH-Firewall-1-INPUT -p tcp -m tcp --dport 1099 -j ACCEPT
+-A RH-Firewall-1-INPUT -p udp -m udp --dport 50000 -j ACCEPT
+-A RH-Firewall-1-INPUT -p tcp -m tcp --dport 50000 -j ACCEPT
+# End jmeter ports
+5. Save the file and while still being root, restart iptables with
+service iptables restart
+&lt;/code>&lt;/pre>
+&lt;p>This covers the work you need to do on the slaves. To test your setup, start the &amp;quot;jmeter-server&amp;quot; application on one of the slaves. Note the address and port the server reports listening to:&lt;/p>
+&lt;pre>&lt;code>Created remote object: UnicastServerRef [liveRef: 
+[endpoint:[&amp;lt;span style=&amp;quot;color:#993300;&amp;quot;&amp;gt;10.91.10.11:50000&amp;lt;/span&amp;gt;](local),
+objID:[-24679ca9:13581440206:-7fff, -1472515273052223306]]]
+&lt;/code>&lt;/pre>
+&lt;p>From another slave, you can see if the iptables configuration works by telnetting to this slave on port 50000. You'll get connected to the jmeter-server process. Use Ctrl-] to exit telnet (there is nothing useful you could type here). If you get a &amp;quot;Connection refused&amp;quot;, your iptables configuration is not working. Check your steps again.&lt;/p>
+&lt;p>For now, stop any running jMeter processes on the slaves.&lt;/p>
+&lt;p>&lt;strong>Step 2: Configuring the master&lt;/strong>
+The master is the system where your jMeter GUI will be running, and it is the system that tells the slaves what to do, and where to deliver their results. In order for the master to do that, it needs to be reachable by the slaves. In the network picture above you see a pesky firewall and a VPN server with mis-matching addresses. In order to make this work we're going to tell the master to listen at a fixed port for the slaves, and then do reverse port forwarding to the slaves so they can deliver content to a local port. Here's how:&lt;/p>
+&lt;pre>&lt;code> 1. Take the same zipfile you used for the slaves. and unpack it on your master machine. In my case, this is a Macbook, running OSX 10.7.2
+2. Edit the jmeter.properties file in the bin folder and list the ip addresses of the jMeter slaves in the remote_hosts property (remove the 127.0.0.1 address) so that it looks like:
+remote_hosts=10.91.10.10,10.91.10.11,10.91.10.12,10.91.10.13
+&lt;/code>&lt;/pre>
+&lt;p>Then look for the client.rmi.localport line and change that into:&lt;/p>
+&lt;pre>&lt;code>client.rmi.localport=51000
+&lt;/code>&lt;/pre>
+&lt;p>This is all the configuration you need to do on the master. The trick is in starting it all up, read on.&lt;/p>
+&lt;p>&lt;strong>Step 3: Starting your tests&lt;/strong>
+Now that your infrastructure is in place, let's put it to the test. First, from your jMeter master machine, connect to each of the machines using SSH, and setup a reverse tunnel to port 51000 on your master, like so:&lt;/p>
+&lt;pre>&lt;code>ssh -R 51000:localhost:51000 jmeter@10.91.10.11
+&lt;/code>&lt;/pre>
+&lt;p>Keep each of these sessions open, as the jMeter slave needs to be able to deliver it's test results to your jMeter master. On your master machine, open a command prompt and type the following:&lt;/p>
+&lt;pre>&lt;code>export JVM_ARGS=&amp;quot;-Djava.rmi.server.hostname=localhost&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>By doing this, jMeter will tell the slaves to connect to &amp;quot;localhost:51000&amp;quot; for delivering their results. This of course ends up being tunneled back to your jMeter master machine.&lt;/p>
+&lt;p>Then, on the master start jmeter.sh, load up your test script and use the &amp;quot;Run&amp;quot; Menu to run the script on one slave, or all slaves together. Remember that the master pushes your test script to each slave and tells it to run it. So if you have a script with a thread group running 10 threads, each slave will do 10 threads, resulting in 40 threads hitting your application.&lt;/p>
+&lt;p>&lt;strong>Tips and Tricks&lt;/strong>
+During this whole adventure I collected a few handy tips:&lt;/p>
+&lt;pre>&lt;code> * Document the whole setup, cookbook style, and put that document in an easy to find spot. There will be a time you have to pass this on to a colleague, and it will help a great deal if he can pick up your document and hit the ground running.
+* Put as much of the command line stuff you see above in scripts. In my setup, I have a &amp;quot;connect-slave.sh&amp;quot; script which contains the reverse tunnel trick, a &amp;quot;start-master.sh&amp;quot; which starts the jMeter master with the correct JVM arguments, and a &amp;quot;start-slave.sh&amp;quot; script which starts the slave with a bit more memory. Each slave has 2GB of heap, because I added the following line to the script:
+export JVM_ARGS=&amp;quot;-Xmx2028m&amp;quot;
+* As much as you need to pay attention to the performance of your application, also make sure that your test script is lean and mean. Some listeners are very expensive to use. The &amp;quot;View Results Tree&amp;quot; and &amp;quot;View Results in Table&amp;quot; are very memory intensive. Great for debugging a single thread, you'll quickly run out of memory for 100 Threads or longer tests. Once you've got your scripts working, disable as much of the listeners as possible.
+* jMeter debugging is fidgety. When debugging your script, always do 1 thread and 1 iteration on 1 server. Once that works, you can scale up (don't forget to disable the &amp;quot;View Results Tree&amp;quot; listeners, see above).
+* jMeter quickly runs out of memory. Increase the default heap sizes of the master and the slaves by using the [-Xmx JVM option](http://docs.oracle.com/javase/1.4.2/docs/tooldocs/windows/java.html).
+&lt;/code>&lt;/pre>
+&lt;p>Happy Testing!&lt;/p></description></item><item><title>Having fun at J-Fall 2011</title><link>https://realrolfje.github.io/rolfje.com/2011/11/03/having-fun-at-j-fall-2011/</link><pubDate>Wed, 02 Nov 2011 22:09:14 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/11/03/having-fun-at-j-fall-2011/</guid><description>
+&lt;p>&lt;a href="img_2973-small.jpg">&lt;img src="img_2973-small.jpg?w=150" alt="J-Fall 2011">
+&lt;/a>This year's Dutch Java Nerd event called &lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/">J-Fall&lt;/a> was held in Nijkerk, in a beautiful location called &lt;a href="http://www.regardz.nl/locaties/event-centers/regardz-hart-van-holland-nijkerk.aspx?gclid=CK7bg8zwmKwCFUMm3godUFpdPQ">&amp;quot;Hart van Holland&amp;quot;&lt;/a> . With plenty of sessions by speakers from all over the world it promised to be a great day for Java enthusiasts, at a great location for meeting friends and colleagues. I took a day off from work and it was well worth it.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00024/">&lt;!-- more -->Opening by Bert Ertman&lt;/a>&lt;/strong>
+Bert starts the day by welcoming the 1000+ attendees in the main presentation room in &amp;quot;Hart van Holland&amp;quot;. After explaining what the day is going to bring and where to find rooms, food, drinks, and company booths, he goes on to tell how they tried to get better network coverage. All these nerds with their smartphones in one single place is asking for trouble. It turns out it's too expensive to get good data network so they didn't do that. Network connections proved to be spotty at best in the main building, but I had good 3G coverage outside the main building.&lt;/p>
+&lt;p>The organizer of &lt;a href="http://www.devoxx.com/display/DV11/Home">Devoxx&lt;/a> came by to say hi, and also told us that the J-Fall presentations are being professionally captured and the most popular ones are going to be online soon at &lt;a href="http://www.parleys.com/">parleys.com&lt;/a>. He closed off with the hilarious &lt;a href="http://www.youtube.com/watch?v=b-Cr0EWwaTk">&amp;quot;Java Life&amp;quot; Rap Music Video&lt;/a> . By the way if you liked that, you certainly will like the &lt;a href="http://www.youtube.com/watch?v=2UFc1pr2yUU">&amp;quot;Whole foods Parking Lot&amp;quot; video&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00025/">Java 7 Directors Cut&lt;/a>&lt;/strong>
+After the cool opening and videos the whole room was ready for some kick-ass sessions. Tomas Nilsson said that he would have a hard time topping the Java Life music video. And he did. Opening with a laughable slide containing a full page mandatory disclaimer text, the presentation was a terrible erratic drive through his very personal memory lane, and after 15 minutes he lost about 80% of the audience. I had absolutely no idea what point he was trying to make, and why nobody advised him to revise his presentation after he gave the same talk at JavaOne. The good thing was that because of the spotty network coverage, not all tweets during this presentation reached the twitter servers, and &lt;a href="http://twitter.com/#!/search/%23jfall">#jfall&lt;/a> was not trending.&lt;/p>
+&lt;p>During the small coffee break we gather around to see what sessions each of us want to join. Scanning the company booths in the main lobby learns that the world didn't change: Booths luring you with pens, mints, stickers, iPads and nice ladies in the booth who are almost always never representing the companies' people or culture. I did score some nice ball pens though :-)&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00071/">Building Highly Scalable Java Applications on Windows Azure&lt;/a>&lt;/strong>
+Microsoft being a big sponsor of this year's J-Fall, they have to have a keynote. And so they did. And it was a good one. Certainly after the below par presentation skills of Oracle, Microsoft has a nicely polished slides and a demo of Azure, a good story and good pace. During the demo the DNS switching is a bit slow and prevents some things to be shown. At the end of the talk, the speaker confidently retries and it now works. This results in a well-deserved warm applause from the audience. &lt;a href="http://twitter.com/#!/doortje123/status/131721454352998400">Well done Microsoft&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00050/">The Java EE7 Platform: Developing for the Cloud&lt;/a>&lt;/strong>
+With &amp;quot;Cloud&amp;quot; being the new buzzword nowadays, &lt;a href="http://www.java.net/blogs/arungupta/">Arun Gupta&lt;/a> did a keynote on where Java 7 is going, and how applications would fit in this cloud structure. I never heard the term &amp;quot;tenants&amp;quot; being used in this respect, which was interesting. The whole talk was a bit erratic, and after Java EE 6 fixing all the EJB gripes of EJB 3, I couldn't help but feeling that all these &amp;quot;enterprisey&amp;quot; terms are re-introduced in Java 7. The whole idea that you build an application but other people configure the actual building blocks that your application will be instantiated with, is a proven failure to me. Administrators don't have developer knowledge. Changing configuration of key components in your application will severely break it.&lt;/p>
+&lt;p>I came out of this session not feeling to hot about Java 7 and the whole components-in-the cloud and people renting instances idea. Too many roles, academic, over engineered, very Sun Enterprise EJB 2 feeling.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00066/">Don't call us - we'll push&lt;/a>&lt;/strong>
+A colleague advised be to go see &lt;a href="http://technology.amis.nl/blog/author/lucas">Lucas Jellema&lt;/a>. Lucas was the first speaker of the day who actually seemed to know what he was doing on stage. Although his slides were a bit crowded, he had a good story with many demos. It was a welcome change after Tomas and Arun, although Lucas didn't have any real new stuff. Polling, long-polls, asynchronus AJAX calls and the old request/response problem in http, and database triggers firing Java programs. Except for &lt;a href="http://en.wikipedia.org/wiki/WebSocket">Web Sockets&lt;/a> there was nothing new but nice to be reminded how these things actually work.&lt;/p>
+&lt;p>After Lucas' talk we went to get our complimentary lunch. Because we were relatively early, we had no problems getting the lunch package, and enjoyed our tasty sandwiches, milk, apples and Mars. Another free coffee and we're recharged and ready for the afternoon sessions.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00053/">Migrating Spring to Java EE 6&lt;/a>&lt;/strong>
+&lt;a href="http://www.linkedin.com/in/paulb01">Paul Bakker&lt;/a> &lt;a href="img_2974-small.jpg">&lt;img src="img_2974-small.jpg?w=150" alt="">
+&lt;/a>had clearly prepared his slides well, and insisted in giving his talk in English because it would be recorded. I thought this was a nice touch (in case you haven't noticed, I have this idea that everything you want to share with technical people should be in English). Paul explained the tactics to use when converting a Spring application to Java EE 6. Where to start, and how to keep your code compiling while doing the conversion.&lt;/p>
+&lt;p>I have worked on some large projects and although Paul mentions that some parts of the conversion will take a bit more time than others, I am not looking forward to convert my current 250+ thousand lines of code to Java EE 6 just yet. A plain Spring application may be easy, but as soon as you have Spring AOP, interesting Proxy beans and Custom Factory beans, you'd have to rewrite that code in Java EE6, which could take quite some time.&lt;/p>
+&lt;p>I predict converting to Java EE 6 will be much more expensive than upgrading to the next version of Spring for most serious enterprise level applications. I have a home project I'd try to convert first, maybe more on that later on this blog, who knows.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00056/">Extreme performance with the Disruptor&lt;/a>&lt;/strong>
+Although the title and the talk description in the schedule didn't hint too much about it, this talk was 100% about Queues. After some high level talk about Producers, Consumers and Queues, &lt;a href="http://blog.dutchworks.nl/author/allard/">Allard Buijze&lt;/a> drops a bomb and introduces some circle and the name &amp;quot;Disruptor&amp;quot;, without introduction. After a few slides everybody understands that this is some kind of &amp;quot;Circular Queue&amp;quot;.&lt;/p>
+&lt;p>We had a bit of a laugh when Allard uses 4 slides to explain about dirty cache line reads at CPU level and how the &lt;a href="http://code.google.com/p/disruptor/">Disruptor&lt;/a> prevents all that, which he then dismisses with &amp;quot;but that doesn't help much&amp;quot;.&lt;/p>
+&lt;p>The talk was entertaining and what I got from it is that the main reason why the &amp;quot;Disruptor&amp;quot; works faster than regular Queues, is that Producers and Consumers can inform each other about their position in the queue, which prevents Queue polling. I can't help but think that this can be done with regular Queue implementations as well, so maybe I missed something here.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00058/">Java Tuning Puzzlers&lt;/a>&lt;/strong>
+For the final session for today most of us decided to go to &amp;quot;Java Tuning Puzzlers&amp;quot;, because it looked like fun. And it was. The presentation by &lt;a href="http://twitter.com/#!/kjkoster">Kees Jan Koster&lt;/a> and &lt;a href="http://twitter.com/#!/jpinpointcom">Jeroen Borgers&lt;/a> was fast, funny, interactive, hands-on and very refreshing. They showed some real-life performance problems they encountered in their work, and asked the audience to solve them. All Java nerds lit up and started shouting answers and funny remarks. Jeroen and particularly Kees Jan were very good in answering questions and snarky comments from the audience.&lt;/p>
+&lt;p>As the talk went into overtime and the organization was trying to cut it short, Jeroen and Kees Jan asked the audience &amp;quot;are we going to get beer, or are we going to finish this?&amp;quot;. The whole audience shouted &amp;quot;Finish it!&amp;quot; and we finished the last Puzzler.&lt;/p>
+&lt;p>No fancy new frameworks, no buzzword bingo, just plain old dry-coding and a plug for one of my favorite tools, findbugs &lt;a href="http://findbugs.sourceforge.net/">http://findbugs.sourceforge.net/&lt;/a> . It was the best session I had all day, and I actually went back to Kees Jan and Jeroen to compliment them with their awesome talk.&lt;/p>
+&lt;p>&lt;strong>Conclusion&lt;/strong>
+I might sound a bit critical here and there, but I had a great day. Being amongst fellow-nerds, talking tech talk, sharing funny stories, listening to interesting new developments and hearing other people's views on things was really refreshing. Next thing on my list: Try to get Kees Jan Koster to do at least one big main-track keynote at J-Spring or J-Fall next year, about any subject. Because he will at least keep the audience awake.&lt;/p>
+&lt;p>Thanks Bert and all of the NLJug people and sponsors who made this possible. See you all at J-Spring!&lt;/p>
+&lt;p>&lt;a href="img_2978-small.jpg">&lt;img src="img_2978-small.jpg" alt="Oracle J-Fall flowers">
+&lt;/a>&lt;/p></description></item><item><title>Add some magic to Eclipse</title><link>https://realrolfje.github.io/rolfje.com/2011/07/30/add-some-magic-to-eclipse/</link><pubDate>Sat, 30 Jul 2011 18:40:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/07/30/add-some-magic-to-eclipse/</guid><description>
+&lt;p>&lt;a href="http://nl.toonpool.com/gallery.php?user=406">&lt;img src="harry_potter_31795.jpg" alt="Templatus Expandum!">
+&lt;/a>The top feature of the eclipse IDE is the very impressive refactoring possibilities. It makes code feel like play-doh, allowing you to knead it in any shape way or form you think fits the current situation. A close second to that is the impressive templates and code assist. Yes, Java is verbose, but I think 80% of the characters which make up a Java program was never actually typed. All the readability without the labour, brought to you by eclipse's powerful templates.&lt;/p>
+&lt;p>What many people don't realize is that you can easily add to this magic by creating your own templates. One of the first templates I always add to the environment is the one which adds a private static final log4j logger. I thought it would be great example to share with you.&lt;/p>
+&lt;!-- more -->
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; gutter=&amp;quot;false&amp;quot;]
+${imp:import(org.apache.log4j.Logger)}
+private static final Logger LOG = Logger.getLogger(${enclosing_type}.class);
+[/sourcecode]&lt;/p>
+&lt;p>You can add and change existing templates in Eclipse -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Editor -&amp;gt; Templates. There are other great examples when you scroll through the list, and you can export the templates to a file in your &lt;a href="http://www.rolfje.com/2011/07/03/1355/">shared SpiderOak folder&lt;/a> to have them available on all your machines.&lt;/p>
+&lt;p>&lt;a href="screen-shot-2011-07-30-at-20-18-00.png">&lt;img src="screen-shot-2011-07-30-at-20-18-00.png?w=300" alt="Templates configuration in Eclipse">
+&lt;/a>Remember to give your templates an easy name so you can quickly invoke them by code completion. Great examples are the existing &amp;quot;sysout&amp;quot; and &amp;quot;foreach&amp;quot; templates. I called mine &amp;quot;llog&amp;quot; with a double-l because &amp;quot;log&amp;quot; collides with too many other code completion possibilities.&lt;/p>
+&lt;p>Experiment and enjoy your increased productivity.&lt;/p></description></item><item><title>^H(eaven) key binding in Eclipse</title><link>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</link><pubDate>Sun, 19 Jun 2011 19:21:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</guid><description>
+&lt;p>&lt;a href="search-window.png">&lt;img src="search-window.png?w=150" alt="Eclipse File Search Window">
+&lt;/a>As a long time user of Eclipse, I have never understood the any of the tabs of the Search panel in Eclipse. JavaScript search, Java Search, Remote Search, they all make no sense to a modern man who is used to a single search box which searches everything. So I always use the &amp;quot;File Search&amp;quot; Tab, which does exactly what I want 99% of the time.&lt;/p>
+&lt;p>File Search always requires mouseclicks. To open the Search window and select the correct tab. It was not until recently that I realized that I could actually reassign the ^H (Control - H) key combination to pop up the File Search tab. If you are an avid Eclipse user you've probably already done this, or know how to do this. If you are new to eclipse, or lazy like me, read on to see how you can re-map this key binding.&lt;/p>
+&lt;!-- more -->
+&lt;p>To remap ^H to &amp;quot;File Search&amp;quot;, do the following:&lt;/p>
+&lt;p>Open Eclipse preferences and go to &amp;quot;General -&amp;gt; keys&amp;quot;. You should see the following settings screen:&lt;/p>
+&lt;p>&lt;a href="eclipse-settings-key-binding.png">&lt;img src="eclipse-settings-key-binding.png?w=300" alt="Eclipse Key Bindings Preference page">
+&lt;/a>&lt;/p>
+&lt;pre>&lt;code> * In the filter text, type &amp;quot;file search&amp;quot;. The command list should now contain only one entry, &amp;quot;File Search&amp;quot;.
+* Highlight the &amp;quot;File Search&amp;quot; command
+* Click in the &amp;quot;Binding&amp;quot; field and press ^H. You should now see that you've created a conflict with the &amp;quot;Open Search Dialog&amp;quot; in the &amp;quot;conflicts&amp;quot; list on the right.
+* Select the conflict you want to remove, and empty the key binding field.
+* Press the &amp;quot;Ok&amp;quot; button to close the preferences screen.
+&lt;/code>&lt;/pre>
+&lt;p>Now you're all done. When you're in an editor and want to see if selected text is present in other parts of your project&lt;/p>
+&lt;p>Let's say you are looking at Java source of an Ibatis SqlMapClient and want to find the matching statement in any of the the SqlMap.xml files. You can now simply select the text in the Java file, hit ^H, Enter, and voila, you get a list of all files with that same text in it, anywhere in your enclosing project or workspace, without copy-pasting or even touching the mouse.&lt;/p>
+&lt;p>Now go play with your new found piece of heaven.&lt;/p></description></item><item><title>Changing the Order of your UnitTests</title><link>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</link><pubDate>Fri, 01 Apr 2011 21:17:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</guid><description>
+&lt;p>&lt;img src="toddler-shape-colour-sorting-puzzle.jpg" alt="">
+A few months ago we had a problem where Eclipse could not automatically run all jUnit unit tests in a package if that package references a class called &amp;quot;enum&amp;quot;, which is a reserved word in Java 1.6. I'll spare you the details, but we were forced to create a TestSuite. Normally we avoid this construction because it's easy to create a new unit test and forget to add it to the correct TestSuit. So as a workaround we wrote some code which could build and return a TestSuite dynamically. Right-click in eclipse, select &amp;quot;Run as Unittest&amp;quot;, sit back and enjoy.&lt;/p>
+&lt;p>Lately this piece of code came in handy while testing another application, which required the removal of data from a database. Yes I know, Unittests should maybe not depend on databases because it leans towards integration testing, but here we are, and I need to solve it. I used the old TestSuite code and changed it so that the TestCase I needed to run first was singled out, while still maintaining the functionality of auto-detecting testcases in the source folder.&lt;/p>
+&lt;!-- more -->I've cleaned up the code and made an example implementation which sorts the test cases in alpabetical order. It's a simple starting point and definetely not the prettiest code I've ever written but it works, it helped me and it might help you. Copy/paste, and adjust to your own needs.
+&lt;p>Have fun!&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; gutter=&amp;quot;false&amp;quot; autolinks=&amp;quot;false&amp;quot;]
+package com.rolfje.example;&lt;/p>
+&lt;p>import java.io.File;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;&lt;/p>
+&lt;p>import junit.framework.Test;
+import junit.framework.TestSuite;&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Constructs a testsuite by dynamically scanning for&lt;/li>
+&lt;li>classes ending in &amp;quot;*Test&amp;quot;, and allows for re-ordering of&lt;/li>
+&lt;li>the Classes in the Suite.
+*/
+public class OrderedTestSuite {&lt;/li>
+&lt;/ul>
+&lt;p>public static Test suite() throws Exception {&lt;/p>
+&lt;pre>&lt;code>// Find all test classes
+List testClasses = findTestClasses();
+// Custom test ordering example: Sort test classes in
+// natural alphabetic order based on simple classname
+Collections.sort(testClasses, new Comparator() {
+@Override
+public int compare(Class o1, Class o2) {
+return o1.getSimpleName().compareTo(
+o2.getSimpleName());
+}
+});
+// Convert the Set to a TestSuite
+TestSuite suite = new TestSuite(
+&amp;quot;Custom ordered TestSuite&amp;quot;);
+for (Class testClass : testClasses) {
+suite.addTestSuite(testClass);
+}
+return suite;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>private static List findTestClasses()
+throws Exception {
+List testClasses = new ArrayList();&lt;/p>
+&lt;pre>&lt;code>File testDir = getRootOfTestTree();
+List files = new ArrayList();
+getTestFiles(files, testDir);
+int nameIdx = testDir.getAbsolutePath().length() + 1;
+for (Iterator iterator = files.iterator(); iterator
+.hasNext();) {
+File file = (File) iterator.next();
+String className = file.getAbsolutePath().substring(
+nameIdx);
+className = className
+.replace(File.separatorChar, '.');
+className = className.replaceAll(&amp;quot;.class&amp;quot;, &amp;quot;&amp;quot;);
+Class testClass = Class.forName(className);
+// Prevent recursion
+if (OrderedTestSuite.class.equals(testClass)) {
+continue;
+}
+if (isTestClass(testClass)) {
+testClasses.add(testClass);
+}
+}
+return testClasses;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**
+*&lt;/p>
+&lt;ul>
+&lt;li>@param clazz Class to check&lt;/li>
+&lt;li>@return &lt;code>true&lt;/code> if the given Class is a&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> usable implementation of {@link Test}
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static boolean isTestClass(Class clazz)
+throws Exception {
+int modifiers = clazz.getModifiers();
+if (Modifier.isAbstract(modifiers)
+|| Modifier.isInterface(modifiers)
+|| Modifier.isPrivate(modifiers)) {
+return false;
+}&lt;/p>
+&lt;pre>&lt;code>return Test.class.isInstance(clazz.newInstance());
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>@return The root directory of the Java Test sources.
+*/
+private static File getRootOfTestTree() {
+String meAsClasspathResource = OrderedTestSuite.class
+.getResource(
+OrderedTestSuite.class.getSimpleName()
++ &amp;quot;.class&amp;quot;).getFile()
+.replace('/', File.separatorChar);
+String myLocation = OrderedTestSuite.class
+.getCanonicalName();
+myLocation = myLocation
+.replace('.', File.separatorChar);&lt;/li>
+&lt;/ul>
+&lt;pre>&lt;code>if (meAsClasspathResource == null
+|| !meAsClasspathResource.contains(myLocation)) {
+throw new RuntimeException(
+&amp;quot;Can not find the class resource for &amp;quot;
++ OrderedTestSuite.class.getCanonicalName());
+}
+meAsClasspathResource = meAsClasspathResource
+.substring(0,
+meAsClasspathResource.indexOf(myLocation));
+File dir = new File(meAsClasspathResource);
+if (!dir.exists()) {
+throw new RuntimeException(&amp;quot;The directory &amp;quot;
++ dir.getAbsolutePath() + &amp;quot; does not exist.&amp;quot;);
+}
+if (!dir.isDirectory()) {
+throw new RuntimeException(dir.getAbsolutePath()
++ &amp;quot; is not a directory.&amp;quot;);
+}
+return dir;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Recursively iterates through the nextFiles array to&lt;/li>
+&lt;li>find all test files. which it subsequently returns.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>@param allTestFilesSoFar&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> new Files will be added to this List
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;li>@param nextDir&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> The directory to scan for java Test files
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static void getTestFiles(
+List allTestFilesSoFar, File nextDir) {
+File[] files = nextDir.listFiles();
+for (int t = 0; t &amp;lt; files.length; t++) {
+File nextFile = files[t];
+if (nextFile.isDirectory()) {
+getTestFiles(allTestFilesSoFar, nextFile);
+} else if (nextFile.getName().endsWith(&amp;quot;Test.class&amp;quot;)
+|| nextFile.getName().endsWith(&amp;quot;Suite.class&amp;quot;)) {
+allTestFilesSoFar.add(nextFile);
+}
+}
+}
+}
+[/sourcecode]&lt;/p></description></item><item><title>Your Maven Java WEB project in Eclipse WTP</title><link>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</link><pubDate>Fri, 28 Jan 2011 22:51:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</guid><description>
+&lt;p>&lt;a href="http://www.eclipse.org/webtools/">&lt;img src="wtp_logo_2010.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>In our company, all Java projects are setup with Maven configuration so that after a &amp;quot;mvn eclipse:eclipse&amp;quot; any developer is generally good to go. One of these projects was a web project but would not transform into a WTP project. By running &amp;quot;mvn eclispe:eclipse&amp;quot; it became a Java project, but could not be added to a Server in Eclipse. It was not a WTP project.&lt;/p>
+&lt;p>I learned that the author of the project tried but never got the WTP plugin to work properly. Using the Google, I found more people who are having the same problem converting their existing Maven Java Web projects in Eclipse into a WTP project. There are even a few desperate articles describing how to edit your .project and .classpath files. Oh dear. This calls for an article on &lt;a href="http://www.rolfje.com">www.rolfje.com&lt;/a>.&lt;/p>
+&lt;!-- more -->It all came down to the maven-eclipse-plugin which would just not configure my project properly. I soon learned that in their infinite wisdom, the development team decided that the maven-eclipse-plugin no longer uses a default value for the _&lt;wtpversion>_ setting. Even if you have the _&lt;wtpapplicationxml>true&lt;/wtpapplicationxml>_ element in your _pom.xml_, without the _&lt;wtpversion>_ tag the maven-eclipse-plugin will ignore all wtp project settings silently. So the solution was rather simple:
+&lt;p>**Short answer
+**The short answer to this fun evening full of Googling and reading is: Add the &lt;em>&lt;wtpversion>&lt;/em> tag to your maven-eclipse-plugin configuration, run &lt;em>&amp;quot;mvn clean eclipse:eclipse&amp;quot;&lt;/em> and refresh your project. That's it.&lt;/p>
+&lt;p>**The long version
+**For people who like to copy-paste (like me): Change your &lt;em>pom.xml&lt;/em> file in the root of your project to include the &lt;em>&lt;wtpapplicationxml>&lt;/em> and &lt;em>&lt;wtpversion>&lt;/em> tags as shown at the bottom of this example pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;46,47&amp;quot;]
+&lt;project>
+&lt;packaging>war&lt;/packaging>&lt;/p>
+&lt;dependencies>
+[...]
+&lt;/dependencies>
+&lt;build>
+&lt;resources>
+&lt;resource>
+&lt;directory>src/main/java&lt;/directory>
+&lt;includes>
+&lt;include>**/*.xml&lt;/include>
+&lt;include>**/*.xsd&lt;/include>
+&lt;include>**/*.wsdl&lt;/include>
+&lt;/includes>
+&lt;/resource>
+&lt;/resources>
+&lt;pre>&lt;code>&amp;lt;testResources&amp;gt;
+&amp;lt;testResource&amp;gt;
+&amp;lt;directory&amp;gt;src/test/java&amp;lt;/directory&amp;gt;
+&amp;lt;includes&amp;gt;
+&amp;lt;include&amp;gt;**/*.xml&amp;lt;/include&amp;gt;
+&amp;lt;/includes&amp;gt;
+&amp;lt;/testResource&amp;gt;
+&amp;lt;/testResources&amp;gt;
+&amp;lt;plugins&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;source&amp;gt;1.6&amp;lt;/source&amp;gt;
+&amp;lt;target&amp;gt;1.6&amp;lt;/target&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-war-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;2.1.1&amp;lt;/version&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-eclipse-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;wtpapplicationxml&amp;gt;true&amp;lt;/wtpapplicationxml&amp;gt;
+&amp;lt;wtpversion&amp;gt;2.0&amp;lt;/wtpversion&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;/plugins&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;/build>
+&lt;/project>
+[/sourcecode]
+&lt;p>Open a command prompt at the root of your project (where the_ pom.xml_ file is) and have maven re-fresh the project, like this:&lt;/p>
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+mvn clean eclipse:eclipse
+[/sourcecode]&lt;/p>
+&lt;p>Open eclipse, right click on the root of your project and select &amp;quot;refresh&amp;quot; (or press F5).&lt;/p>
+&lt;p>After you've done this, you should have &amp;quot;Web Project Settings&amp;quot; in the properties of the eclipse project. If you right-click on your defined servers in Eclipse, the project should show up in the &amp;quot;Add and Remove&amp;quot; dialog.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Simple Strict Date Parsing</title><link>https://realrolfje.github.io/rolfje.com/2010/03/06/simple-strict-date-parsing/</link><pubDate>Fri, 05 Mar 2010 23:00:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/03/06/simple-strict-date-parsing/</guid><description>
+&lt;p>&lt;img src="calendar-icon2.png" alt="">
+In Java, the &lt;em>DateFormat.parse()&lt;/em> method is a funny little critter. It helps you by trying to figure out what date you actually meant when you typed in &amp;quot;35/12/2O10&amp;quot; (note the letter &amp;quot;O&amp;quot; in 2O10). In this case, it will parse the date without errors or warnings, and returns the date &amp;quot;11/12/04&amp;quot; (November 12th, 0004). That's because it thinks &amp;quot;35&amp;quot; is a month, and &amp;quot;2&amp;quot; is the year, ignoring everything after the letter &amp;quot;O&amp;quot;.&lt;/p>
+&lt;p>&lt;em>DateFormat&lt;/em> tries to convert the &amp;quot;35th month&amp;quot; into 2 years and 11 months, and correct the date accordingly. &lt;em>df.setLenient(false)&lt;/em> prevents this, but that still leaves the problem of the parsing stopping at the first wrong character without warning.&lt;/p>
+&lt;p>I needed a much stricter way of parsing dates, and yesterday I found an elegant solution to this problem. It's so small I was able to &lt;a href="http://twitter.com/rolfje/status/9828355998">tweet it in less than 140 characters&lt;/a>, but I thought it deserved a decent blogpost so here it goes:&lt;/p>
+&lt;p>`&lt;/p>
+&lt;pre>&lt;code>public Date parseDateString(String inputDateString)
+throws ParseException {
+DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+Date parsedDate = df.parse(inputDateString);
+if (!inputDateString.equals(df.format(parsedDate))) {
+throw new ParseException(&amp;quot;Invalid Date&amp;quot;, 0);
+}
+return parsedDate;
+}
+&lt;/code>&lt;/pre>
+&lt;p>`&lt;/p>
+&lt;p>The brilliance here is in the comparing of the formatted date with the original input. The method returns a normal ParseException so you can perfectly replace your original &lt;em>df.parse()&lt;/em> calls with it, making them more strict.&lt;/p>
+&lt;p>Thanks to Bas for this elegant and simple solution.&lt;/p></description></item><item><title>Ibatis Inline Parameter Maps</title><link>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</link><pubDate>Tue, 16 Feb 2010 15:19:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</guid><description>
+&lt;p>&lt;img src="box.jpg" alt="">
+Today I (re)discovered a feature in the Ibatis data mapper framework which was clearly documented, but for some reason was not being used in our project. The feature is called &amp;quot;inline parameter maps&amp;quot; and combined with a wrapper bean it can clean up a lot of clutter in the code and in the SqlMaps. Please feel free to share this example with your fellow Ibatis Data Mapper 2 framework users.&lt;/p>
+&lt;!-- more -->**The Case.**
+&lt;p>Suppose you are building software to interface with an old Oracle backoffice for a big parcel delivery company. One of the Classes you are using is the &amp;quot;Box&amp;quot; class, which is a basic Java Bean:&lt;/p>
+&lt;pre>&lt;code>public class Box {
+private int height;
+private int width;
+private int depth;
+private int weight;
+private String color;
+private String origin;
+private String destination;
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>You need to store a Box object using a stored procedure in the backoffice. The stored procedure, called &amp;quot;store_box&amp;quot;, returns the location code of the Box, but you do not want to store this location code in the Box object.&lt;/p>
+&lt;p>&lt;strong>The Parameter Class.&lt;/strong>
+To solve this problem in Ibatis, you can use an aggregating parameter object called &amp;quot;StoreBoxParameters&amp;quot; (or any name you like). This is a simple bean which aggregates the Box object you want to store, and has extra fields for the data returned by the &amp;quot;store_box&amp;quot; stored procedure:&lt;/p>
+&lt;pre>&lt;code>public class StoreBoxParameters {
+private Box box;
+private String locationCode;
+public StoreBoxParameters(Box aBox){
+this.box = aBox;
+}
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>To store the Box object, you write an SqlMap which calls the stored procedure with a parameter map:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;parameterMap id=&amp;quot;storeBoxParameterMap&amp;quot; class=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.height&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.width&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.depth&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.weight&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.color&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.origin&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.destination&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;locationCode&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;OUT&amp;quot; /&amp;gt;
+&amp;lt;/parameterMap&amp;gt;
+&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterMap=&amp;quot;storeBoxParameterMap&amp;quot;&amp;gt;
+{call store_box (?,?,?,?,?,?,?,?)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>And in the DAO, you can now fetch the locationcode seperate from the Box object:&lt;/p>
+&lt;pre>&lt;code>public String storeBox (Box aBox) {
+StoreBoxParameters boxParameters = new StoreBoxParameters(aBox);
+getSqlMapClientTemplate().update(&amp;quot;store_box&amp;quot;, boxParameters);
+return boxParameters.getLocationCode();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this solution becomes even nicer when you have to call a stored procedure with multiple IN and OUT parameters and you want to separate these your business objects.&lt;/p>
+&lt;p>In the solution for the first problem, you may have noticed the stored procedure call in the Ibatis SQL map being written as &lt;em>&amp;quot;{call store_box (?,?,?,?,?,?,?,?)}&amp;quot;&lt;/em>. This is not exactly elegant, particularly when you have a long list of parameters. When bug fixing, it is hard to see which value gets passed into which parameter.&lt;/p>
+&lt;p>&lt;strong>The Inline Parameter Map.&lt;/strong>
+In the Ibatis data mapper documentation, I found a beautiful solution for this, called inline parameter maps. First, you delete the parameter map from the SqlMap. Then, you replace the question marks with an inline version of these fields. You should get something like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterClass=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+{call store_box (
+#box.height,jdbcType=NUMERIC,mode=IN#,
+#box.width,jdbcType=NUMERIC,mode=IN#,
+#box.depth,jdbcType=NUMERIC,mode=IN#,
+#box.weight,jdbcType=NUMERIC,mode=IN#,
+#box.color,jdbcType=VARCHAR,mode=IN#,
+#box.origin,jdbcType=VARCHAR,mode=IN#,
+#box.destination,jdbcType=VARCHAR,mode=IN#,
+#locationCode,jdbcType=VARCHAR,mode=OUT#
+)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>This cleans up your SqlMaps and improves their readability. Note that for OUT parameters to work, the fields you map them to may not be primitives.&lt;/p>
+&lt;p>Happy coding.&lt;/p>
+&lt;pre>&lt;code>StoreBoxParameters
+&lt;/code>&lt;/pre></description></item><item><title>Sonar "Close Connection" warning workaround.</title><link>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</link><pubDate>Tue, 06 Oct 2009 08:38:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</guid><description>
+&lt;p>When you use Spring and Ibatis and SQLTemplates, you could have code in your project which looks somewhat like this:&lt;/p>
+&lt;pre>&lt;code>Connection connection = DataSourceUtils.getConnection(getDataSource());
+...&amp;lt;do connection stuff here&amp;gt;...
+DataSourceUtils.releaseConnection(connection, getDataSource());
+&lt;/code>&lt;/pre>
+&lt;p>Sonar will report that you did not close the connection, while in fact, Spring did that for you. You can not just add a &lt;em>&amp;quot;connection.close()&amp;quot;&lt;/em> to the code because the whole point of calling &lt;em>&amp;quot;releaseConnection()&amp;quot;&lt;/em> is to have Spring handle all the smart stuff on committing, closing, and returning the connection to the pool if needed.&lt;/p>
+&lt;!-- more -->In our company, not closing the connection is a major blocking violation (and it should be). But in this case, there is no way to make the Jedi wave to Sonar, telling it that "this code will do just fine". So I added the following trick, albeit a bit dirty:
+&lt;pre>&lt;code>if (connection.isClosed()){
+// This code is only here to keep Sonar from
+// warning us that the connection is not
+// closed. Please note: Do not just close an
+// unclosed connection, Spring should handle
+// connection closing and returning to the pool.
+connection.close();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Use it to your advantage, but use this responsibly. If you see any problems in my solution, or if there is a better way to do this I'd be happy to hear about it.&lt;/p>
+&lt;p>&lt;strong>Edit (2009-12-01):&lt;/strong>&lt;/p>
+&lt;p>There is a much better way to do this if you have Spring/Ibatis integration. In stead of DataSourceUtils.getConnection() you can create a new ConnectionCallback object, like so:&lt;/p>
+&lt;pre>&lt;code>JdbcTemplate template = new JdbcTemplate(getDataSource());
+Object resultObject = template.execute(new ConnectionCallback() {
+public Object doInConnection(Connection conn) 
+throws SQLException, DataAccessException {
+// Do connection stuff here (can return object);
+return null;
+});
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this code does NOT contain any Connection.close() references. The connection is passed to you, you can use it, and after your method completes, the framework will do whatever is needed to clean everything up. Sonar will not complain because the whole open/close handeling is done outside your method.&lt;/p></description></item><item><title>Eclipse 3.4.1, OSX and Java 1.6</title><link>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</link><pubDate>Sun, 28 Dec 2008 14:05:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</guid><description>
+&lt;p>&lt;img src="afbeelding-22.png" alt="Eclipse application icon">&lt;/p>
+&lt;p>I recently downloaded &lt;a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/ganymede/SR1/eclipse-java-ganymede-SR1-macosx-carbon.tar.gz">Eclipse 3.4.1 for Mac OSX&lt;/a>, and tried starting it using the eclipse.app icon. It did not work, and I noticed a message in /var/log/system.log telling me that the JVM could not be loaded.&lt;/p>
+&lt;!-- more -->After some Googling, I found out that Eclipse is not compatible with the new 64bit version of JDK 1.6 for the Mac. After switching back to 1.5 (luckaly Apple ships all JVM's with it's OS) it all worked. Here's how you switch back to JDK 1.5 on a Mac:
+&lt;pre>&lt;code>cd /System/Library/Frameworks/JavaVM.framework/Versions
+sudo ln -fhsv 1.5 CurrentJDK
+&lt;/code>&lt;/pre>
+&lt;p>This makes the CurrentJDK link to point to the 1.5 installation of the Java JDK.&lt;/p>
+&lt;p>Bonus tip for today: While you're at it, increase the memory used by eclipse by opening the eclipse.app bundle (right click -&amp;gt; show package contents) and edit Contents/MacOS/eclipse.ini. Change the &amp;quot;-Xmx256m&amp;quot; line to read &amp;quot;-Xmx512m&amp;quot;, and eclipse should be much happier with you.&lt;/p>
+&lt;p>Ofcourse there's &lt;a href="http://help.eclipse.org/stable/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/running_eclipse.htm">lots more you can do there&lt;/a>, but I always say &amp;quot;keep it simple&amp;quot;.&lt;/p></description></item><item><title>J-Fall 2008</title><link>https://realrolfje.github.io/rolfje.com/2008/11/13/j-fall-2008/</link><pubDate>Thu, 13 Nov 2008 21:56:02 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/11/13/j-fall-2008/</guid><description>
+&lt;p>&lt;a href="http://www.nljug.org/">&lt;img src="nljug-duke-small.png" alt="NLJUG small duke">
+&lt;/a>Last wednesday I was at &lt;a href="http://www.nljug.org/jfall/">J-Fall 2008&lt;/a>, a fairly large event for Java programmers in the Netherlands. This event is organized by &lt;a href="http://www.nljug.org/">NLJUG&lt;/a>. You can read some of my notes on the different sessions in my &lt;a href="http://www.evernote.com/pub/rolfje/PublicNoteBook#7ddeb086-5064-42c1-99e9-83fc84e384f6">public evernote.&lt;/a>&lt;/p>
+&lt;!-- more -->
+&lt;p>Here's a one-minute impression of what J-Fall looked like this year:&lt;/p>
+&lt;p>[youtube=http://nl.youtube.com/watch?v=Fy42_eX_QkA]&lt;/p></description></item><item><title>Spring SystemPropertyInitializingBean</title><link>https://realrolfje.github.io/rolfje.com/2008/07/23/spring-systempropertyinitilizingbean/</link><pubDate>Tue, 22 Jul 2008 22:37:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/23/spring-systempropertyinitilizingbean/</guid><description>
+&lt;p>When using POI in any of your projects, and the application you're building is a web application, you probably have it running on a Windows machine. If not, you know all about the struggle with the &lt;a href="http://java.sun.com/developer/technicalArticles/J2SE/Desktop/headless/">&amp;quot;headless mode&amp;quot;&lt;/a> environment setting to tell the JVM how to handle graphics rendering.&lt;/p>
+&lt;p>I always like to keep my applications as clean as possible to the users. The system administrator is also a user of the software (during installation at least). So I wanted the application to set the environment properties itself, In this case, I built a nice little Spring bean to handle this. The solution is so simple, that it is almost a brilliant display of what Spring can solve for you. Suddenly, all these environment setting problems turned into a simple Spring configuration problem. Here's how:&lt;/p>
+&lt;!-- more -->In the Spring configuration, the whole "headless mode" problem got reduced to this bean definition:
+&lt;pre>&lt;code>&amp;lt;bean id=&amp;quot;systemproperty_initializer&amp;quot; 
+   class=&amp;quot;com.rolfje.SystemPropertyInitiliazingBean&amp;quot;&amp;gt;
+   &amp;lt;property name=&amp;quot;systemProperties&amp;quot;&amp;gt;
+      &amp;lt;map&amp;gt;
+         &amp;lt;!-- Set headless mode to true, 
+              for POI sheet.autoSizeColumn See 
+&amp;lt;span&amp;gt;              &amp;lt;/span&amp;gt;&amp;lt;span&amp;gt;http://poi.apache.org/hssf/quick-guide.html&amp;lt;/span&amp;gt;&amp;lt;span&amp;gt; 
+         --&amp;gt;
+         &amp;lt;entry key=&amp;quot;java.awt.headless&amp;quot; value=&amp;quot;true&amp;quot;/&amp;gt;
+     &amp;lt;/map&amp;gt;
+   &amp;lt;/property&amp;gt;
+&amp;lt;/bean&amp;gt;&amp;lt;/span&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>The code for the SystemPropertyInitilizingBean is really a simple list iterator which walks though the map and sets everything as a system property:&lt;/p>
+&lt;pre>&lt;code>/**
+ * Bean for automatically initializing System 
+ * properties from within a Spring context. 
+ */
+public class SystemPropertyInitializingBean 
+       implements InitializingBean {
+        /** Properties to be set */
+        private Map systemProperties;
+        /** Sets the system properties */
+        public void afterPropertiesSet() 
+               throws Exception {
+                if (systemProperties == null || 
+                       systemProperties.isEmpty()) {
+                        // No properties to initialize
+                        return;
+                }
+                Iterator i = systemProperties.keySet().iterator();
+                while (i.hasNext()) {
+                        String key = (String) i.next();
+                        String value = (String) systemProperties.get(key);
+                        System.setProperty(key, value);
+                }
+        }
+        public void setSystemProperties(Map systemProperties) {
+                this.systemProperties = systemProperties;
+        }
+}
+&lt;/code>&lt;/pre>
+&lt;p>In my opinion this is a nice and clean solution, which does not impact any of the application code, hides the setting of obscure system properties from the administrator, is simple to the developer, gives room to add comments (see Spring xml above)and is reusable. All in a few lines of code. You can even easily have it parese settings from a config file, and put that into system environment variables without changing a line of code. All in Spring XML.&lt;/p>
+&lt;p>Sometimes it's the small things that make you feel nice :-)&lt;/p></description></item><item><title>Ibatis 2.2 Ignores XML encoding</title><link>https://realrolfje.github.io/rolfje.com/2008/07/20/ibatis-22-ignores-xml-encoding/</link><pubDate>Sat, 19 Jul 2008 22:37:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/20/ibatis-22-ignores-xml-encoding/</guid><description>
+&lt;p>At my company, we're using Ibatis to do operations on Oracle databases. As most of our software is designed to be international, we keep our XML files in UTF-8 encoding. Recently we discovered that Ibatis had some trouble parsing the XML files when we were using diacritics in them. As it turns out, Ibatis 2.2 actually ignores the &amp;quot;UTF-8&amp;quot; setting in the XML file header altogether.&lt;/p>
+&lt;p>This was actually reported as an &lt;a href="http://issues.apache.org/jira/browse/IBATIS-349?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12454071">issue&lt;/a> at apache's issue tracker, and fixed in Ibatis release 2.3 and upward. In the meantime, if you can not swich to a new release because of tight deadlines and no time for regression tests, you can set the file.encoding property to UTF-8, because then Ibatis will parse the XML in the correct encoding.&lt;/p></description></item><item><title>Tomcat, UTF-8 and the RequestDumperValve</title><link>https://realrolfje.github.io/rolfje.com/2008/07/20/tomcat-utf-8-and-the-requestdumpervalve/</link><pubDate>Sat, 19 Jul 2008 22:30:11 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/20/tomcat-utf-8-and-the-requestdumpervalve/</guid><description>
+&lt;p>A week ago, we encountered a funny problem where our Tapestry 3.0 application seemed to screw up the encoding of form posts. Every time we tried to post a form with diacritics in the input fields, the data got mangled before reaching the application code.&lt;/p>
+&lt;p>As it turned out, somebody had turned on the RequestDumperValve in the Tomcat configuration file. The request dumper does not only dump the request, but is also kind enough to mangle the data before handing it over to the servlet for further processing:&lt;/p>
+&lt;p>&lt;em>&lt;!-- more -->&amp;quot;Enabling the RequestDumperValve in both 5.5.12 and 5.0.16 (!) messes up the parsing of other-than-ISO-8859-1 incoming parameters.
+After using a rather huge bunch of hours, this came down as the result: when this &amp;quot;debug valve&amp;quot; is turned on, it seems to default to ISO-8859-1 when it parses and log-outputs the incoming parameters, thus also implicitly setting the entire Request-object to this enc, so any subsequnt setting to UTF-8 doesn't matter at all. At least this is true for POST parameters.
+For GET parameters, the situation is a little different. Here an explicit setting of URIEncoding to UTF-8 seems to work as it should, while useBodyEncodingForURI doesn't - it picks up the wrong already implicitly set encoding. (For 5.0.16 I can't seem to get the latter version to work, and have to use the explicit setting.)
+Sorry if my analysis doesn't hold water, but at least the bug seems to be very consistent.&amp;quot;&lt;/em>&lt;/p>
+&lt;p>(quoted from a post by Endre Stølsvik found in the &lt;a href="http://www.mail-archive.com/users@tomcat.apache.org/msg04008.html">mail archive&lt;/a>)&lt;/p>
+&lt;p>So if you have strange UTF-8 problems with Tomcat, see if the following line is in your server.xml file:&lt;/p>
+&lt;pre>&lt;code>   &amp;lt;Valve className=&amp;quot;org.apache.catalina.valves.RequestDumperValve&amp;quot;/&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>If this line is in, comment it out, restart and try again. Chances are that your problem has dissapeared.&lt;/p>
+&lt;p>The most irritating point about this whole adventure is that the RequestDumperValve was found by a collegue with which I used the RequestDumperValve a year or so ago to fix some other problem, and we already had discovered exactly this behaviour. If only I had blogged about it then... Good thing Joris' memory is better than mine :-)&lt;/p></description></item><item><title>Hacking Your Way Through Codebases</title><link>https://realrolfje.github.io/rolfje.com/2008/07/02/hacking-your-way-through-codebases/</link><pubDate>Wed, 02 Jul 2008 19:12:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/02/hacking-your-way-through-codebases/</guid><description>
+&lt;p>I found a nice blog post which describes how it is after you leave school and start programming for a real company. You discover that programming is more like 80% reading and 20% coding.&lt;/p>
+&lt;p>Read the article at the Tired Architect's blog titled &lt;a href="http://antipattern.wordpress.com/2008/06/19/hacking-your-way-through-codebases/">&amp;quot;Hacking Your Way Through Codebases&amp;quot;&lt;/a>.&lt;/p></description></item><item><title>Layer Violations</title><link>https://realrolfje.github.io/rolfje.com/2008/04/13/layer-violations/</link><pubDate>Sun, 13 Apr 2008 17:34:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/13/layer-violations/</guid><description>
+&lt;p>Like buildings, software usually a deviation of a standard structure. The architect chooses the structure his design will be based upon. After making design adjustments to the structure to cater the requirements, the architect supervises the builders. Like a building architect, the software architect supervises while walking around in the structure during the build.&lt;/p>
+&lt;p>Software projects can get so large and complex that the architect can not posibly monitor all the code all the time. This is where te tooling comes in. In this post, I will explain how to use &lt;a href="http://checkstyle.sourceforge.net/">Checkstyle&lt;/a> to automatically monitor the basic architectural integrety of the software.&lt;/p>
+&lt;!-- more -->When designing software, we usually start of with drawing high level building blocks on a piece of paper. In most of my sketches, these building blocks map to Java packages in the code, and the arrows between the blocks represent communication paths or method calls between the packages.
+&lt;p>Interfaces and calls between packages are an important part of the architecture or design. One of the ways to monitor design integrity is to monitor which packages are using other packages, and the way packages interact.&lt;/p>
+&lt;p>Packages are almost a Java-specific term for what other languages call “modules”, or “libraries”. The way these packages are grouped in graphical representations of the design is very often layer-like. For more information on layers, maybe you should read about &lt;a href="http://en.wikipedia.org/wiki/3_tier">3-tier architecture&lt;/a>.&lt;/p>
+&lt;p>The word &lt;a href="http://www.google.nl/search?q=define%3Atier">“Tier”&lt;/a> is a more exact term than layer, but to keep things less confusing by introducing another term, I’ll stick with the word “layer”.&lt;/p>
+&lt;p>As with any design, it is important to stick to the plan. Software developers have no physical boundaries to access the different layers of the software. This means that during development, layers can be interconnected in a way that was not intended by the architect. These connections are called “Layer violations”. One of the important tasks for the architect is to prevent these violations.&lt;/p>
+&lt;p>To prevent developers making layer violations, the design should be simple and clear to the developers. In essence, developers should not see the need to violate the layer access rules. Make the right thing to do, the easy thing to do.&lt;/p>
+&lt;p>If layer violations are a common practice in a project, the architect needs to investigate the reasons for these violations, and may need to reconsider the design or the layer access rules.&lt;/p>
+&lt;p>Eliminating layer violations will:&lt;/p>
+&lt;pre>&lt;code> * Reduce complexity of the software
+* Prevent circular dependencies
+* Reduce vulnerability to exploits
+* Improve code reusability
+&lt;/code>&lt;/pre>
+&lt;p>When software projects become too large to monitor each line of sourcecode by hand, tooling is needed to monitor these Layer Violations. One of the tools which is able to do this for Java code is &lt;a href="http://checkstyle.sourceforge.net/">CheckStyle&lt;/a>. The Checkstyle module we use to monitor layer violations is called &lt;a href="http://checkstyle.sourceforge.net/config_imports.html#ImportControl">&amp;quot;Import Control&amp;quot;&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Example:&lt;/strong>
+Suppose we want to create a simple (java web) application. This application consists of some screens for users to enter data, a bunch of business rules for processing this data, and data storage.&lt;/p>
+&lt;p>The generic way to solve this problem is to logically group the functionality into packages. The following packages will be used in our example application:&lt;/p>
+&lt;pre>&lt;code> * **Frontend** - Contains the screens (this can contain Wicket, Tapestry or JSP techoligy for instance
+* **Service** - Contains the business logic for processing the data. The servicelayer usually contains the highest level of abstraction, because it uses the core and data access layers to get things done.
+* **Core** - Data object which represent entities in the system. These are usually beans or POJO's, and represent real-world things like &amp;quot;User&amp;quot;, &amp;quot;Order&amp;quot; or &amp;quot;Invoice&amp;quot;.
+* **Data Access** - This layer has the responsibility of storing Core objects into the database, and retrieving them.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="layers.png">&lt;img src="layers.png" alt="">
+&lt;/a>In the image on the right, you can see the different packages, and the way they are organized. These type of images are the reason for calling the different packages &amp;quot;layers&amp;quot;.&lt;/p>
+&lt;p>The green arrows between the layers represent normal relationships, or method calls, if you like. The Frontend layer uses the service layer. The Service layer uses the Data Access layer. All layers need to pass Core objects to eachother, so they all have to be able to use the Core layer.&lt;/p>
+&lt;p>On the right side we see a red arrow from the Data Access layer to the Frontend layer. This arrow is an example of a so called &amp;quot;layer violation&amp;quot;. Having a relation to the Frontend layer makes the Data Access layer dependant on the Frontend, and could also lead to circular references.&lt;/p>
+&lt;p>&lt;strong>Checkstyle&lt;/strong>
+Checkstyle is a program which can parse Java source code, and create a list of coding style violations and architectural errors. It also has a maven plugin, which we are going to use in our example project to get a report on layer violations.&lt;/p>
+&lt;p>First, we need to add Checkstyle to the project. Layer violation monitoring was added to Checkstyle in one of the later releases. To make sure that we have the correct version of Checkstyle, add the folowing dependency to your Maven (1.0) project.xml:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;dependency&amp;gt;
+&amp;lt;groupId&amp;gt;checkstyle&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-checkstyle-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;3.0.1&amp;lt;/version&amp;gt;
+&amp;lt;type&amp;gt;plugin&amp;lt;/type&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>Should you want the Checkstyle report to be automatically included in the generated Maven site, you can optionally add&lt;/p>
+&lt;pre>&lt;code>&amp;lt;report&amp;gt;maven-checkstyle-plugin&amp;lt;/report&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>To the &lt;reports> section of the project.xml file.&lt;/p>
+&lt;p>Now that we have added Checkstyle to our Maven configuration, we need to configure Checkstyle to check our layer violations. Checkstyle can check a lot more, but we're only using it to check Layer Violations for the sake of this article.&lt;/p>
+&lt;p>We need to tell the Maven Checkstyle plugin where it can find it’s configuration file. Add the following line to the project.properties in the root of your maven project:&lt;/p>
+&lt;pre>&lt;code>#Checkstyle
+maven.checkstyle.check.tests=false
+maven.checkstyle.fail.on.violation=false
+maven.checkstyle.properties=checkstyle-config.xml
+&lt;/code>&lt;/pre>
+&lt;p>Next, create a checkstyle-config.xml in the root of your project which looks like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE module PUBLIC &amp;quot;-//Puppy Crawl//DTD Check Configuration 1.2//EN&amp;quot; &amp;quot;http://www.puppycrawl.com/dtds/configuration_1_2.dtd&amp;quot;&amp;gt;
+&amp;lt;module name=&amp;quot;Checker&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;severity&amp;quot; value=&amp;quot;warning&amp;quot;/&amp;gt;
+&amp;lt;module name=&amp;quot;TreeWalker&amp;quot;&amp;gt;
+&amp;lt;module name=&amp;quot;ImportControl&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;severity&amp;quot; value=&amp;quot;error&amp;quot;/&amp;gt;
+&amp;lt;property name=&amp;quot;file&amp;quot; value=&amp;quot;checkstyle-import-control.xml&amp;quot;/&amp;gt;
+&amp;lt;/module&amp;gt;
+&amp;lt;/module&amp;gt;
+&amp;lt;/module&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>As you can see in this configuration file, checkstyle will look for a checkstyle-import-control.xml file containing the Layer access rules.&lt;/p>
+&lt;p>An example of this file which would match our example would look like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE import-control PUBLIC
+&amp;quot;-//Puppy Crawl//DTD Import Control 1.0//EN&amp;quot;
+&amp;quot;http://www.puppycrawl.com/dtds/import_control_1_0.dtd&amp;quot;&amp;gt;
+&amp;lt;import-control pkg=&amp;quot;com.rolfje.example&amp;quot;&amp;gt;
+&amp;lt;!—allow access to utility libraries --&amp;gt;
+&amp;lt;allow pkg=&amp;quot;java&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;org&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;sun&amp;quot;/&amp;gt;
+&amp;lt;subpackage name=&amp;quot;frontend&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.frontend&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.service&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;javax.servlet&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;service&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.service&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.dataaccess&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;dataaccess&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.dataaccess&amp;quot;/&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;subpackage name=&amp;quot;core&amp;quot;&amp;gt;
+&amp;lt;allow pkg=&amp;quot;com.rolfje.example.core&amp;quot;/&amp;gt;
+&amp;lt;/subpackage&amp;gt;
+&amp;lt;/import-control&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>There are a few things to note in this configuration file:&lt;/p>
+&lt;pre>&lt;code> * It is allowed to use java.*, org.*, and sun.* packages abywhere in the code. This is to allow normal usage of java.util.List for instance.
+* The frontend is a web frontend in this example, and accesses javax.servlet. Note that the service, backend and core layers are not allowed to use servlet classes.
+* Packages are allowed to access themselves. This is done so that sub-packages made by developers are not immediately detected and seen as a layer violation.
+* There are no nested subpackages in this example. You can nest subpackage elements if you need to.
+&lt;/code>&lt;/pre>
+&lt;p>Having configured everything, you can now run “maven checstyle:report” to see how your code is matching your design. If you run a “maven site”, then the Layer Violations will be visible as a report in the left menu.&lt;/p>
+&lt;p>You may also want to checkout the Checkstyle eclipse plugin, which will visually mark the violations in you sourcefiles and add them to the “Problems” view. It will help you to find and fix the violations much quicker.&lt;/p></description></item><item><title>GForge CVS/SSH Authentication Failures</title><link>https://realrolfje.github.io/rolfje.com/2008/02/26/gforge-cvsssh-authentication-failures/</link><pubDate>Tue, 26 Feb 2008 10:48:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/02/26/gforge-cvsssh-authentication-failures/</guid><description>
+&lt;p>Recently we had a problem connecting to our GForge CVS through SSH. We added the public RSA key to the GForge user, but because of wrong configuration on the client we tried to connect a couple of times with the wrong key. After a while the GForge CVS will return the following error:&lt;/p>
+&lt;p>Received disconnect from &lt;GForge ip>: 2: Too many authentication failures for &lt;username>&lt;/p>
+&lt;p>To solve this, simple ask a GForge administrator to edit the GForge user, and press the &amp;quot;Save&amp;quot; button without changing anything. You will be able to reconnect immediately after the administrator has pressed &amp;quot;Save&amp;quot;.&lt;/p></description></item><item><title>Link CVS/SVN commit to GForge Tracker Item</title><link>https://realrolfje.github.io/rolfje.com/2008/02/21/link-cvssvn-commit-to-gforge-tracker-item/</link><pubDate>Thu, 21 Feb 2008 12:47:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/02/21/link-cvssvn-commit-to-gforge-tracker-item/</guid><description>
+&lt;p>Today I spent some time figuring out what the exact format of the CVS comment is when I want to link a commit to a GForge tracker item. I'll try to explain it a bit simpler:&lt;/p>
+&lt;pre>&lt;code> * We have [GForge](http://gforge.org/) installed at work. We use GForge to manage a software project for a customer.
+* The customer reports a bug in the Tracker of GForge. This bug gets assigned to me.
+* I read the code, find the problem and fix it. Now I want to commit the fix to the GForge integrated CVS, and have it automatically linked to the Tracker item for future reference.
+&lt;/code>&lt;/pre>
+&lt;p>I spent 30 minutes Googling for an example, and did find a lot of info, but no real usage examples. The info says &amp;quot;Include the tracker item id in the commit comment&amp;quot;. I spent anther 10 to 20 minutes trying to figure out if this meant just the number, the number with the prefix, or brackets, or both. To save more people from searching, you should copy-paste the complete tracker id from the tracker item screen.&lt;/p>
+&lt;!-- more -->**Example:**
+&lt;p>To connect a CVS commit to Tracker Item 123, use the following comment:&lt;/p>
+&lt;p>cvs commit xyz.txt &lt;em>&amp;quot;This is a commit comment for &lt;strong>[#123]&lt;/strong> in GForge project XYZ&amp;quot;&lt;/em>&lt;/p>
+&lt;p>GForge will then automatically link the commit to the tracker item(s). You can have multiple item id's in there, and you can also do multiple commits for a single tracker item.&lt;/p>
+&lt;p>Another great tip:  Enable the &amp;quot;Require Tracker Item ID on commit&amp;quot; to force people to do this. Then, create a seperate tracker item titled &amp;quot;Generic Work&amp;quot; so that people who are NOT working on a specific Tracker kan still commit. This forces people to think about what thei're committing for.&lt;/p>
+&lt;p>One step further would be to have a seperate tracker item for &amp;quot;refactoring&amp;quot; and &amp;quot;configuration management&amp;quot; or have todo tracker items for a release. This way you can link commits to certain types of work, maybe even to a time tracking tool.&lt;/p></description></item><item><title>Ibatis Nullpointer calling stored procedure</title><link>https://realrolfje.github.io/rolfje.com/2006/11/07/ibatis-nullpointer-calling-stored-procedure/</link><pubDate>Tue, 07 Nov 2006 19:53:14 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/11/07/ibatis-nullpointer-calling-stored-procedure/</guid><description>
+&lt;p>Today, a collegue of mine had a really strange nullpointer problem trying to call a stored procedure in an Oracle 10 database using &lt;a href="http://ibatis.apache.org/javadownloads.html">iBATIS Java 2.2.0&lt;/a>. What she had was a normal JavaBean, like so: &lt;/p>
+&lt;pre>&lt;code>package com.rolfje.foo
+public class BarBean {
+private String barName;
+private Long barId;
+... setters/getters here ...
+}
+&lt;/code>&lt;/pre>
+&lt;p>A straightforward parametermap:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;parameterMap class=&amp;quot;com.rolfje.foo.BarBean&amp;quot;
+id=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+&amp;lt;parameter property=&amp;quot;barName&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;barId&amp;quot; /&amp;gt;
+&amp;lt;/parameterMap&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>and a straightforward procedure mapping:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;insertBar&amp;quot; parameterMap=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+{ call store_bar (
+?,?)
+}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>When trying to call the stored procedure, she got the following stacktrace:&lt;/p>
+&lt;pre>&lt;code>org.springframework.jdbc.UncategorizedSQLException: SqlMapClient operation;
+uncategorized SQLException for SQL [];
+SQL state [null]; error code [0];
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException; nested exception is
+com.ibatis.common.jdbc.exception.NestedSQLException:
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException
+Caused by: java.lang.NullPointerException
+Caused by: com.ibatis.common.jdbc.exception.NestedSQLException:
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException
+Caused by: java.lang.NullPointerException
+at ...executeQueryWithCallback(GeneralStatement.java:188)
+at ...executeQueryForObject(GeneralStatement.java:104)
+at ...queryForObject(SqlMapExecutorDelegate.java:565)
+...
+&lt;/code>&lt;/pre>
+&lt;p>After hours of staring at the problem, and comparing code with similar constructions from other projects, we decided to switch to the Oracle 9i thin driver to see if that would solve the problem. It didn't, but there was an interesting development: The Oracle 9i driver actually gave us a decent error about not being able to parse the SQL statement. Which brings us to...&lt;/p>
+&lt;p>&lt;strong>The solution:&lt;/strong>
+We removed all layout from the procedure mapping, which resulted in:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;insertBar&amp;quot; parameterMap=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+{call store_bar (?,?)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>This solved the problem. Then we switched back to the Oracle 10i thin driver, and the problem was still gone. The problem lies in the TAB between the left curly bracket and the word &amp;quot;call&amp;quot;. Oracle can not handle this.To investigate this problem, we then also tried to insert &lt;![CDATA[ ]]> around the procedure call, but as soon as there is a TAB between the { and the word &amp;quot;call&amp;quot; iBATIS will throw a NullPointer. The strange thing is that you can have spaces, newlines and tabs &lt;em>anywhere&lt;/em> in the procedure mapping, as long as there is no TAB between the left curly and the word &amp;quot;call&amp;quot;.&lt;/p></description></item><item><title>request a password at the command-line without display</title><link>https://realrolfje.github.io/rolfje.com/2006/08/18/request-a-password-at-the-command-line-without-display/</link><pubDate>Fri, 18 Aug 2006 15:07:56 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/08/18/request-a-password-at-the-command-line-without-display/</guid><description>
+&lt;p>For those of you trying to request a password from the user at the command-line, without the password being displayed on-screen, &lt;a href="http://userfriendly.free.fr/christopher/en/index.php?2006/03/24/8-console-api">Java 6 finaly has the answer&lt;/a>, along with better access to the console.&lt;/p>
+&lt;p>I hope that soon we will never see &lt;a href="http://java.sun.com/developer/technicalArticles/Security/pwordmask/">this hideous construction&lt;/a> to do the same again.&lt;/p></description></item><item><title>Killing oracle sessions, the easy (JDBC) way.</title><link>https://realrolfje.github.io/rolfje.com/2006/02/23/killing-oracle-sessions-the-easy-jdbc-way/</link><pubDate>Wed, 22 Feb 2006 20:27:40 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/23/killing-oracle-sessions-the-easy-jdbc-way/</guid><description>
+&lt;p>Does Oracle complain about not being able to drop a table for a currently connected user, but you are sure you disconnected? Do the sessions &amp;quot;hang&amp;quot; in &amp;quot;inactive&amp;quot; state? Just log on as system, and execute the following query: &lt;/p>
+&lt;pre>&lt;code>SELECT
+'ALTER SYSTEM KILL SESSION ''' || sid || ',' || serial# || '''; --',
+s.sid,
+s.serial#,
+s.osuser,
+s.username,
+s.program,
+status
+FROM v$session s
+WHERE status = 'INACTIVE';
+&lt;/code>&lt;/pre>
+&lt;p>You will get a list of statements you need to execute (just copy-pase) to kill the inactive sessions. Don't listen to the guys telling you to do intricate System Administrator stuff on a command prompt, just use any JDBC tool.&lt;/p>
+&lt;p>&lt;strong>EDIT:&lt;/strong> Single query which also lists the kill command if the &amp;quot;alter system kill session&amp;quot; trick did not work:&lt;/p>
+&lt;pre>&lt;code>SELECT
+'ALTER SYSTEM KILL SESSION ''' || s.sid || ',' || s.serial# ||
+'''; -- kill -9 ' || p.spid,
+s.sid,
+s.serial#,
+p.spid,
+s.username,
+s.program,
+s.status
+FROM v$session s, v$process p
+WHERE s.paddr = p.addr
+and (s.state='INACTIVE' or s.state='KILLED');
+&lt;/code>&lt;/pre>
+&lt;p>Thanks Bas en Jeroen!&lt;/p></description></item><item><title>Tapestry/OGNL: Could not find an adaptor for class XYZ</title><link>https://realrolfje.github.io/rolfje.com/2006/02/07/tapestryognl-could-not-find-an-adaptor-for-class-xyz/</link><pubDate>Mon, 06 Feb 2006 20:47:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/07/tapestryognl-could-not-find-an-adaptor-for-class-xyz/</guid><description>
+&lt;p>Getting the &amp;quot;Could not find an adaptor for class Foo&amp;quot; Mesage in Tapestry? You probably forgot to make your class Serializable. A simple description of a possible problematic situation follows: &lt;/p>
+&lt;!-- more -->Suppose you have some simple class, like so:
+&lt;pre>&lt;code>public class MyItem {
+private String itemname;
+public String getItemname() {
+return itemname;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>And somewhere in your Tapestry page or component, you iterate a list of these items to produce directlinks for each of them:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;span jwcid=&amp;quot;@Foreach&amp;quot; source=&amp;quot;ognl:myItems&amp;quot; value=&amp;quot;ognl:loopItem&amp;quot;&amp;gt;
+&amp;lt;a jwcid=&amp;quot;@DirectLink&amp;quot; listener=&amp;quot;ognl:listeners.myItemListener&amp;quot;
+parameters=&amp;quot;ognl:new java.lang.Object[] {loopItem}&amp;quot;&amp;gt;
+&amp;lt;span jwcid=&amp;quot;@Insert&amp;quot; value=&amp;quot;ognl:loopItem.itemname&amp;quot;/&amp;gt;
+&amp;lt;/a&amp;gt;
+&amp;lt;/span&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>In your page definition, you have created a nice listener method which you expect to be called:&lt;/p>
+&lt;pre>&lt;code>public void myItemListener(IRequestCycle cycle){
+MyItem item = (MyItem)cycle.getServiceParameters()[0];
+System.out.println(
+&amp;quot;Hi, you have pressed the link for &amp;quot;
++ item.getItemname());
+}
+&lt;/code>&lt;/pre>
+&lt;p>You start everything up, but when loading the page, Tapestry complains:&lt;/p>
+&lt;pre>&lt;code>org.apache.tapestry.ApplicationRuntimeException:
+Could not find an adaptor for class MyItem.
+&lt;/code>&lt;/pre>
+&lt;p>... and a horrific stacktrace follows, which you can't read or understand because it is all about AbstractComponent.renderbody and other internals of Tapestry and your webserver. Although the error is terrible, and does not point you anywhere, the fix is rather simple. You forgot to make your class Serializable! Changing it to :&lt;/p>
+&lt;pre>&lt;code>public class MyItem implement Serializable {
+private String itemname;
+public String getItemname() {
+return itemname;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>fixes the problem, because now Tapestry can serialize your object into the session, and pass it as a parameter to the listener.&lt;/p></description></item><item><title>Ibatis and Timestamps (2)</title><link>https://realrolfje.github.io/rolfje.com/2005/07/04/ibatis-and-timestamps-2/</link><pubDate>Mon, 04 Jul 2005 13:09:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2005/07/04/ibatis-and-timestamps-2/</guid><description>
+&lt;p>People who have read my &lt;a href="http://rolfje.wordpress.com/2005/07/01/ibatis-and-timestamps/">last post&lt;/a> are now probably removing the Date classes from their beans, replacing the code with things as new Long(new Date.getTime()) and such. This is also what I started doing, until a collegue of mine pointed out that the TypeHandler I wrote last saturday could also do the trick. This would mean my beans could still contain clean Dates. I was so close, and failed to realize that I (or ibatis) had that power.&lt;/p>
+&lt;p>So I set out to do this and it works wonderfully. What I did was the following. I changes all postgres timestamp fields to bigints, like you read yesterday. I left my beans unchanged, containing java.util.Date objects for representing dates. So now all we need to do is write a typehandler which converts the date to a long and back, so Postgress and the buggy JDBC driver don't realize it's actually a Date.&lt;/p>
+&lt;p>To do this I wrote the following TypeHandler:&lt;/p>
+&lt;pre>&lt;code>public class DateTypeHandler
+implements TypeHandlerCallback {
+public void setParameter(ParameterSetter setter,
+Object parameter)
+throws SQLException {
+if (parameter == null) {
+setter.setNull(Types.BIGINT);
+} else {
+Date datetime = (Date) parameter;
+setter.setLong(datetime.getTime());
+}
+}
+public Object getResult(ResultGetter getter)
+throws SQLException {
+long millis = getter.getLong();
+if (getter.wasNull()) {
+return null;
+}
+return new Date(millis);
+}
+public Object valueOf(String s) {
+return s;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>Now, all we need to do is tell ibatis to use this typehandler whenever we try to insert or retreive a java.util.Date. We do this by adding the following line to the ibatis SqlMapConfig.xml file, just after the typealias definitions:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;typeHandler javaType=&amp;quot;java.util.Date&amp;quot;
+callback=&amp;quot;com.bestlaps.database.typehandlers.DateTypeHandler&amp;quot;/&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>After doing this, you can cary on doing things as normal. Beans can contain java.util.Date, and ibatis happily inserts and retreives them in postgres bigint columns without any timezone conversion. Please note that timezones are not stored at all here, so when you retreive a Date from the database, the java.util.Date object will have your local JVM's devault timesone offset. You can happily ignore this, especially if you're not going to do any calculations with it.&lt;/p>
+&lt;p>The beauty of this solution is, that when there is a solution for the silly timezone conversion problem/bug, we can simply convert all database fields to timestamps, and remove the typehandler reference from the SqlMapConfig.xml file, and you're all set without changing a single line of code.&lt;/p>
+&lt;p>Thanks Joris!&lt;/p></description></item><item><title>Ibatis and Timestamps</title><link>https://realrolfje.github.io/rolfje.com/2005/07/01/ibatis-and-timestamps/</link><pubDate>Fri, 01 Jul 2005 13:05:31 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2005/07/01/ibatis-and-timestamps/</guid><description>
+&lt;p>I am using Ibatis and PostgreSQL for this great project, &lt;a href="http://www.bestlaps.com/">www.bestlaps.com&lt;/a>. However, we've recently ran into a strange problem where we store a java.util.Date into a postgress TIMEZONE column, which works fine. However, when you want to retreive it, Ibatis returns a &amp;quot;StringIndexOutofBoundsException&amp;quot; at position 23. For some reason, the result returned by Postgres can not be converted back into a java.util.Date.&lt;/p>
+&lt;p>I've tried really hard to circumvent this problem with custom setter methods (parsing the results myself), and using jodatime (a great java date and time replacement library). The fix is as simple as it is strange: Make Ibatis convert the timestamp into a java.&lt;strong>sql&lt;/strong>.Date, without changing your code.&lt;/p>
+&lt;p>So: You have your normal bean, in which you use java.&lt;strong>util&lt;/strong>.Date. Then, make your Ibatis sqlMap as usual, but for the timestamp column you put the following in the resultmap: javaType=&amp;quot;java.&lt;strong>sql&lt;/strong>.Date&amp;quot;.&lt;/p>
+&lt;p>Strange, but it works for now. Maybe more info on this later.&lt;/p>
+&lt;p>&lt;strong>UPDATE&lt;/strong>: Okay, after spending the whole weekend with this problem I discovered that the trick I just described does noet work. java.sql.Date has no time component, so when you retreive it, your java.util.Date in the bean will have a 00:00 time. So I had to search a bit further.&lt;/p>
+&lt;p>When querying with SquirrelSQL, I can insert and retreive a timestamp to and from Postgress without it being changed. So it seems that it is no Postgress bug. When I am using Ibatis to insert a java.util.Date into Postgress, it gets &amp;quot;timezone corrected&amp;quot;, although I specifically told Postgress to store timestamps without timezones.&lt;/p>
+&lt;p>The time gets corrected by 2 hours. This seems to come from the util.Date class, which seems to have a default offset of -120 minutes, although I did not set that, and did not request any timezone to be set.&lt;/p>
+&lt;p>I tried to make my own typeHandler for Ibatis, where I could convert the java.util.Date to a java.sql.TimeStamp, and give it directly to the PreparedStatement. But even that did not help. I am guessing the bug is in the Postgress JDBC driver, although that conflicts with the fact that SquirelSQL (which is als a Java/JDBC program) can do it.&lt;/p>
+&lt;p>&lt;strong>THE FIX&lt;/strong>: After more than 16 hours (!) of research I decided I would go for the workaround. We are behind schedule allready for the &lt;a href="http://www.bestlaps.com/">www.bestlaps.com&lt;/a> project, so I needed a quick fix. The way to go was dissapointingly simple: Convert Date's to Longs (with getTime()) and store the Longs in the database as number. This way ibatis and postgress don't know that it's a time. Pay attention to the fact that you need a postgress BIGINT to store the large number of milliseconds since the epoch.&lt;/p>
+&lt;p>**Final thoughts: **It seems that people who do not know how to handle timezones have built code to handle timezones. For Java, Postgres, Ibatis, or somewhere around that neighbourhood. Oh well, we knew that Java doesn't have a great Date system. A promising solution I found (but not used yet) is &lt;a href="http://www.theserverside.com/news/thread.tss?thread_id=32005">JodaTime&lt;/a>.&lt;/p>
+&lt;p>I really hope the bug gets fixed soon so I can have proper dates in the database when we go live. For now, Longs work (and will probably stay in to the end of time).&lt;/p></description></item></channel></rss>

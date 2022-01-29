@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Garmin on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/garmin/</link><description>Recent content in Garmin on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 03 May 2013 19:38:21 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/garmin/index.xml" rel="self" type="application/rss+xml"/><item><title>BaseCamp Import problem [fixed]</title><link>https://realrolfje.github.io/rolfje.com/2013/05/03/basecamp-import-problem-fixed/</link><pubDate>Fri, 03 May 2013 19:38:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/05/03/basecamp-import-problem-fixed/</guid><description>
+&lt;p>&lt;a href="screen-shot-2013-05-03-at-20-32-43.png">&lt;img src="screen-shot-2013-05-03-at-20-32-43.png" alt="route.gdb not found">
+&lt;/a>On Mac OSX, when installing Garmin BaseCamp 4.1.2 from the Appstore, there is a chance that importing downloaded routes in gdb or gpx files from your local machine will not work. The error you'll get is &amp;quot;[filename].gdb not found&amp;quot;, in a popup much like the one shown here. If you open the console app, you'll see the following error in the logfile:&lt;/p>
+&lt;pre>&lt;code>sandboxd[28092]: ([27931]) Garmin BaseCamp(27931) deny file-read-data /Users/rolf/Desktop
+&lt;/code>&lt;/pre>
+&lt;p>This means that the OSX Sandbox mechanism does not allow Garmin BaseCamp to read files in that folder. I have briefly searched documentation on how to grant BaseCamp the rights to read files there, but I couldn't find anything that would work. I did find a way to work around this problem though: Garmin BaseCamp does have rights to read your Garmin device. So here we go:&lt;/p>
+&lt;pre>&lt;code> 1. Temporarily copy the files you want to import in Garmin BaseCamp onto your device (or in my case: the extra SD card in the device).
+2. Start Garmin BaseCamp, and select &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import…&amp;quot;.
+3. Browse to the Garmin SD card and select the gdb file to import. Voila. That will get it into BaseCamp.
+4. Delete the gdb file from the Garmin. We don't need it anymore, the Garmin was just a place where BaseCamp could read the file.
+&lt;/code>&lt;/pre>
+&lt;p>From here on, everything should work as normal. This is just a workaround. If anybody finds out how to really fix this problem let me know.&lt;/p></description></item><item><title>How to share Garmin routes with your friends</title><link>https://realrolfje.github.io/rolfje.com/2010/06/30/how-to-share-garmin-routes-with-your-friends/</link><pubDate>Wed, 30 Jun 2010 21:19:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/06/30/how-to-share-garmin-routes-with-your-friends/</guid><description>
+&lt;p>&lt;img src="schermafbeelding-2010-06-16-om-20-40-16.png" alt="Recalculated route (green) does not match the original (pink)">
+I've been struggling to get routes into my Garmin Zūmo® in such a way that it matches the plans of the original author, while at the same time setting the Garmin to &amp;quot;recalculate&amp;quot; so that when I take a wrong turn, it will send me back to the track. After reading a lot on the Garmin forums, and experimenting with this on my two recent road trips (one to Eifel and one to Sauerland in Germany) I can say I have found a way to do this. It's a bit of work, but it will make your trip a lot more trouble-free. Here's the recipe.&lt;/p>
+&lt;p>&lt;strong>Needed:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Nice motorcycle route in a GPX or GDB file&lt;/li>
+&lt;li>&lt;a href="http://www8.garmin.com/support/download_details.jsp?id=4435">Garmin BaseCamp&lt;/a> (BaseCamp 3.0.1.0 for OSX at time of writing)&lt;/li>
+&lt;li>&lt;a href="https://buy.garmin.com/shop/shop.do?cID=135&amp;amp;pID=15000">Garmin Zūmo®&lt;/a> (model 660 at time of writing)&lt;/li>
+&lt;/ul>
+&lt;!-- more -->**Before you begin:**
+&lt;p>Open &amp;quot;Preferences...&amp;quot; in Garmin BaseCamp on the Mac and make sure you selected &lt;em>&amp;quot;Shortest Dinstance&amp;quot;&lt;/em> on the routing tab. This is to prevent routing errors because of changed maximum speeds on different maps. Speeds may differ, but distances are always the same.
+On the Zūmo, make sure you matched the BaseCamp routing settings as well as you can.&lt;/p>
+&lt;p>&lt;strong>1. Import the route&lt;/strong>
+You friend sends you a file with a great motorcycle route, in this case &lt;em>&amp;quot;Demo.GPX&amp;quot;&lt;/em>
+You import the file into BaseCamp by clicking on &lt;em>&amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import...&amp;quot;&lt;/em> and selecting the file. Basecamp loads the route and it shows up as follows:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-26-19.png">&lt;img src="schermafbeelding-2010-06-16-om-20-26-19.png?w=450" alt="">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>2. Copy the route&lt;/strong>
+In order to make sure your Zūmo will re-calculate the route as your friend intended it, you may need to correct for mismatches in maps, software versions or settings influencing the calculation. To correct the route, we copy it. Select the imported route (it will highlight on the map), right click it and select &lt;em>&amp;quot;Duplicate&amp;quot;&lt;/em>. You should now have 2 routes in the List on the left side of the screen:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-33-11.png">&lt;img src="schermafbeelding-2010-06-16-om-20-33-11.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Next, right click the copied route (in this case &lt;em>&amp;quot;Demo Route 1&amp;quot;&lt;/em>) and choose &lt;em>&amp;quot;Get Info&amp;quot;&lt;/em>. On the &lt;em>&amp;quot;Summary&amp;quot;&lt;/em> tab, choose a different color for the copied route, so we know what we are editing. In this case, I choose green.&lt;/p>
+&lt;p>&lt;strong>3. Recalculate and fix the copy&lt;/strong>
+Close the info screen and right-click the copied route again, this time choosing &lt;em>&amp;quot;Recalculate&amp;quot;&lt;/em>. To demonstrate what happens when settings differ, I exported the route with the (wrong) &lt;em>&amp;quot;Shortest Time&amp;quot;&lt;/em> setting, and imported/recalculated it with the (correct) &lt;em>&amp;quot;Shortest Distance&amp;quot;&lt;/em> setting. We see that the copied route is now recalculated and does not match the original:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-40-16.png">&lt;img src="schermafbeelding-2010-06-16-om-20-40-16.png" alt="Recalculated route (green) does not match the original (pink)">
+&lt;/a>&lt;/p>
+&lt;p>Because your friend will likely be riding the pink route, you want to correct your copy of the route so that both BaseCamp and the Zūmo will send you down the roads you intended to ride. You can do this by selecting the &lt;em>&amp;quot;Selector Tool&amp;quot;&lt;/em> and dragging the green route towards the purple one. Each time you do this, it will create a new waypoint in your copied route.&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-42-51.png">&lt;img src="schermafbeelding-2010-06-16-om-20-42-51.png" alt="Selector tool">
+&lt;/a>When placing a new waypoint, try to avoid placing waypoints on intersections. This will give both BaseCamp and the Zūmo more room to choose different routes, which you don't want. Think of it this way: You want to be driving on a certain road, not on a certain intersection.&lt;/p>
+&lt;p>Once you think you are ready, zoom in to about 300m level, and carefully scan the route so that you can correct the final details of the route. Because we selected different colors, the differences are easy to spot, and it's easy to see how to correct them. This is what it looks like when making corrections, note that I'm dragging the new waypoint to the middle of the road, as mentioned earlier:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-49-20.png">&lt;img src="schermafbeelding-2010-06-16-om-20-49-20.png" alt="Dragging waypoint to correct route">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>4. Fine-tune the waypoints&lt;/strong>
+After the route looks as intented, you need to make sure that the waypoints are placed perfectly on the road. This is particularly important on 2-way highways, where a misplaced waypoint can make your Zūmo think you want to be riding in the other direction on this highway.&lt;/p>
+&lt;p>Right-click the copied route and select &lt;em>&amp;quot;Get Info&amp;quot;&lt;/em>. If not already selected, choose the &lt;em>&amp;quot;Via Points&amp;quot;&lt;/em> tab and place a checkmark on the &lt;em>&amp;quot;Center on Selected&amp;quot;&lt;/em> option. Now click on the first waypoint, and see if it is placed exactly where you want it to be. If it is not, press the &lt;em>&amp;quot;alt&amp;quot;&lt;/em> (also called &lt;em>&amp;quot;option&amp;quot;)&lt;/em> key on your keyboard and use the Selector Tool to drag the waypoint to the correct location. Below you can see a misplaced waypoint that needs to be corrected:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-52-51.png">&lt;img src="schermafbeelding-2010-06-16-om-20-52-51.png?w=450" alt="Misaligned waypoint">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>5. Export the route&lt;/strong>
+If you placed the copied route in the same List as the original route (like in this example), you might want to delete the original route from the list (or from your Collection if you choose), and save the resulting list into a GPX file. This is an extra safety measure, giving you a backup of the route to take along on your trip on an SD card.&lt;/p>
+&lt;p>You have 2 options in BaseCamp for transporting the route to the Zūmo. Either you send it directly to the device, or you save the exported GPX file onto the SD card in the &lt;em>/Garmin/GPX&lt;/em> folder. Doing the latter will enable you to recover from a crashing Zūmo, because you can re-import the route from the SD card.&lt;/p>
+&lt;p>&lt;strong>6. Check the imported route in the Zūmo&lt;/strong>
+Whether you exported it directly to the Zūmo, or you put it onto the SD card, a few seconds after booting the Zūmo will tell you that it found new user data. You choose &amp;quot;import&amp;quot; and select the route(s) you want to import. I did notice that selecting &amp;quot;&lt;em>Import all&amp;quot;&lt;/em> for larger routes, the Zūmo tells you after 5 routes or so that it failed. This is probably a memory problem. Importing them one-by-one nearly always works.&lt;/p>
+&lt;p>When the route is imported and you're still behind your Mac, you might want to compare the route in the Zūmo with the one on your screen. In some cases the Zūmo is still stubborn enough to select a different route. Most of the time this is because of incorrect settings in the Zūmo, causing it to avoid ferries or take the faster route.&lt;/p>
+&lt;p>&lt;strong>Have fun!&lt;/strong>
+The most important thing of all this work is to have fun. No matter where Garmin sends you, remember that you're on your bike to have fun.&lt;/p></description></item><item><title>Zūmo Mount for Triumph Speed Triple</title><link>https://realrolfje.github.io/rolfje.com/2009/12/30/zumo-mount-for-triumph-speed-triple/</link><pubDate>Tue, 29 Dec 2009 23:57:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/12/30/zumo-mount-for-triumph-speed-triple/</guid><description>
+&lt;p>&lt;a href="img_8498.jpg">&lt;img src="img_8498.jpg?w=150" alt="">
+&lt;/a>The RAM mount coming with the Garmin zūmo's are fine, but I wanted something more elegant to go with my Triumph Speed Triple. This article contains a detailed description of building your own mount for the &lt;a href="https://buy.garmin.com/shop/shop.do?cID=135&amp;amp;pID=15000">Garmin zūmo 660&lt;/a>. I mounted the zūmo on my Speed Triple, but the mount is universal enough to be center-mounted on any bike which has riser-mounted handlebars.&lt;/p>
+&lt;p>No guarantees ofcourse, you're on your own from here. Bring your tools and read on.&lt;/p>
+&lt;p>&lt;a href="img_8529.jpg">&lt;img src="img_8529.jpg" alt="">
+&lt;/a>&lt;strong>WARNING: When I tried to cut one of these rubbers in half, the bottom disk came loose. It was not as securely glued to the rubber as the top disk. When pulling the zūmo on the mount it does not come off, but if you want to be sure order the Garmin 550 mount rubbers (described in article below).&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>&lt;!-- more -->Stuff you need to buy:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> * [![](img_8444.jpg?w=150)
+&lt;/code>&lt;/pre>
+&lt;p>](img_8444.jpg)A scythe &amp;quot;Harddisk Stabilizer II&amp;quot;. For more info, see &lt;a href="http://www.scythe.co.jp">www.scythe.co.jp&lt;/a>. I got mine at &lt;a href="http://www.ikbenstil.nl">www.ikbenstil.nl&lt;/a>. Buy two of these if you can spare the money, because you're likely to screw one up. Please note that you can also order ready-made M4 dampers at &lt;a href="http://snelbalie.gps.nl/">Waypoint&lt;/a>, but I did not know that at the time, and they are not listed on their shop page.
+* a sheet of rubber or an old tyre inner tubing
+* A (stainless steel) brace which can fit the handle bars and the rubber at the thickest part. The standard Garmin mount brace is not long enough, I found a perfectly fitting brace sold as some drywall pipe mount (&lt;a href="http://www.23hq.com/rolfje/photo/5236931">wandputting&lt;/a>).
+* two stainless steel self-locking nuts fitting the brace, in my case M6.
+* 10x10 aluminum U profile rod, about 50mm length for the counter bracket on the brace
+* eight stainless steel M4x15 bolts, with at least four washers.
+* 2mm thick aluminum sheet, at least 53x80mm
+* at least 30x30mm wood beam, of about 1 meter in length
+* wood screws (trust me on these last two items)
+* small bottle of mild threadlock (I used &lt;a href="http://www.loctitesolutions.com/index.php?FOLDERID=12096&amp;amp;PHPSESSID=277a20d2714a013c7235e12cade3653e">loctite 243&lt;/a>)
+* some &lt;a href="http://www.wd40.com/">WD40&lt;/a> (you should have that in your shop, next to the &lt;a href="http://www.ducttapeguys.com/">duct tape&lt;/a>)&lt;/p>
+&lt;p>**
+Tools you need to have:**&lt;/p>
+&lt;hr>
+&lt;pre>&lt;code> * sharp (new) 3.2mm HSS drill bit and preferably a bench-press drill
+* standard set of steel drill bits (1mm to 10mm, whatever you have handy)
+* sharp 15mm wood drill but (this needs to be exact)
+* M4 inner thread cutter
+* firmly attached [bench vise](http://en.wikipedia.org/wiki/Vise)
+* a set of [metal files](http://en.wikipedia.org/wiki/File_(tool))
+* a hacksaw
+* a wood saw
+* a freezer (or rent a small space in that for 24 hours :-)
+* an old blanket or towel
+&lt;/code>&lt;/pre>
+&lt;p>**
+Things you need to do:**&lt;/p>
+&lt;p>The rubber dampers in the harddisk stabilizer have the wrong hole in one end, and a &lt;a href="http://www.23hq.com/rolfje/photo/5237044?album_id=5237009">piece of thread in the other.&lt;/a> To be able to cut new M4 thread, we need to drill through the steel and the rubber. Drilling rubber is usually a problem, but not if we do some careful preparations.&lt;/p>
+&lt;p>&lt;a href="img_8453.jpg">&lt;img src="img_8453.jpg?w=112" alt="">
+&lt;/a>Take the 30x30 wood beam, and cut off four pieces of about 7 to 10 cm length. Drill a 15mm hole in each of them. Then, saw it in half with the wood saw. Be carefull to mark the wood pieces, as they need to fit perfectly back together later on. Drill two small holes in one half of the four clamps, so you can screw it back together perfectly, as if it was 1 piece.&lt;/p>
+&lt;p>Take the rubber dampers from the scythe harddisk stabilizer, put them in the 15mm holes and screw the clamps back together. With the hacksaw, saw off the thread coming out of one end of the damper, and file it so that the metal is &lt;a href="http://www.23hq.com/rolfje/photo/5237061?album_id=5237009">perfectly flat&lt;/a>.&lt;/p>
+&lt;p>Check that the rubber dampers fit the wooden clamps, screw them together pretty tight, and put the four (or eight) assemblies in the freezer for at least 24 hours.&lt;/p>
+&lt;p>To protect the paint on your gastank, put an old blanket or towel on it. This will keep you from scratching the tank in the next steps. Extra advantage is that you can put small nuts and washers on your tank without them rolling away.&lt;/p>
+&lt;p>&lt;a href="img_8483.jpg">&lt;img src="img_8483.jpg?w=150" alt="">
+&lt;/a>While waiting for the rubbers to cool off, you can prepare the aluminum parts. Take the 10x10 aluminum frame, and drill two holes in it so that the M6 brace fits through it. Mark the perfect middle between the two holes, and use a half-round steel file to file it down so that it fits the handlebars perfectly.&lt;/p>
+&lt;p>Be careful to file perpendicular to the aluminum, and re-check your work often. The U profile sits flush against the handlebars, while being perpendicular to them when looking from the riders position. Don't file too deep, allow for some room between the aluminum plate and the handlebars, so that the &lt;a href="http://www.23hq.com/rolfje/photo/5237030?album_id=5237009">screw heads don't touch the bars&lt;/a>.&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2009-12-29-om-13-54-41.jpg">&lt;img src="schermafbeelding-2009-12-29-om-13-54-41.jpg?w=248" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Next, take the aluminum sheet and make it look like the drawing I made here (this is the shortest sentence in this post, resulting in the most work for the reader).&lt;/p>
+&lt;p>Prepare the benchpress drill by mounting the 3.2mm drill bit. After the rubber dampers in the wood clamps have been in the freezer, take one out and take it to the workshop as fast as you can, make sure to keep it cold.&lt;/p>
+&lt;p>On the flat side of the rubber damper (the side where you filed off the thread), drill a hole through the steel, but try not to drill into the rubber too much.&lt;/p>
+&lt;p>Flip the clamp over, and drill through the original threaded hole, all the way through the rubber. If your benchpress drill is straight, you &lt;a href="http://www.23hq.com/rolfje/photo/5237076?album_id=5237009">should come out through the hole&lt;/a> you just drilled in the in the other steel plate.&lt;/p>
+&lt;p>Repeat the whole process for each damper. Minimize the time they are out of the freezer. After you've drilled all dampers, they can warm up again by leaving them in the workshop.&lt;/p>
+&lt;p>&lt;a href="img_8466.jpg">&lt;img src="img_8466.jpg?w=112" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Take the dampers out of the wooden clamps. You don't need the clamps anymore, give them to a friend so he can make this cool mount, too.&lt;/p>
+&lt;p>Put one of the rubber dampers in the bench vise and use a small drop of WD40 and the M4 thread cutter to cut thread into the 3.2mm holes. Do this on both sides, make sure that you break the cuttings (one turn forward, then 2/3 back, repeat). Repeat this for all dampers.&lt;/p>
+&lt;p>&lt;strong>Mount up!
+You should now have all pieces to mount. Test the fitting of the mount before you use threadlock (loctite) on any of the parts. Because of the construction, there is an order in which you need to assemble the parts, let me take you through it:&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="img_8485.jpg">&lt;img src="img_8485.jpg" alt="">
+&lt;/a>Mount the rubbers on the zūmo mount, but do not fasten the screws. Attach the aluminum plate to the other side, also not fastening the screws.&lt;/p>
+&lt;p>Now, tighten the screws on the zumo mount first, then tighten the screws on the aluminim plate. This will make sure that the dampers will align perfectly later on. Take one screw out of the aluminum plate, apply threadlock and a washer, and re-tighten it. Repeat for the other three screws in the aluminum plate.&lt;/p>
+&lt;p>After you've done all four screws attaching the dampers to the aluminum plate, take the Garmin zūmo mount off. You should now have an aluminum plate with four dampers firmly attached to it.&lt;/p>
+&lt;p>&lt;a href="img_8490.jpg">&lt;img src="img_8490.jpg?w=150" alt="">
+&lt;/a>Cut the rubber slab to the correct width and length so that it protects your handlebars from scratches by the mount. Use the brace, the aluminum U profile, two washers and two self-locking nuts to attach the aluminum plate to the handlebars.&lt;/p>
+&lt;p>When compfortable with the position, tighten the bolts and &lt;a href="http://www.23hq.com/rolfje/photo/5237129?album_id=5237009">attach the zūmo mount&lt;/a> to the rubber dampers, using threadlock. Everything should match up perfectly, don't force anything.&lt;/p>
+&lt;p>And there you have it, all done! More pictures of the whole process are available &lt;a href="http://www.23hq.com/rolfje/album/5237009">here&lt;/a>.&lt;/p>
+&lt;p>&lt;a href="img_84991.jpg">&lt;img src="img_84991.jpg" alt="">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Please note:&lt;/strong> At the time of writing I did not thouroghly test the durability and strength of this mount and it's dampers. Mounting the zūmo like this is totally at your own risk, so please be careful. If you're not sure about the dampers, buy ready-made ones fit for this purpose. Your GPS supplier should be able to get a hold of a set.&lt;/p></description></item></channel></rss>

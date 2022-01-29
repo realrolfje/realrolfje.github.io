@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>motorcycle on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/motorcycle/</link><description>Recent content in motorcycle on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Wed, 30 Jun 2010 21:19:29 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/motorcycle/index.xml" rel="self" type="application/rss+xml"/><item><title>How to share Garmin routes with your friends</title><link>https://realrolfje.github.io/rolfje.com/2010/06/30/how-to-share-garmin-routes-with-your-friends/</link><pubDate>Wed, 30 Jun 2010 21:19:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/06/30/how-to-share-garmin-routes-with-your-friends/</guid><description>
+&lt;p>&lt;img src="schermafbeelding-2010-06-16-om-20-40-16.png" alt="Recalculated route (green) does not match the original (pink)">
+I've been struggling to get routes into my Garmin Zūmo® in such a way that it matches the plans of the original author, while at the same time setting the Garmin to &amp;quot;recalculate&amp;quot; so that when I take a wrong turn, it will send me back to the track. After reading a lot on the Garmin forums, and experimenting with this on my two recent road trips (one to Eifel and one to Sauerland in Germany) I can say I have found a way to do this. It's a bit of work, but it will make your trip a lot more trouble-free. Here's the recipe.&lt;/p>
+&lt;p>&lt;strong>Needed:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Nice motorcycle route in a GPX or GDB file&lt;/li>
+&lt;li>&lt;a href="http://www8.garmin.com/support/download_details.jsp?id=4435">Garmin BaseCamp&lt;/a> (BaseCamp 3.0.1.0 for OSX at time of writing)&lt;/li>
+&lt;li>&lt;a href="https://buy.garmin.com/shop/shop.do?cID=135&amp;amp;pID=15000">Garmin Zūmo®&lt;/a> (model 660 at time of writing)&lt;/li>
+&lt;/ul>
+&lt;!-- more -->**Before you begin:**
+&lt;p>Open &amp;quot;Preferences...&amp;quot; in Garmin BaseCamp on the Mac and make sure you selected &lt;em>&amp;quot;Shortest Dinstance&amp;quot;&lt;/em> on the routing tab. This is to prevent routing errors because of changed maximum speeds on different maps. Speeds may differ, but distances are always the same.
+On the Zūmo, make sure you matched the BaseCamp routing settings as well as you can.&lt;/p>
+&lt;p>&lt;strong>1. Import the route&lt;/strong>
+You friend sends you a file with a great motorcycle route, in this case &lt;em>&amp;quot;Demo.GPX&amp;quot;&lt;/em>
+You import the file into BaseCamp by clicking on &lt;em>&amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import...&amp;quot;&lt;/em> and selecting the file. Basecamp loads the route and it shows up as follows:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-26-19.png">&lt;img src="schermafbeelding-2010-06-16-om-20-26-19.png?w=450" alt="">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>2. Copy the route&lt;/strong>
+In order to make sure your Zūmo will re-calculate the route as your friend intended it, you may need to correct for mismatches in maps, software versions or settings influencing the calculation. To correct the route, we copy it. Select the imported route (it will highlight on the map), right click it and select &lt;em>&amp;quot;Duplicate&amp;quot;&lt;/em>. You should now have 2 routes in the List on the left side of the screen:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-33-11.png">&lt;img src="schermafbeelding-2010-06-16-om-20-33-11.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Next, right click the copied route (in this case &lt;em>&amp;quot;Demo Route 1&amp;quot;&lt;/em>) and choose &lt;em>&amp;quot;Get Info&amp;quot;&lt;/em>. On the &lt;em>&amp;quot;Summary&amp;quot;&lt;/em> tab, choose a different color for the copied route, so we know what we are editing. In this case, I choose green.&lt;/p>
+&lt;p>&lt;strong>3. Recalculate and fix the copy&lt;/strong>
+Close the info screen and right-click the copied route again, this time choosing &lt;em>&amp;quot;Recalculate&amp;quot;&lt;/em>. To demonstrate what happens when settings differ, I exported the route with the (wrong) &lt;em>&amp;quot;Shortest Time&amp;quot;&lt;/em> setting, and imported/recalculated it with the (correct) &lt;em>&amp;quot;Shortest Distance&amp;quot;&lt;/em> setting. We see that the copied route is now recalculated and does not match the original:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-40-16.png">&lt;img src="schermafbeelding-2010-06-16-om-20-40-16.png" alt="Recalculated route (green) does not match the original (pink)">
+&lt;/a>&lt;/p>
+&lt;p>Because your friend will likely be riding the pink route, you want to correct your copy of the route so that both BaseCamp and the Zūmo will send you down the roads you intended to ride. You can do this by selecting the &lt;em>&amp;quot;Selector Tool&amp;quot;&lt;/em> and dragging the green route towards the purple one. Each time you do this, it will create a new waypoint in your copied route.&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-42-51.png">&lt;img src="schermafbeelding-2010-06-16-om-20-42-51.png" alt="Selector tool">
+&lt;/a>When placing a new waypoint, try to avoid placing waypoints on intersections. This will give both BaseCamp and the Zūmo more room to choose different routes, which you don't want. Think of it this way: You want to be driving on a certain road, not on a certain intersection.&lt;/p>
+&lt;p>Once you think you are ready, zoom in to about 300m level, and carefully scan the route so that you can correct the final details of the route. Because we selected different colors, the differences are easy to spot, and it's easy to see how to correct them. This is what it looks like when making corrections, note that I'm dragging the new waypoint to the middle of the road, as mentioned earlier:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-49-20.png">&lt;img src="schermafbeelding-2010-06-16-om-20-49-20.png" alt="Dragging waypoint to correct route">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>4. Fine-tune the waypoints&lt;/strong>
+After the route looks as intented, you need to make sure that the waypoints are placed perfectly on the road. This is particularly important on 2-way highways, where a misplaced waypoint can make your Zūmo think you want to be riding in the other direction on this highway.&lt;/p>
+&lt;p>Right-click the copied route and select &lt;em>&amp;quot;Get Info&amp;quot;&lt;/em>. If not already selected, choose the &lt;em>&amp;quot;Via Points&amp;quot;&lt;/em> tab and place a checkmark on the &lt;em>&amp;quot;Center on Selected&amp;quot;&lt;/em> option. Now click on the first waypoint, and see if it is placed exactly where you want it to be. If it is not, press the &lt;em>&amp;quot;alt&amp;quot;&lt;/em> (also called &lt;em>&amp;quot;option&amp;quot;)&lt;/em> key on your keyboard and use the Selector Tool to drag the waypoint to the correct location. Below you can see a misplaced waypoint that needs to be corrected:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2010-06-16-om-20-52-51.png">&lt;img src="schermafbeelding-2010-06-16-om-20-52-51.png?w=450" alt="Misaligned waypoint">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>5. Export the route&lt;/strong>
+If you placed the copied route in the same List as the original route (like in this example), you might want to delete the original route from the list (or from your Collection if you choose), and save the resulting list into a GPX file. This is an extra safety measure, giving you a backup of the route to take along on your trip on an SD card.&lt;/p>
+&lt;p>You have 2 options in BaseCamp for transporting the route to the Zūmo. Either you send it directly to the device, or you save the exported GPX file onto the SD card in the &lt;em>/Garmin/GPX&lt;/em> folder. Doing the latter will enable you to recover from a crashing Zūmo, because you can re-import the route from the SD card.&lt;/p>
+&lt;p>&lt;strong>6. Check the imported route in the Zūmo&lt;/strong>
+Whether you exported it directly to the Zūmo, or you put it onto the SD card, a few seconds after booting the Zūmo will tell you that it found new user data. You choose &amp;quot;import&amp;quot; and select the route(s) you want to import. I did notice that selecting &amp;quot;&lt;em>Import all&amp;quot;&lt;/em> for larger routes, the Zūmo tells you after 5 routes or so that it failed. This is probably a memory problem. Importing them one-by-one nearly always works.&lt;/p>
+&lt;p>When the route is imported and you're still behind your Mac, you might want to compare the route in the Zūmo with the one on your screen. In some cases the Zūmo is still stubborn enough to select a different route. Most of the time this is because of incorrect settings in the Zūmo, causing it to avoid ferries or take the faster route.&lt;/p>
+&lt;p>&lt;strong>Have fun!&lt;/strong>
+The most important thing of all this work is to have fun. No matter where Garmin sends you, remember that you're on your bike to have fun.&lt;/p></description></item><item><title>Anti-fog Helmet Visor Tip</title><link>https://realrolfje.github.io/rolfje.com/2010/04/19/anti-fog-helmet-visor-tip/</link><pubDate>Mon, 19 Apr 2010 20:39:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/04/19/anti-fog-helmet-visor-tip/</guid><description>
+&lt;p>&lt;img src="accessories-icon-street-helmet-universal-original-shield-fog-free-light-smoke.jpg" alt="">
+In some biker magazines you'll see some cheap journalists write that the &amp;quot;dish washing soap anti-fog is an urban myth&amp;quot;, and that it will &amp;quot;blur your vision&amp;quot;, some may even say it's downright dangerous. This blogpost is to show that if done right, dish washing soap is actually the absolute best anti-fog treatment money can buy. If you've tried this and still don't like it, there are some easier alternatives at the bottom for your convenience.&lt;/p>
+&lt;!-- more -->**Why this post**
+&lt;p>The Netherlands. A damp and cold country where even the most high-tech coated visors fog up at the most inconvenient moments. Particulary at the start of this season it was terrible. Because of the longer and colder than normal winter, I was very eager to get on the bike early. As soon as the snow was gone, I was riding. Because I forgot to take care of the visor, it fogged up. Badly.&lt;/p>
+&lt;p>I went out to find ways of preventing the fogging up of the visor. A friend told me that pinlock works, but when the airtight seal is gone, you're in deep trouble. It also adds extra layers of Lexan, meaning more glare. Then, &lt;a href="http://twitter.com/cityjohn">@CityJohn&lt;/a> pointed me to FogTech wipes. I ordered a few at &lt;a href="visorvision.co.uk">Visorvision&lt;/a>, and got them very promptly (customer service is A-ok at Visorvision, thanks again Paul!). The wipes work as advertised and add almost unvisible glare to the visor. Good value for money, but the wipes themselves dry out quickly. To keep the effect you have to re-apply the coat, but you will rarely find yourself using the same wipe twice. Not that the price is a problem, but it may become a burden on roadtrips.&lt;/p>
+&lt;p>To my surprise, I found a longer lasting solution on my kitchen sink. I heard of the dish washing soap tip before but never actively tried it. To my surprise, with a little care, you can coat the inside of your helmet with this stuff, it will be invisible, and will stay on for at least a week. Even better: your visor will actually become clearer when you breathe against it.&lt;/p>
+&lt;p>&lt;strong>Before you do anything:&lt;/strong>_ Check if your visor has a special coating. If this is the case, you are probably better off just cleaning it according to the owners manual. If you're not sure, try this stuff on a small unused part of the visor._&lt;/p>
+&lt;p>&lt;strong>Step 1: Clean your visor&lt;/strong>&lt;/p>
+&lt;p>[caption id=&amp;quot;attachment_1175&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;140&amp;quot; caption=&amp;quot;The clean visor should fog up evenly when breathing against it&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-30-46.png">&lt;img src="schermafbeelding-2010-04-19-om-21-30-46.png?w=200" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;p>Before applying any product to your visor, you need to carefully clean it. Taking the visor off and washing it with a soft detergent is probably best. On the road this can be a bit more problematic, so you might want to consider taking a damp sponge with you in a watertight bag, and some dry wipes.&lt;/p>
+&lt;p>You can test if your visor is clean by breathing on it. If it fogs up nice and evenly, it's clean enough for the next step.&lt;/p>
+&lt;p>&lt;strong>Step 2: Apply (very little!) dishwashing soap&lt;/strong>
+Take a soft rag (cotton t-shirt or such) and put a small  drop of washing up liquid on it. The less you apply, the easier the final step will be.&lt;/p>
+&lt;table width="100%" align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1177&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;60&amp;quot; caption=&amp;quot;The Magic Stuff&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-48.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-48.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1178&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;Apply a very small drop of detergent on a soft rag to the inside of the visor.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-12.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-12.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1179&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;After applying, your visor now looks somewhat smudgy, like this.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-31-38.png">&lt;img src="schermafbeelding-2010-04-19-om-21-31-38.png" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Step 3: Buffing**
+Take a new, clean, soft rag and gently rub the inside of your visor. You'll see the detergent disappear, and the visor will become clear. As soon as the visor is clear, stop. You don't want to remove all the detergent.
+&lt;table width="100%" align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1181&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Buff the inside of the visor with a clean soft rag&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-08.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-08.png?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1182&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;99&amp;quot; caption=&amp;quot;Stop when you think it's clear enough&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-33.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-33.png?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1183&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;120&amp;quot; caption=&amp;quot;The result. No visible traces of detergent, clear vision for at least a week.&amp;quot;]&lt;a href="schermafbeelding-2010-04-19-om-21-32-41.png">&lt;img src="schermafbeelding-2010-04-19-om-21-32-41.png?w=120" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Now try it. Put your helmet on, close the visor and breathe on it like your neighbors dog after a run in the park. It will not fog up. Nice huh? Imagine how many coats you can do with one bottle of dish washing soap? And you don't even have to take it on the road trip, because every household, hotel or grocery store will have this!
+&lt;p>&lt;strong>Advanced tips:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. After a while, very small dirt particles from your breath will attach to the detergent. This can be seen as a light mist, like you also see on the inside of the windshield of your car. You can re-buff the inside of the visor at least once before re-applying the soap, but it has to be absolutely dry before buffing.
+2. When you are riding, you might notice you didn't buff the inside quite enough. If it bothers you too much, breathe against your visor to clear it up. Yes, with soap on the visor it will actually become clearer when breathing against it.
+3. If you don't have the time to do all this, and are going for quick-and-easy, I'd recommend the FogTech wipes, as mentioned earlier.
+&lt;/code>&lt;/pre>
+&lt;p>Ride safely.&lt;/p></description></item><item><title>Packing bags on a Speed Triple</title><link>https://realrolfje.github.io/rolfje.com/2009/04/18/packing-bags-on-a-speed-triple/</link><pubDate>Sat, 18 Apr 2009 13:53:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/04/18/packing-bags-on-a-speed-triple/</guid><description>
+&lt;p>&lt;a href="img_1798.jpg">&lt;img src="img_1798.jpg" alt="my Triumph Speed Triple">
+&lt;/a>As you may know, I traded in my Honda Sevenfifty for a nice Triumph Speed Triple. While waiting for the bike to be delivered, I tried to fiend out how I can take my hefty 4-star ART chainlock on this bike. Apparently, nobody uses chainlocks on their bikes because I could find no information at all about transporting chainlocks.&lt;/p>
+&lt;!-- more -->Ofcourse you can put the chainlock around your body, or in a backpack, but neither of these solutions are without risk. Particularly wearing a chainlock around your neck is pretty dangerous when you fall. You might expect that bike manufacturers would leave some room under the seat to transport a lock. But if you have a Speed Triple, you know how little room there is under the seat.
+&lt;p> 
+&lt;a href="img_1932.jpg">&lt;img src="img_1932.jpg?w=200" alt="Speed Triple storage... None.">
+&lt;/a>    &lt;a href="img_1934.jpg">&lt;img src="img_1934.jpg?w=200" alt="No room in the seat itself... But look! Loops!">
+&lt;/a>&lt;/p>
+&lt;p>As you can see in these pictures, there is not even enough room to put a pair of summer gloves or a simple disclock under the seat. There is a small compartment at the rear, but my insurance requires me to have an SCM approved alarm, which takes up the remaining space under the seat (the box with the yellow sticker in the top left picture).&lt;/p>
+&lt;p>&lt;a href="img_1945.jpg">&lt;img src="img_1945.jpg" alt="Loops sticking out">
+&lt;/a>    &lt;a href="img_1942.jpg">&lt;img src="img_1942.jpg" alt="img_1942">
+&lt;/a>&lt;/p>
+&lt;p>To my surprise, Triumph did add a cool feature to the seat itself: loops! Lift the seat, fold the loops out, and put the seat back. Now you can put a backpack on your buddyseat, and strap it to the bike without damaging or even touching any painted parts.&lt;/p></description></item></channel></rss>

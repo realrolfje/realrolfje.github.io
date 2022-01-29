@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ubuntu on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/ubuntu/</link><description>Recent content in Ubuntu on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 07 Jan 2018 18:18:59 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/ubuntu/index.xml" rel="self" type="application/rss+xml"/><item><title>JSON alerts for Munin</title><link>https://realrolfje.github.io/rolfje.com/2018/01/07/json-alerts-for-munin/</link><pubDate>Sun, 07 Jan 2018 18:18:59 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/01/07/json-alerts-for-munin/</guid><description>
+&lt;p>&lt;a href="https://math.stackexchange.com/a/54568">&lt;img src="munin-log.png" alt="">
+&lt;/a>Munin is a great and easy way to monitor your servers. The documentation for Munin is kind of all over the place, and sometimes not all that clear.&lt;/p>
+&lt;pre>&lt;code> * There is the recent [&amp;quot;Munin Guide&amp;quot;](https://munin.readthedocs.io/en/latest/) which is quite informative and well laid out.
+&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>Sometimes additional info and background can be found on the &lt;a href="http://munin-monitoring.org/wiki/Documentation">old munin wiki&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;p>Getting the standard mail alerts working on munin is simplest, but as soon as you want custom layouts or send alerts as a push message to a phone, it can take quite some work. Here's what I figured out to get the Munin alert available to you as JSON inside your own Python script so you can do anything you want with it.&lt;/p>
+&lt;!-- more -->
+&lt;p>On the munin master, create the file &lt;code>/etc/munin/munin-conf.d/alerts.conf&lt;/code> with the following contents:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;text&amp;quot;]
+contact.python.command /etc/munin/scripts/alert.py
+contact.python.text { &amp;quot;group&amp;quot;:&amp;quot;${var:group}&amp;quot;, &amp;quot;host&amp;quot;:&amp;quot;${var:host}&amp;quot;,&lt;br>
+&amp;quot;graph_category&amp;quot;:&amp;quot;${var:graph_category}&amp;quot;,&lt;br>
+&amp;quot;graph_title&amp;quot;:&amp;quot;${var:graph_title}&amp;quot;,&lt;br>
+&amp;quot;warning&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:wfields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+],&lt;br>
+&amp;quot;critical&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:cfields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+],&lt;br>
+&amp;quot;unknown&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:ufields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+]&lt;br>
+}
+[/sourcecode]&lt;/p>
+&lt;p>This will make Munin output JSON to the &amp;quot;python&amp;quot; user, you can chose another name if needed. After this, you can create a Python script looking somewhat like this:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;python&amp;quot;]
+#!/usr/bin/python&lt;/p>
+&lt;h1 id="heading">&lt;/h1>
+&lt;h1 id="save-as-etcmuninscriptsalertpy">Save as /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="chown-muninmunin-etcmuninscriptsalertpy">chown munin:munin /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="chmod-x-etcmuninscriptsalertpy">chmod +x /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="heading-1">&lt;/h1>
+&lt;p>import sys
+import os
+import json&lt;/p>
+&lt;p>def humanreadable( jsonalert ):
+hascritical = (len(jsonalert['critical']) &amp;gt; 0)
+haswarning = (len(jsonalert['warning']) &amp;gt; 0)
+hasunknown = (len(jsonalert['unknown']) &amp;gt; 0)&lt;/p>
+&lt;p>report = &amp;quot;&amp;quot;&lt;/p>
+&lt;p>if hascritical:
+for i in jsonalert['critical']:
+report += &amp;quot;CRITICAL: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if haswarning:
+for i in jsonalert['warning']:
+report += &amp;quot;WARNING: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if hasunknown:
+for i in jsonalert['unknown']:
+report += &amp;quot;UNKNOWN: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if hascritical + haswarning + hasunknown == 0:
+report += &amp;quot;OK: {0} {1}&amp;quot;.format(jsonalert['host'],jsonalert['graph_title'])&lt;/p>
+&lt;p>return report&lt;/p>
+&lt;h1 id="get-the-output-from-munin-stdout-and-print-it">Get the output from Munin stdout and print it.&lt;/h1>
+&lt;p>for line in sys.stdin:
+j = json.loads(line)
+readable = humanreadable(j)
+print readable
+[/sourcecode]&lt;/p>
+&lt;p>There is no debugging without testruns. To see if this works, you can run this command:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;bash&amp;quot;]
+sudo -u munin /usr/share/munin/munin-limits --force
+[/sourcecode]&lt;/p>
+&lt;p>This should give you output which looks somewhat like this:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;text&amp;quot;]
+WARNING: monitor.local Logged in users: pts=4.00
+OK: monitor.local Inode usage in percent
+OK: monitor.local eth0 errors
+OK: monitor.local File table usage
+OK: monitor.local Disk usage in percent
+OK: monitor.local routerboard CPU usage
+OK: monitor.local Disk latency per device :: Average latency for /dev/mmcblk0
+[/sourcecode]&lt;/p>
+&lt;p>Bingo! Munin sends JSON to your Python script! Now you can use your awesome Pyhton skills to change this into whatever you want or send. To get you inspired, here's a piece of code I use to send alerts to a Mattermost server:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;python&amp;quot;]
+import requests&lt;/p>
+&lt;p>mattermost_url = &amp;quot;https://&lt;your-server-here>/hooks/&lt;your-hook-here>&amp;quot;&lt;/p>
+&lt;p>def sendmattermost( alerts ):
+payload = '{&amp;quot;username&amp;quot;: &amp;quot;Monitor&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;'&lt;/p>
+&lt;p>if &amp;quot;WARNING:&amp;quot; in alerts or &amp;quot;CRITICAL:&amp;quot; in alerts:
+payload += ':rotating_light:\n'
+else:
+payload += &amp;quot;:pager:\n&amp;quot;&lt;/p>
+&lt;p>payload += alerts
+payload += '&amp;quot;}'&lt;/p>
+&lt;p>print &amp;quot;Sending payload: '&amp;quot; + payload +&amp;quot;'.&amp;quot;
+r = requests.post(mattermost_url, data=payload)
+if r.status_code != 200:
+print &amp;quot;PANIC &amp;quot; + r.reason +&amp;quot; : &amp;quot; + r.text
+[/sourcecode]&lt;/p>
+&lt;p>You can find this trick and other munin plugin stuff in my &lt;a href="https://github.com/realrolfje/munin-plugins">munin-plugins repository&lt;/a>.&lt;/p>
+&lt;p>Happy alerting!&lt;/p></description></item><item><title>Strange fix for SMB problems in Linux</title><link>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</link><pubDate>Mon, 28 Nov 2011 21:09:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</guid><description>
+&lt;p>&lt;a href="http://lunduke.com/?p=429">&lt;img src="images.jpeg" alt="Linux Sucks.">
+&lt;/a>Last week, the upgrade to Ubuntu 11 severely broke all carefully selected menu colors, graphics settings and icon sets. I gave up the fight after a few hours of effortless restoration work and switched to Linux Mint 11.&lt;/p>
+&lt;p>While setting up my machine and restoring the links to the company Windows file servers I could not connect. The password window would re-appear without any feedback. The fix was even stranger than the problem.&lt;/p>
+&lt;!-- more -->To analyze this strange problem, [@sastuvel](http://twitter.com/#!/sastuvel) took the keys and tried the following on the command prompt:
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+$ smbclient //server/Share$ -U DOMAIN\rolf -d 2
+rlimit_max: increasing rlimit_max (1024) to minimum Windows
+ limit (16384)
+added interface eth0 ip=fe80::5e26:aff:fe12:5a23%eth0
+bcast=fe80::ffff:ffff:ffff:ffff%eth0
+netmask=ffff:ffff:ffff:ffff::
+added interface eth0 ip=172.17.100.74 bcast=172.17.255.255
+netmask=255.255.0.0
+Enter DOMAIN\rolf's password:
+tdb(unnamed): tdb_open_ex: could not open file
+/var/run/samba/gencache.tdb:
+Permission denied
+session setup failed: NT_STATUS_MORE_PROCESSING_REQUIRED
+did you forget to run kinit?
+[/sourcecode]&lt;/p>
+&lt;p>Of course we did run kinit and everything was up and running. No level of debug logging came up with something useful. After staring at this problem of a while I noticed that my hostname was &lt;em>&amp;quot;rolf-Latitude-E6510&amp;quot;&lt;/em>, which seemed a bit long. In a strange last resort voodo-chicken action I edited &lt;em>/etc/hostname&lt;/em> to change it to &lt;em>&amp;quot;dellmint&amp;quot;&lt;/em> and rebooted the machine.&lt;/p>
+&lt;p>Strangely, this solved the problem. So if you're running Linux (Mint) and have strange problems mounting SMB shares, check your hostname and change it to something simple and short. It might help.&lt;/p>
+&lt;p>And while you're at it, you can also install &lt;a href="http://www.webupd8.org/2011/02/touchpad-indicator-now-automatically.html">touchpad indicator&lt;/a> to disable your touchpad when you plug in your mouse. Why this isn't standard in every Linux distribution baffles me just as much as the blinking wifi indicator.&lt;/p></description></item><item><title>Installing Wubi 9.10</title><link>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</link><pubDate>Fri, 23 Apr 2010 20:40:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</guid><description>
+&lt;p>&lt;a href="schermafbeelding-2010-04-23-om-22-20-17.png">&lt;img src="schermafbeelding-2010-04-23-om-22-20-17.png?w=150" alt="Why I HATE Linux">
+&lt;/a>Ok, fist of all: DO NOT DOWNLOAD WUBI 9.10 as it contains a serious GRUB2 problem which will give you some headaches if you're new to Linux. Why I'm saying this? I just ran into this GRUB2 problem while installing the new Wubi 9.10. Here's what I did:&lt;/p>
+&lt;pre>&lt;code> 1. Downloaded Wubi 9.10 windows installer and ran it.
+2. Installer downloads stuff, and boots into Ubuntu installer
+3. After reboot, GRUB screen comes up with a loud beep and a prompt. Great.
+&lt;/code>&lt;/pre>
+&lt;p>Some googling finds a lot of Linux voodoo talking l33tspe4king nerds, but it did contain some info with which I managed to get things working:&lt;/p>
+&lt;!-- more -->At the GRUB2 screen,  issue the following _(italic)_ commands (things in red you have to figure out yourself, sorry. _&lt;tab>_ means press the tab key for autocompletion.):
+&lt;p>X=0 and Y=1 in most cases (Wubi install on C:)
+grub&amp;gt;&lt;em>ls (hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_&lt;/p>
+&lt;p>The long HEX string at the end of the line you get back is the UUID, you'll need that later.&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>insmod ntfs&lt;/em>
+grub&amp;gt;&lt;em>set root=(hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_
+grub&amp;gt;_search --no-floppy --fs-uuid --set _&lt;em>UUID&lt;/em>
+grub&amp;gt;&lt;em>loopback loop0 /ubuntu/disks/root.disk&lt;/em>
+grub&amp;gt;&lt;em>set root=(loop0)&lt;/em>&lt;/p>
+&lt;p>if X was 0:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sda__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>if X was 1:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sdb__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>initrd /boot/initrd.img&lt;/em>_&lt;tab>_
+grub&amp;gt;&lt;em>boot&lt;/em>&lt;/p>
+&lt;p>You should now see the normal Ubuntu. Log in with the user information you entered in the windows wubi installer, and start the update manager. This will get your GRUB2 installation updated (partly). When the update manager asks you to reboot, say &amp;quot;restart later&amp;quot;. Open a terminal and type in &amp;quot;&lt;strong>&lt;em>sudo update-grub2&lt;/em>&lt;/strong>” (don't forget, or you'll have to do the whole typing exercise, above,  again.&lt;/p>
+&lt;p>I hope this helps. The grub commands in this blogpost are originally posted by felixcorrales, &lt;a href="https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/477104/comments/76">here&lt;/a>, and the installer/reboot information is my own doing.&lt;/p></description></item><item><title>Creating an Ubuntu Postgres server</title><link>https://realrolfje.github.io/rolfje.com/2006/11/10/creating-an-ubuntu-postgres-server/</link><pubDate>Fri, 10 Nov 2006 19:52:04 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/11/10/creating-an-ubuntu-postgres-server/</guid><description>
+&lt;p>Follow these steps to create an &lt;a href="http://www.ubuntu.com/">Ubuntu Linux&lt;/a> &amp;quot;server&amp;quot; running a &lt;a href="http://www.postgresql.org/">Postgres&lt;/a> database which allows non-local connections. You will need a machine with at least 10GB HD, bootable from CD-ROM, network card, and preferably more than 200MB RAM. Other than that, it can even be a Mac G4 if you like (just download the correct Ubuntu build).&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Download the [ISO image for Ubuntu 6.06.1 (Dapper Drake)](http://se.releases.ubuntu.com/6.06/). I chose the desktop version to have the graphic user interface to fall back on, I'm not a command-line typing machine.
+2. Burn the ISO image to a CD-ROM, and startup your soon-to-be-database-server with it. To make the installation go smoothly, hook it up to a network with a DHCP server. You can configure the DHCP server to always deliver the same IP to your database server, which is often much easier than configuring all those stupid Linux config files all over the place.
+3. Choose install values as if it were going to be your desktop. Follow the installer, don't try to &amp;quot;outsmart&amp;quot; it.
+4. When it boots for the first time, log on and find the software updates on the top left of the screen. Install the updates. This may take a while but you don't have to babysit it. Wait for it to finish and reboot when it asks you to. Please note that your root password will be the same password as you used for creating your first user.
+5. [optional] If you would like to be able to remote-connect to this machine using SSH, install the ssh server by typing in the following command on in a terminal window:
+sudo apt-get install ssh openssh-server
+&lt;/code>&lt;/pre>
+&lt;p>You should now be able to connect to your server remotely. If you installed SSH, you can now move the machine to it's final physical destination (a nice broomcloset or something)
+6. Install postgres 8.1 (plus client) with the following command:&lt;/p>
+&lt;pre>&lt;code>sudo apt-get install postgresql-8.1 postgresql-client-8.1
+7. Change the password of the postgres user with the following commands (typing in red)
+&amp;lt;font color=&amp;quot;red&amp;quot;&amp;gt;sudo su postgres -c psql template1&amp;lt;/font&amp;gt;
+template1=# &amp;lt;font color=&amp;quot;red&amp;quot;&amp;gt;ALTER USER postgres WITH PASSWORD 'mySecret123Password';&amp;lt;/font&amp;gt;
+template1=# &amp;lt;font color=&amp;quot;red&amp;quot;&amp;gt;\q&amp;lt;/font&amp;gt;
+8. Make postgres listen on all interfaces by editting the postgres.conf file. Edit the file with:
+sudo pico /etc/postgresql/8.1/main/postgresql.conf
+&lt;/code>&lt;/pre>
+&lt;p>Change the line&lt;/p>
+&lt;pre>&lt;code>#listen_addresses = 'localhost'
+&lt;/code>&lt;/pre>
+&lt;p>to&lt;/p>
+&lt;pre>&lt;code>listen_addresses = '*'
+&lt;/code>&lt;/pre>
+&lt;p>In the same postgres.conf file, make sure the password encryption is turned on by changing the line&lt;/p>
+&lt;pre>&lt;code>#password_encryption = on
+&lt;/code>&lt;/pre>
+&lt;p>to&lt;/p>
+&lt;pre>&lt;code>password_encryption = on
+&lt;/code>&lt;/pre>
+&lt;p>and close the file.
+9. Tell postgres which machines are allowed to connect. Edit the pg_hba.conf file (nice descriptive name, huh?) with the following command:&lt;/p>
+&lt;pre>&lt;code>sudo pico /etc/postgresql/8.1/main/pg_hba.conf
+&lt;/code>&lt;/pre>
+&lt;p>and add the following lines to the end of the file:&lt;/p>
+&lt;pre>&lt;code>#Allow all hosts on the same subnet to connect to this database server
+host all all 192.168.0.0 255.255.255.0 md5
+&lt;/code>&lt;/pre>
+&lt;p>Please note that my home network is a 192.168.0.* network. If yours is a 10.0.0.*, you know what to replace in the line above, right?
+10. Make the postgres server restart and load the changes you've just made by using the command&lt;/p>
+&lt;pre>&lt;code>sudo /etc/init.d/postgresql-8.1 restart
+11. Check that it actually works by using the following telnet command from a different machine in your network:
+telnet [postgresmachine] 5432
+&lt;/code>&lt;/pre>
+&lt;p>If telnet responds with &amp;quot;Connection refused&amp;quot;, you have a problem (which I'm not going to cover here, sorry, just retry). If all went well, telnet will tell you that it's &amp;quot;Connected to [postgresmachine]&amp;quot;. You can start using it.&lt;/p>
+&lt;p>Creating a working postgres server from a bare metal machine should take not much more than 1 hour or so. For me, it took 2 complete evenings because so few people are posting good step-by-step simple guides. 80% of the time you get redirected to a long, complete, cryptic information page on the postgres site, which by the time you've read completely through it, only solved half your problem. The other 20% of the time people are steering you in the wrong direction by making you edit the &amp;quot;inner guts&amp;quot; of your server, like the rc.d files and whatnot.&lt;/p>
+&lt;p>Have fun with your new database machine!&lt;/p>
+&lt;p>Update: Replaced gedit with pico, this will work on an ssh session as well as a local terminal session. gedit is a graphical editor.&lt;/p></description></item></channel></rss>

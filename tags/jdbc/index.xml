@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JDBC on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/jdbc/</link><description>Recent content in JDBC on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 02 Jan 2015 09:51:16 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/jdbc/index.xml" rel="self" type="application/rss+xml"/><item><title>Import/export an Oracle Schema using JDBC</title><link>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</link><pubDate>Fri, 02 Jan 2015 09:51:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=3j3tj1kV1hs">&lt;img src="61c1ee2ce9d31c894d188b7b17cacee90ffdece8bc4c4798d10100b7515820de.jpg" alt="Everybody gets a database!">
+&lt;/a>When doing integration testing or fixing a bug in a piece of Java code that uses Oracle as a database, being able to do quick exports and imports of your schema can be a big help. Sometimes just calling Oracle's imp/exp commandline tools from your code can be of help, but I was looking for something a bit more portable and less demanding on my local development machine. I found that Oracle's datapump functionality can be called from stored procedures, which in turn can be called from a normal JDBC statement.&lt;/p>
+&lt;!-- more -->Combining Oracle's information and questions like this one on StackOverflow, I've come up with a solution that allows me to call Java methods to import and export a database schema to a dumpfile, like so:
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; light=&amp;quot;true&amp;quot;]
+import(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+export(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+[/sourcecode]&lt;/p>
+&lt;p>These methods make use of regular JDBC calls, are implemented as follows:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot;]
+public static final String EXPORT_DIR = &amp;quot;/tmp&amp;quot;;&lt;/p>
+&lt;p>public void export(String schema, String fileName)
+throws SQLException, IOException {
+String sql = getFileContents(&amp;quot;export.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schema.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>public void import(String schema, String fileName)
+throws IOException, SQLException {
+String sql = getFileContents(&amp;quot;import.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schemaName.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>private String getFileContents(String fileName)
+throws IOException {
+InputStream in = this.getClass()
+.getResourceAsStream(fileName);
+return IOUtils.toString(in, &amp;quot;UTF-8&amp;quot;);
+}
+[/sourcecode]&lt;/p>
+&lt;p>As you can see in the code, I create prepared statements from two sql files which are located in the same Java package. The &amp;quot;export.sql&amp;quot; contains the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100)
+:= 'EXPORT_DIR_' || schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'EXPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump export schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.export.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>The &amp;quot;import.sql&amp;quot; looks very similar, containing the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100) := 'EXPORT_DIR_'
+|| schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'IMPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump import schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.import.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.SET_PARAMETER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'table_exists_action',
+value =&amp;gt; 'REPLACE');&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>I recommend reading the Oracle Datapump documentation (albeit dangerously enterprisey) to see what exactly happens when these scripts run. For instance, dumpfiles are reused (overwritten) without notice, and logfiles are created next to the dumpfile.&lt;/p>
+&lt;p>In this example, I write the dumpfiles to the &amp;quot;/tmp&amp;quot; directory on the database server. You can change this to any directory you like, but please make sure that the directory exists, and that the oracle user or orainst group has write access in that directory. A good way to start is first make it work with the /tmp directory, as in this example. If Oracle can not (over)write a file for any reason, you will get incomprehensible error messages about incorrect parameters in the dbms.datapump.add_file() calls.&lt;/p>
+&lt;p>Enjoy your Oracle-free development environment!&lt;/p></description></item></channel></rss>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>XP on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/xp/</link><description>Recent content in XP on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 24 Mar 2008 22:33:26 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/xp/index.xml" rel="self" type="application/rss+xml"/><item><title>DOCTYPE is a myth...</title><link>https://realrolfje.github.io/rolfje.com/2008/03/25/doctype-is-a-myth/</link><pubDate>Mon, 24 Mar 2008 22:33:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/03/25/doctype-is-a-myth/</guid><description>
+&lt;p>... and other wisdom from Joel. Finally, after weeks of slightly boring posts about travel, speeches and FogBugz, Joel has an article on his blog he was so famous for: &lt;a href="http://www.joelonsoftware.com/items/2008/03/17.html">Martian Headsets&lt;/a>.&lt;/p>
+&lt;p>The article discusses the problems with the HTML spec, and numerous other problems developers are facing these days. That, and the Martians' strange fascination for all kinds and shades of red.&lt;/p>
+&lt;p>At times, the article remembered me of some thoughts I have during my dayjob:&lt;/p>
+&lt;pre>&lt;code> * Minimize. (also known as the [KISS](http://en.wikipedia.org/wiki/KISS_principle) principle)
+* Have a contract early in the process. Make it testable. Find a way to handle problems in the contract.
+* Be strict and transparent. Fail early and explain.
+* Using a standard and conforming to it are two different things.
+* Communicate.
+&lt;/code>&lt;/pre>
+&lt;p>Although all are true to some degree, they aren't going to solve all problems, because everybody has their own set of thoughts and rules. For every problem there is a nice, clean, simple, cheap, wrong answer.&lt;/p>
+&lt;p>Now go read the &lt;a href="http://www.joelonsoftware.com/items/2008/03/17.html">article&lt;/a>, it's much better than my writing...&lt;/p></description></item></channel></rss>

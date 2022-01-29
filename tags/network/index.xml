@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>network on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/network/</link><description>Recent content in network on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 30 Oct 2008 23:00:28 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/network/index.xml" rel="self" type="application/rss+xml"/><item><title>T-Mobile Network Quality</title><link>https://realrolfje.github.io/rolfje.com/2008/10/31/t-mobile-network-quality/</link><pubDate>Thu, 30 Oct 2008 23:00:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/10/31/t-mobile-network-quality/</guid><description>
+&lt;p>&lt;a href="img_0003.png">&lt;img src="img_0003.png?w=200" alt="">
+&lt;/a>As you've noticed, I bought an &lt;a href="http://rolfje.wordpress.com/2008/10/11/the-iphone-buying-experience/">iPhone&lt;/a>. When you're living in the Netherlands, you've got two options to get an iPhone. The first one is walk to an Apple reseller, buy an iPhone and sell your soul to T-Mobile. The second option is to drive to Belgium, convince a reseller to sell you a simlock-free iPhone, and get a &lt;a href="http://www.vodafone.nl/prive/favorieten/Super_SIM_Only">Vodafone iPhone &amp;quot;Super Sim Only&amp;quot; contract&lt;/a>. I went for the first option, and to be honest I kind of regret it. The iPhone is brilliant, but the T-Mobile network in the Netherlands sucks. Bigtime.&lt;/p>
+&lt;p>If your life depends on somebodies availabilty, please make sure to check they're not using the T-Mobile or Orange network (the companies merged). Don't let T-Mobile fool you with the &amp;quot;iPhone has bad reception hype&amp;quot;. I can make screenshots like you see here each day. I have &amp;quot;No service&amp;quot; but I can see the Vodafone and KPN networks just fine.&lt;/p>
+&lt;!-- more -->Although the [GSM coverage maps for T-Mobile](http://www.gsmworld.com/cgi-bin/ni_map.pl?x=0&amp;y=0&amp;z=0&amp;cc=nl&amp;net=t3) indicate that the gsm1800 coverage very good, a lot of customers, including me, will tell you otherwise from personal experience. I think the 3G coverage on the map is also unrealistic to say the least.
+&lt;p>Here's a short list of locations I went to the last couple of weeks. Please note that in all of these locations, I could reliably see the Vodafone network, inside and outside.&lt;/p>
+&lt;p> &lt;/p>
+&lt;table style="text-align:right;" border="0" >
+&lt;tbody >
+&lt;tr >
+Location
+Inside buildings
+Outside
+&lt;/tr>
+&lt;tr >
+&lt;td >[Amersfoort](http://maps.google.com/maps?f=d&amp;saddr=52.151924,5.411625&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=13&amp;sll=52.140231,5.414543&amp;sspn=0.096926,0.12188&amp;ie=UTF8&amp;ll=52.142549,5.408363&amp;spn=0.096921,0.12188&amp;z=13)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-4.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Amsterdam, VU hospital](http://maps.google.com/maps?f=q&amp;hl=nl&amp;q=Vu+Medisch+Centrum,+Nederland&amp;sll=52.373812,4.890951&amp;sspn=0.376443,0.487518&amp;g=Vu+Medisch+Centrum,+Nederland&amp;ie=UTF8&amp;cd=2&amp;geocode=FeKSHgMd9h5KAA&amp;ll=52.334775,4.860184&amp;spn=0.011774,0.015235&amp;z=16)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-2.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Beverwijk](http://maps.google.com/maps?f=d&amp;saddr=52.481735,4.664254&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=15&amp;sll=52.482754,4.662666&amp;sspn=0.02347,0.03047&amp;ie=UTF8&amp;ll=52.482101,4.663568&amp;spn=0.02347,0.03047&amp;z=15)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;td >![](bars-5.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Haaksbergen](http://maps.google.com/maps?f=d&amp;saddr=Elektrostraat&amp;daddr=&amp;hl=nl&amp;geocode=FYwjHAMdZfNmAA%3B&amp;mra=mr&amp;sll=52.156785,6.738631&amp;sspn=0.094573,0.12188&amp;ie=UTF8&amp;ll=52.166562,6.745605&amp;spn=0.094552,0.12188&amp;z=13)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Haarlem](http://maps.google.com/maps?f=d&amp;saddr=52.384021,4.63696&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=16&amp;sll=52.382384,4.63505&amp;sspn=0.011762,0.015235&amp;ie=UTF8&amp;ll=52.384689,4.636724&amp;spn=0.011761,0.015235&amp;z=16)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-5.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >Haarlem
+([Parking Central Station](http://maps.google.com/maps?f=d&amp;saddr=52.386772,4.63902&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=16&amp;sll=52.386785,4.639728&amp;sspn=0.01176,0.015235&amp;ie=UTF8&amp;ll=52.386366,4.639063&amp;spn=0.011761,0.015235&amp;z=16))
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-4.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Leusden](http://maps.google.com/maps?f=d&amp;saddr=52.11457,5.40699&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=14&amp;sll=52.117574,5.418062&amp;sspn=0.047328,0.06094&amp;ie=UTF8&amp;ll=52.112673,5.406475&amp;spn=0.047333,0.06094&amp;z=14)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+ 
+&lt;p>Terrible right? In Amersfoort, Amsterdam, Haaksbergen and Leusden I actually had to walk outside to make calls, or to see if I had missed any.&lt;/p>
+&lt;p>I really hope that this will improve significantly, otherwise I have to try to unlock my iPone and buy a Vodafone simcard. T-Mobile will then probably hold my phonenumber hostage until the end of my contract just because they can. I've had the same phonenumber for the past 15 odd years.&lt;/p>
+&lt;p>If you've got a choice, try to get an iPhone from Belgium, and avoid T-Mobile because you will be frustrated by the lack of connectivity. The only thing you'll miss is the Visual Voicemail, but if your network is good, you don't need voicemail all that much.&lt;/p>
+&lt;p>For now, I'm going to check if my hart surgeon uses the T-Mobile network. If so, I need to switch to a smarter surgeon ;-)&lt;/p></description></item><item><title>OSX 10.5.2 Solved SMB problems (for me)</title><link>https://realrolfje.github.io/rolfje.com/2008/03/16/1052-solved-smb-problems-for-me/</link><pubDate>Sat, 15 Mar 2008 20:47:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/03/16/1052-solved-smb-problems-for-me/</guid><description>
+&lt;p>In a &lt;a href="http://rolfje.wordpress.com/2007/11/16/osx-1051-update-still-smb-problems/">previous post&lt;/a> on this blog, I indicated that the 10.5.1. update of Apple's OSX did not fix my network and SMB problems with my Iomega drive. In the comments underneath, some readers kindly pointed out that &lt;a href="http://download.iomega.com/english/storcenter_home_firmware-k104w11.bin">Iomega's K104w11 Firmware update&lt;/a> is available for the Iomega drive I have. Now that 10.5.2 is out, I reconnected the Iomega drive to my network. And suddenly the world changed...&lt;/p>
+&lt;!-- more -->I didn't upgrade the drive, because I thought that was rediculous. It works with Windows, it works with Tiger, why shouldn't it work with Leopard? Right now I'm glad that I didn't go through the trouble of upgrading my drive:
+&lt;p>With the OSX release 10.5.2, my Iomega drive is accesable, and I can drag files on and off as I like.&lt;/p>
+&lt;p>I have created a &amp;quot;sparse bundle&amp;quot; disk image on the drive, so that I can copy files onto it which are bigger than 4GB, and have (very very) long names. So it's finally there: A network mounted 500GB HPS+ partition to which I can backup my backups using an rsync script.&lt;/p>
+&lt;p>Now that everything works, I might even be tempted to do that Iomega software upgrade, but then again: &amp;quot;if it ain't broke, don't try to fix it&amp;quot;.&lt;/p>
+&lt;p>Next thing on my list to find out: What if I upgraded my Tiger fileserver to Leopard, and had TimeMachine running there. Could I rsync the TimeMachine disk to an off-site location without sending the double-hardlinked files twice?&lt;/p></description></item></channel></rss>

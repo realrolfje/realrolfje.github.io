@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>modification on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/modification/</link><description>Recent content in modification on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 10 May 2015 10:32:41 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/modification/index.xml" rel="self" type="application/rss+xml"/><item><title>Better modulation for the Baofeng UV-5RA</title><link>https://realrolfje.github.io/rolfje.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/</link><pubDate>Sun, 10 May 2015 10:32:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=h73EYcyszf8">&lt;img src="baofeng-uv-5ra-plus.jpg" alt="baofeng-uv-5ra-plus">
+&lt;/a>Undoubtedly the Baofeng UV-5Rx delivers a lot of radio for your buck. However some models in the range have a bad reputation for the transmitted audio sounding soft and muffled.&lt;/p>
+&lt;p>In 2013, Remco PA3FYM obtained the schematics of the radio and &lt;a href="http://remco.org/index.php?s=baofeng">devised a modification&lt;/a> where transistor Q17 of the VOX is re-purposed as preamplifier in the microphone audio circuit. It works wonders for your radio. For people needing a bit more visual guidance, below is a walktrough of how I did this to my Baofeng UV-5RA.&lt;/p>
+&lt;!-- more -->On the left you find the original schematics of the microphone and vox circuits. On the right, I've marked the modifications we're about to do in red.
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![uv5r-schema-before](uv5r-schema-before.png)
+](uv5r-schema-before.png)
+&lt;/td>
+&lt;td >[![uv5r-schema-after](uv5r-schema-after.png)
+](uv5r-schema-after.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Step 1: Open the radio
+**Open up the Baofeng UV-5RA. There is plenty information online on how to do this, check out [the teardown at takapart](https://www.takeitapart.com/guide/9) for instance. You need to open the radio up to the point that you can access the components on the back of the keypad.
+&lt;p>Remember: the radio comes apart without force. If you feel something is not giving, look for solder joints or screws you missed. For easy removal of the display, I used solder wick to remove the solder on the backlight connections:&lt;/p>
+&lt;p>&lt;a href="step-1-desolder-display.jpg">&lt;img src="step-1-desolder-display.jpg" alt="Step 1-desolder-display">
+&lt;/a>Just to be sure I desoldered the antenna connection but you can also unscrew the antenna connector and carefully force it over the aluminum ridge.&lt;/p>
+&lt;p>&lt;a href="step-1-desolder-antenna.jpg">&lt;img src="step-1-desolder-antenna.jpg?w=450" alt="Step 1-desolder antenna">
+&lt;/a>&lt;/p>
+&lt;p>**Step 2: Locate components
+**Locate the components in the schematic on the printed circuit board. Use a multimeter to ensure yourself that you are looking at the right components:&lt;/p>
+&lt;p>&lt;a href="step-2-locate-components.jpg">&lt;img src="step-2-locate-components.jpg" alt="Step 2 Locate components">
+&lt;/a>&lt;/p>
+&lt;p>Step 3: Disconnect Emitter of Q17
+Take a (very very) small drillbit and carefully disconnect the emitter of Q17:&lt;/p>
+&lt;p>&lt;a href="step-3-disconnect-emitter.jpg">&lt;img src="step-3-disconnect-emitter.jpg?w=450" alt="Step 3 disconnect emitter">
+&lt;/a>&lt;/p>
+&lt;p>The end result should look like this:&lt;/p>
+&lt;p>&lt;a href="step-3-result.jpg">&lt;img src="step-3-result.jpg" alt="step 3 result">
+&lt;/a>&lt;/p>
+&lt;p>**Step 4: Add 560 Ohm resistor
+**Use a very small soldering iron tip and small tweezers or toothpick put the 560 (or 680) Ohm resistor in place:&lt;/p>
+&lt;p>&lt;a href="step-4-resistor-in-place.jpg">&lt;img src="step-4-resistor-in-place.jpg?w=450" alt="Step 4 resistor in place">
+&lt;/a>&lt;/p>
+&lt;p>In my case, the 560 Ohm resistor gave a bit too much amplification. For a bit more modest result, choose 680 (like Remco did), or anything up to 1k Ohm.&lt;/p>
+&lt;p>&lt;strong>Step 5: Remove C135 and disconnect L44&lt;/strong>
+Using the small tip of your soldering iron, heat up and wipe down on C135 to remove it. Take care to not hit other components, repairs will be almost impossible. Use the small drillbit to disconnect L44 by cutting the little trace between C137 and L44:&lt;/p>
+&lt;p>&lt;a href="step-5-disconnect-l44.jpg">&lt;img src="step-5-disconnect-l44.jpg" alt="Step 5 disconnect L44">
+&lt;/a>&lt;/p>
+&lt;p>**Step 6: Connect Q17 to L44
+**Take a small piece of enamel coated wire, strip 2mm at the ends and connect the collector of Q17 to L44:&lt;/p>
+&lt;p>&lt;a href="step-6-connect-l44.jpg">&lt;img src="step-6-connect-l44.jpg?w=450" alt="Step 6 Connect L44">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 7: Close it up&lt;/strong>
+Put your radio back together. Don't forget to solder the antenna connector and backlight connections I mentioned in step 1.&lt;/p>
+&lt;p>When snapping the PCB back into the case, make sure that the rubber of the PTT button does not fold behind the PCB board. Make sure the rubber is nice and flat after inserting the PCB, like this:&lt;/p>
+&lt;p>&lt;a href="step-7-ptt-buttons.jpg">&lt;img src="step-7-ptt-buttons.jpg?w=450" alt="Step 7 PTT buttons">
+&lt;/a>&lt;/p>
+&lt;p>Have fun with your new and improved modulation!&lt;/p>
+&lt;p>73, Rolf.&lt;/p></description></item></channel></rss>

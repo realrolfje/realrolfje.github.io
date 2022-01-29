@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>hamradio on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/hamradio/</link><description>Recent content in hamradio on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 24 Feb 2018 12:00:41 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/hamradio/index.xml" rel="self" type="application/rss+xml"/><item><title>1N4148 diode as RF switch</title><link>https://realrolfje.github.io/rolfje.com/2018/02/24/1n4148-diode-as-rf-switch/</link><pubDate>Sat, 24 Feb 2018 12:00:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/02/24/1n4148-diode-as-rf-switch/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/hgll-XTqcS4">&lt;img src="1n4148.jpg" alt="1N4148.jpg">
+&lt;/a>For a recent experiment I was using &lt;a href="http://www.datasheetarchive.com/BA389-datasheet.html">BA389 PIN diodes&lt;/a> to switch low power RF signals. I was asked why I didn't use an ordinary &lt;a href="https://en.wikipedia.org/wiki/1N4148_signal_diode">1N4148&lt;/a> for that. Since I didn't know what an 1N4148 would do when used like that, and I also didn't really know what a BA389 actually does, I decided to do some measurements.&lt;!-- more -->&lt;/p>
+&lt;p>&lt;strong>Aren't diodes rectifiers?&lt;/strong>
+Yes and no. The most basic operation of a diode is to pass current in one way, and block it in the other. But when the diode passes DC current, the internal capacitance lowers, and RF resistance will drop to around 1 Ohm. If you can separate the DC and RF currents, you can switch RF with DC. Most, if not all modern transceivers use PIN diodes to switch the antenna between the internal transmitter and receiver components.&lt;/p>
+&lt;p>&lt;strong>PIN or PN diode?&lt;/strong>
+A &lt;a href="https://en.wikipedia.org/wiki/P%E2%80%93n_diode">P/N diode&lt;/a> like the 1N4148 only has P and N doped regions. A &lt;a href="https://en.wikipedia.org/wiki/PIN_diode">P/I/N diode&lt;/a> has three semiconductor regions with different doping. The I region in a PIN diode makes it a bad/slow rectifier but it a great RF switch, see the provided wikipedia link for more info.&lt;/p>
+&lt;p>Enough talk. Let's go. In this case I want to know how a PIN diode like the BA389 compares to an 1N4148 when used for switching RF signals on 145 MHz and 435 MHz. I decided to use my &lt;a href="http://miniradiosolutions.com/54-2/">MiniVNA Tiny&lt;/a> and the following circuit to do the measurements:&lt;/p>
+&lt;p>&lt;img src="screen-shot-2018-02-23-at-17-31-36.png" alt="Screen Shot 2018-02-23 at 17.31.36">&lt;/p>
+&lt;p>The output of the MiniVNA Tiny is connected to a 10 dB attenuator, reducing the -6 dBm (0.251 mW) output of the VNA to -16 dBm (0.025 mW) hoping to reduce signal leaking around the diode (less signal, less leakage). The output of the attenuator is connected to the AC input on the left side of the schematic.&lt;/p>
+&lt;p>The input of the MiniVNA Tiny is connected to the output of the schematic. Yes, the RF travels through the diode the &amp;quot;wrong way&amp;quot;, against the DC current. This is not an error.&lt;/p>
+&lt;p>The DC input of the circuit is connected to a variable resistor, a multimeter and a power supply to be able to vary the current through the diode (DUT) from 0.001 mA to 20 mA.&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Test setup](img_6758.jpg?w=250)
+](img_6758.jpg)
+&lt;/td>
+&lt;td >[![test circuit](img_6767.jpg?w=150)
+](img_6767.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The coils are 0.35 mm copper wound 15 turns around a 3 mm drillbit. The capacitors are SMD to keep everything as short as possible. I also added some extra shielding to separate the in and outputs better.
+&lt;p>Before measuring diodes I callibrated the whole setup by having vnaJ measure the &amp;quot;OPEN&amp;quot; characteristics with everything connected but with the diode removed. Then, I soldered a wire in place of the diode and had vnaJ measure the &amp;quot;CLOSED&amp;quot; characteristics. I saved this callibration dataset and used it throughout all other measurements.&lt;/p>
+&lt;p>Then, I soldered a 1N4148 in place and measured RF Transmission Loss for a number of currents between 0 and 15 mA. Then I did the same for the BA389. After a bit of fiddling with Excel I produced the following graph of the results:&lt;/p>
+&lt;p>[&lt;img src="screen-shot-2018-02-23-at-21-39-15.png" alt="Screen Shot 2018-02-23 at 21.39.15 .png">&lt;/p>
+&lt;p>](screen-shot-2018-02-23-at-21-39-15.png)&lt;/p>
+&lt;p>&lt;strong>The verdict:&lt;/strong>
+The results are actually not that bad for the 1N4148. It shows behaviour and comparable linearity to the BA389 PIN diode. The attenuation of the 1N4148 leaves to be desired: -25,5 dB attenuation compared to -30.3 dB of the BA389 on 145 MHz. On 435 MHz the difference is a bit bigger: -14.1 dB vs -20.1 dB for the BA389. All in all, the 1N4148 is roughly 6 dB more &amp;quot;leaky&amp;quot; than the BA389.&lt;/p>
+&lt;p>So a 1N4148 actually works as an RF switch, if you are on lower frequencies and don't mind that it only attenuates -25,5 dB. If you need high performance RF switching with high isolation, particularly at frequencies above 200 MHz or so I think you're better off selecting a proper PIN diode.&lt;/p>
+&lt;p>Here are the 1N4148 and the BA389 graphs from the MiniVNA Tiny. The graph for the 1N4148 is an earlier one where I didn't have the extra shields. The dip in the 200MHz range is caused by the measurement jig itself. Mind the vertical scales, they don't match. Blue line is Transmission Loss:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![VNA_180222_174935.jpg](vna_180222_174935.jpg)
+](vna_180222_174935.jpg)
+&lt;/td>
+&lt;td >[![VNA_180223_150657.jpg](vna_180223_150657.jpg)
+](vna_180223_150657.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Interdigital Bandpass for RTL2832U Receiver</title><link>https://realrolfje.github.io/rolfje.com/2018/02/09/interdigital-bandpass-for-rtl2832u-receiver/</link><pubDate>Fri, 09 Feb 2018 21:37:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/02/09/interdigital-bandpass-for-rtl2832u-receiver/</guid><description>
+&lt;p>&lt;img src="bandpassfilter.gif" alt="">
+Building a receiver for a voice repeater system in this area I set up a &lt;a href="https://www.thumbsat.com/thumbnet-radios">thumbsat receiver&lt;/a> connected to a Raspberry Pi. The receiver is part of the repeater system to widen it's receiving range. However, the performance turned out not to be too optimal. I guessed that the GSM and Wifi signals around here could cause the RTL2832U to overload, so I decided to build an intedigital bandpassfilter using &lt;a href="http://www.changpuak.ch/electronics/interdigital_bandpass_filter_designer.php">Ajarn Changpuak&lt;/a>'s excelent interdigital bandpass filter calculator.&lt;/p>
+&lt;!-- more -->
+&lt;p>Because size was an issue and the GSM and Wifi bands are not very close to the receive frequency, I decided on a 2 element filter with 8MHz passband and 0.2dB ripple. Playing with the calculator got me the following filter dimensions:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot;]
+Length interior Element : 54.54 mm or 2.147 inch
+Length of end Element : 54.72 mm or 2.154 inch
+Ground plane space : 20 mm or 0.787 inch
+Rod Diameter : 4 mm or 0.157 inch
+End plate to center of Rod : 10 mm or 0.394 inch
+Tap to shorted End : 1.41 mm or 0.055 inch&lt;/p>
+&lt;p>**** Dimensions, mm (inch) ****&lt;/p>
+&lt;h1 id="end-to-center-center-center-gk-qcoup">End to Center Center-Center G[k] Q/Coup&lt;/h1>
+&lt;p>0 0.00 (0.000)
+1 10.00 (0.394) 35.97 (1.416) 1.038 0.714
+2 45.97 (1.810) 0.00 (0.000) 0.675 1.738
+3 55.97 (2.204)&lt;/p>
+&lt;p>**** Box inside dimensions ****
+Height : 59.00 mm or 2.323 inch
+Length : 55.97 mm or 2.204 inch
+Depth : 20.00 mm or 0.787 inch
+[/sourcecode]&lt;/p>
+&lt;p>As I discovered later, forgetting to refresh the calculations one last time resulted in incorrect dimentions (yes, the dimensions are incorrect in the list above).&lt;/p>
+&lt;p>I built the filter with blank PCB sheet and brass rods I had lying around. The first version looked like this:&lt;/p>
+&lt;p>&lt;img src="img_6332.jpg" alt="">&lt;/p>
+&lt;p>Without the top screwed it performed beautifully, but that turned out to be coincedence. Closing the filter up showed some strange characteristicts and the passband was on a much lower frequency.&lt;/p>
+&lt;p>I used my &lt;a href="http://miniradiosolutions.com/54-2/">miniVNA Tiny&lt;/a> to look at the characteristics while fiddling with it. To make it work I used copper shielding of an RG213 cable to close the filter properly, connected the inside and outside copper on the PCB, and added two solid wires to create a stronger coupling and changing the frequency. A bit unconventional and structuraly unsound, but it worked, and it ended up looking like this:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](img_6400-small.jpg)
+](img_6400-small.jpg)
+&lt;/td>
+&lt;td >[![](img_6413-small.jpg)
+](img_6413-small.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The electrical performance is adequate enough, and a short test confirmed that the RTL2832U has a much better performance, even with the additional 1.3 dB insertion loss of the filter:
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](1270-mhz-bandpass-s12.png?w=150)
+](1270-mhz-bandpass-s12.png)
+&lt;/td>
+&lt;td >[![](img_6489-crop.jpg)
+](img_6489-crop.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The receiver with the bandpass filter is installed on the roof and is performing nicely.
+&lt;p>It still felt strange that the filter does not behave as designed so I returned to Ajarn Changpuak's page to re-check my calculations and it turned out to be incorrect. The correct dimensions would have been:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot;]
+Length interior Element : 54.53 mm or 2.147 inch
+Length of end Element : 54.72 mm or 2.154 inch
+Ground plane space : 20 mm or 0.787 inch
+Rod Diameter : 4 mm or 0.157 inch
+End plate to center of Rod : 10 mm or 0.394 inch
+Tap to shorted End : 1.78 mm or 0.070 inch&lt;/p>
+&lt;p>**** Dimensions, mm (inch) ****&lt;/p>
+&lt;h1 id="end-to-center-center-center-gk-qcoup-1">End to Center Center-Center G[k] Q/Coup&lt;/h1>
+&lt;p>0 0.00 (0.000)
+1 10.00 (0.394) 32.98 (1.298) 1.038 0.714
+2 42.98 (1.692) 0.00 (0.000) 0.675 1.738
+3 52.98 (2.086)&lt;/p>
+&lt;p>**** Box inside dimensions ****
+Height : 59.00 mm or 2.323 inch
+Length : 52.98 mm or 2.086 inch
+Depth : 20.00 mm or 0.787 inch
+[/sourcecode]&lt;/p>
+&lt;p>Aha. This explains it. After re-calculating, the rods should have been closer together and the tap to the shorted end should have been further from the casing. I guess I have to re-do this filter with the correct dimensions some time. After this adventure I'm fairly confident that I can get it to behave nicely.&lt;/p></description></item><item><title>Mattermost Delete Channel "fixed"</title><link>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</link><pubDate>Thu, 26 Oct 2017 15:58:01 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</guid><description>
+&lt;p>&lt;a href="delete-or-leave.jpg">&lt;img src="delete-or-leave.jpg" alt="">
+&lt;/a>Users of Mattermost have probably noticed the less-than-optimal interface design where de Delete option is right above the Leave option in the Channel menu. On a busy server, you can imagine having quite a few incidents where people accidentally completely delete a channel.&lt;/p>
+&lt;p>In the Open Source version of Mattermost, everybody van do anything, because there is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320">no sensible security model with roles&lt;/a>. Mattermost Inc. seems to think that the Open Source community is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320#issuecomment-302996954">not entitled to roles&lt;/a>, which I (and others with me) strongly disagree with.&lt;/p>
+&lt;p>&lt;a href="https://github.com/realrolfje/mattermost-platform">Forking Mattermost&lt;/a>, learning Golang and enabeling security, improving &lt;a href="https://github.com/mattermost/mattermost-server/issues/6321">a few other issues&lt;/a> for the open source community along the way is a plan. But there is a simpler workaround for people running Mattermost inside &lt;a href="https://en.wikipedia.org/wiki/Nginx">Nginx&lt;/a>.&lt;/p>
+&lt;!-- more -->Open _/etc/nginx/sites-enabled/mattermost_ and find the _"location"_ sections. Add the highlighted lines (this modifies one location, and adds a new one):
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; highlight=&amp;quot;15-18, 20-50&amp;quot; padlinenumbers=&amp;quot;false&amp;quot; gutter=&amp;quot;false&amp;quot;]
+location ~ /api/v[0-9]+/(users/)?websocket$ {
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &amp;quot;upgrade&amp;quot;;
+client_max_body_size 50M;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code>if ($request_method = DELETE) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location ~ /api/v[0-9]+/channels/[\d\w]*$ {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code># See https://stackoverflow.com/questions/4833238/nginx-conf-redirect-multiple-conditions#4939522
+if ($request_method = DELETE) {
+set $block_delete 1;
+}
+# Allow deletes originatig from this ip address.
+if ($remote_addr = 44.137.37.17) {
+set $block_delete 0;
+}
+if ($block_delete = 1) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location / {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;
+}
+[/sourcecode]&lt;/p>
+&lt;p>Restart nginx with the command &lt;em>&amp;quot;service nginx restart&amp;quot;&lt;/em>. After this modification, nobody can delete a channel. Crude but effective. If you have tips on how to parse the headers with nginx to allow certain users to access the DELETE methods, please let me know.&lt;/p>
+&lt;p>&lt;strong>Background:&lt;/strong>
+We run a chat server for (mostly Dutch) licensed HAM radio operators on our own &lt;a href="https://en.wikipedia.org/wiki/AMPRNet">44.x.x.x network segment&lt;/a> of the internet also known in the Netherlands as &lt;a href="https://www.hamnet.nl/">&amp;quot;hamnet&amp;quot;&lt;/a>. We wanted a modern chat service with mobile applications to spice up the HAM radio world, ping eachother on field days, share thoughts and links to information, and enable colaboration for the growing number &lt;a href="https://github.com/travisgoodspeed/md380tools">HAM radio programmers&lt;/a> working on &lt;a href="https://freedv.org/">open source&lt;/a> software.&lt;/p>
+&lt;p>The server is paid for and run by people who care about sharing. Although Mattermost is not our focus area, we do try to contribute to Mattermost with bug reports, &lt;a href="https://github.com/42wim/matterbridge/pull/176">fixes&lt;/a> and running the beta chat clients. Our usergroup is almost 500 people, and growing. Depending on events or contests roughly 20% of our users are actively reading and contributing to one or more channels:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](mattermost_users_hobbyscoop-month.png?w=150)
+](mattermost_users_hobbyscoop-month.png)
+&lt;/td>
+&lt;td >[![](mattermost_sessions_hobbyscoop-week.png)
+](mattermost_sessions_hobbyscoop-week.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Mattermost did mention their ["monday license program"](https://about.mattermost.com/mattermost-mondays/) in their responses, but as you can see we are already halfway their 1000 user limit and growing. We have no intention of sending any legal documents or statutes to a company which then decides if we can access our own existing content.
+&lt;p>From where we are standing, with the open source tools we use, Mattermost looks like an odd duck. Most of the open source tools we use and contribute to have common-sense safety and security built in, Linux, nginx, &lt;a href="http://www.haproxy.org/">haproxy&lt;/a> and &lt;a href="https://letsencrypt.org/">letsencrypt&lt;/a>  being a few strong examples. In contrast, the Mattermost team cripples the Open Source version with &lt;a href="https://github.com/mattermost/mattermost-server/issues/5935">weak passwords&lt;/a> and no implementation of even the most basic security roles. For a tool which pretends to be mature and safe enough to be exposed to the Internet, the workaround as described in this blogpost should not be needed.&lt;/p>
+&lt;p>Please help us convince the Mattermost Team of the importance of security in all versions of their products. Making money with support and features is okay, but basic common sense security should be the default for any open source project. We even think that improving security and speed makes Mattermost a more viable competitor against Slack and Telegram, to name two.&lt;/p>
+&lt;p>Open Source is about sharing, not about farting in the general direction of the very people contributing to it.&lt;/p></description></item><item><title>Seeed ESP8266 WiFi Breakout Board Pinout</title><link>https://realrolfje.github.io/rolfje.com/2017/01/01/seeed-esp8266-wifi-breakout-board-pinout/</link><pubDate>Sun, 01 Jan 2017 17:02:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/01/01/seeed-esp8266-wifi-breakout-board-pinout/</guid><description>
+&lt;p>[caption id=&amp;quot;attachment_2130&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;450&amp;quot;]&lt;img src="pinout1.png" alt="WiFi Serial Transceiver Module Breakout Board w&amp; ESP8266 pinout">
+WiFi Serial Transceiver Module Breakout Board w&amp;amp; ESP8266 pinout[/caption]&lt;/p>
+&lt;p>This is the pinout for the &lt;a href="https://www.seeedstudio.com/WiFi-Serial-Transceiver-Module-Breakout-Board-w%26amp%3B-ESP8266-p-2081.html#">Seeed WiFi ESP8266 breakout board&lt;/a>. Please be careful, it only accepts 3.3 Volt nominal input voltage and logic. Putting 5 Volts on any of the pins may permanently damage the chip.&lt;/p>
+&lt;p>The ESP8266 on this board is programmed to do serial communications at 115.2 kilobaud, and accepts &lt;a href="https://room-15.github.io/blog/2015/03/26/esp8266-at-command-reference/">AT commands&lt;/a>.&lt;/p></description></item><item><title>Designing a Fox-hunt antenna</title><link>https://realrolfje.github.io/rolfje.com/2016/06/19/designing-a-fox-hunt-antenna/</link><pubDate>Sun, 19 Jun 2016 21:47:36 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2016/06/19/designing-a-fox-hunt-antenna/</guid><description>
+&lt;p>&lt;a href="3d-radiation-pattern.png">&lt;img src="3d-radiation-pattern.png" alt="3d radiation pattern">
+&lt;/a>Many years ago, I used to do some &lt;a href="https://youtu.be/rrNXyv134bE">radio fox hunting with cars&lt;/a>. Usually these hunts are at night to make it more exciting, and can be great fun. As I got older I lost interest and moved on to other things. But last year, I decided to have a go at a &lt;a href="http://www.ballonvossenjacht.nl">popular balloon fox hunt&lt;/a> on 144MHz. This is quite a large scale &lt;a href="https://www.youtube.com/watch?v=_QrDOEXb_ss">and professionally organized fox hunt&lt;/a> by Dutch Radio Amateurs.&lt;!-- more -->&lt;/p>
+&lt;p>Because of the totally different setup and frequency I decided to join a few recreational 144MHz (2 meter) fox hunts to get the hang of it. If you like to play with radios and walk in the woods, &lt;a href="https://www.youtube.com/watch?v=KDN8w7awAkQ">this is your thing&lt;/a>. Lots of small transmitters hidden in the bushes on random frequencies for you to find.&lt;/p>
+&lt;p>Last year I used a borrowed receiver and antenna, and this year I decided to build a &lt;a href="http://www.peildoos.nl/?page_id=128">Foxbox receiver kit&lt;/a>.&lt;/p>
+&lt;p>After building the receiver, the age-old discussion among radio amateurs began: What antenna to use? I had a discussion with Remco who just designed his own &lt;a href="http://remco.org/index.php/2015/02/26/145-mhz-2m-moxon-pt-2/">Moxon antenna&lt;/a> using the &lt;a href="http://www.qsl.net/4nec2/">4nec2 antenna modeler and optimizer&lt;/a>. He convinced me to use this software in order to prevent building a lot of failing antennas and not being sure why they fail. So that's what I did.&lt;/p>
+&lt;p>The 4nec2 software comes with a bunch of example antennas for you to play around with. The antenna I borrowed last year was a 2 element antenna based on a &lt;a href="https://en.wikipedia.org/wiki/Log-periodic_antenna">Log Periodic Dipole Array antenna&lt;/a>. It worked fine and I had fun with it so I decided to model an antenna like that. (Also because I'm hard-headed and just copying Remco's Moxon would not lead to interesting discussions).&lt;/p>
+&lt;p>&lt;strong>Step 1: Getting basic dimensions of an LPDA&lt;/strong>
+The first thing I needed is a basic, ballpark approximation of a working LPDA antenna for 144MHz so I could get used to the 4nec2 modeling software. I used &lt;a href="http://hamwaves.com/lpda/en/">ON4AA's Log-Periodic Dipole Array calculator&lt;/a> to get an idea of the basic dimensions.&lt;/p>
+&lt;p>I noticed that the length of the first and largest element of the antenna is always 1041 mm, no matter what taper or relative spacing I chose as input. Good news, because that means that the antenna only has a few parameters to change when optimizing in 4nec2, see below.&lt;/p>
+&lt;p>&lt;strong>Step 2: Getting the design into 4nec2&lt;/strong>
+So here is where the struggle starts. As I am a Mac user and the 4nec2 software is Windows only, I installed it on a Linux Mint virtual machine running under Wine without problems. The terminal window will log errors but you have to put your OCD aside for a moment and ignore those.&lt;/p>
+&lt;p>For the LPDA antenna itself the struggle was not that bad, as I found an example file and was able to change that around to learn how 4nec2 works. I'll spare you the details. Just remember that you want to use the new NEC editor (Main Window, Settings → NEC Editor (new)).&lt;/p>
+&lt;p>&lt;a href="1-editor.png">&lt;img src="1-editor.png" alt="4nec2 Editor">
+&lt;/a>&lt;/p>
+&lt;p>Here you see the two wires of my LPDA antenna. As you can see, each line has a start (X1,Y1,Z1) and end point (X2,Y2,Z2) in 3D space. Ignore the funny formulas in the screenshot for now. A counter intuitive thing for me was that lines are made out of &amp;quot;segments&amp;quot;. 4nec2 cryptically complains about too few and too much segments, and you have to choose a number accordingly.&lt;/p>
+&lt;p>Another important thing to learn about 4nec2 is that you don't &amp;quot;connect&amp;quot; a source to your antenna. Rather, you choose a segment of a line which will then act as a current or voltage source (current source is the recommended default). This is why if you want to have your feed point in the middle of a wire, you need to choose an odd number of segments. In my design, both wires are 61 segments, and the feed point on both wires is on segment 31 (the middle segment of each wire).&lt;/p>
+&lt;p>Connecting the two wires of the antenna is done using a transmission line, with a twist (literally). We connect segment 31 of both wires with a transmission line, and chose a &lt;em>negative impedance&lt;/em>. This causes the transmission line to &amp;quot;twist&amp;quot; in your geometry window, and you should see something like this:&lt;/p>
+&lt;p>&lt;a href="2-geometry.png">&lt;img src="2-geometry.png" alt="LPDA Geometry">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 3: Changing the NEC file for optimization&lt;/strong>
+4nec2 contains an optimizer which can optimize certain characteristics of your antenna by iterating values. If you hard-coded the X,Y and Z values of the lines, the optimizer can not change the design. To be able to use the optimizer, I chose to have variables for the length of the boom (L), length of the driving/smallest element (D), length of the reflecting/longest element (R) and impedance of the transmission line (TRI). This explains the funny values for the X,Y,Z coordinates in my file. The variables can be found on the &amp;quot;Symbols&amp;quot; tab of the NEC editor.&lt;/p>
+&lt;p>&lt;strong>Step 4: Optimize!&lt;/strong>
+Close the Editor window, and in the main window, select Calculate -&amp;gt; Start Optimizer. The optimizer parameters can be a bit confusing. Choose the &amp;quot;Optimize&amp;quot; function in the drop-down top left, and leave the Option set to &amp;quot;default&amp;quot;. Below the text &amp;quot;Weighting factors in %&amp;quot; you'll see 7 text fields. Set them all to 0, except for &amp;quot;F/B&amp;quot;, the Front-to-back ratio. That should be set to 100, As we are only interested in maximum directivity.&lt;/p>
+&lt;p>&lt;a href="3-optimizer.png">&lt;img src="3-optimizer.png?w=450" alt="Optimizer">
+&lt;/a>&lt;/p>
+&lt;p>Now that we have told 4nec2 what we want (max F/B), we need to tell the optimizer which variables it can play with. In this simple design, you could select all variables by clicking on them, which moves them to the &amp;quot;selected&amp;quot; column. I tried, this does not lead to practical results and takes a bit of time depending on the speed of the computer. All open geometry or 3D view windows will live-update with the calculations. This looks really cool but things go faster if you close them.&lt;/p>
+&lt;p>&lt;a href="3a-optimized-radiation.png">&lt;img src="3a-optimized-radiation.png" alt="Optimized radiation">
+&lt;/a>&lt;/p>
+&lt;p>After a bit of playing with the optimizer, I got to the following radiation pattern:&lt;/p>
+&lt;p>&lt;a href="4-radiation-pattern.png">&lt;img src="4-radiation-pattern.png" alt="4. radiation pattern">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 5. Build and field test.&lt;/strong>
+At this point, the software will have tried tens, if not hundreds of different antenna variations you didn't have to physically build. But now that we are &amp;quot;certain&amp;quot;, we can build the antenna. The boom is aluminum profile, the radials are made of measuring tape so they can be folded, and the handle is a broomstick:&lt;/p>
+&lt;p>&lt;a href="5-antenne.jpg">&lt;img src="5-antenne.jpg" alt="Antenna">
+&lt;/a>&lt;/p>
+&lt;p>I've spent extra effort to make sure the dimensions are as close to the simulation as possible, to maximize the chance that it actually works as designed.&lt;/p>
+&lt;p>I did a field test together with my dad, where we used a Baofeng handheld (yes &lt;a href="https://rolfje.wordpress.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/">that one&lt;/a>) as a &amp;quot;fox&amp;quot;, taking turns in hiding it for the each other. The tests went &amp;quot;sort of okay&amp;quot;, but I noticed that it sometimes felt as if there was not one peak straight in front of the antenna, but rather two peaks left and right. This got me worrying about the accuracy of the build or the simulation. I even started doubting impact of impedance mismatch and cable length. When we got home however, I checked and saw that the 4nec2 software actually predicted this in a different diagram:&lt;/p>
+&lt;p>&lt;a href="6-vertical-radiation.png">&lt;img src="6-vertical-radiation.png" alt="Vertical radiation">
+&lt;/a>&lt;/p>
+&lt;p>It turns out, that if the antenna is held horizontally, and the transmitter antenna is a vertical, the whole system behaves exactly as simulated, with the antenna being almost &amp;quot;deaf&amp;quot; right in front of the boom. Solution: Turn the antenna vertical or horizontal while hunting to find the maximum signal. We noticed that without being able to see the radio, I could exactly match the angle of the vertical antenna. My dad hid the fox in a tree at 45 degrees, and without seeing or knowing it I matched the angle of the antenna perfectly.&lt;/p>
+&lt;p>&lt;strong>Step 6. Game on!&lt;/strong>
+Just today I tried the whole setup in an actual fox hunt with 24 foxes (yes that many). I was very pleased with the performance of the antenna, and I found 14 of the foxes. With a bit of practice and experience, I'm sure I can improve to find more foxes next time around.&lt;/p>
+&lt;p>And last but not least, here is the 4nec2 file for you to play around with:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; padlinenumbers=&amp;quot;false&amp;quot;]
+CM Log Periodic Dipole Array for 2m fox hunting
+CE
+SY L=180 'Boom length
+SY D=963 'Driver length
+SY R=1041 'Reflector length
+SY TRI=70 'Transmission line impedance
+GW 1 61 0 -R/2 0 0 R/2 0 10
+GW 2 61 L -D/2 0 L D/2 0 10
+GS 0 0 0.001
+GE 0
+GN -1
+EK
+EX 6 2 31 0 1 0 0
+TL 1 31 2 31 -TRI 0 0 0 0 0
+FR 0 20 0 0 144 0.1
+EN
+[/sourcecode]&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Measuring Coax Length and Loss</title><link>https://realrolfje.github.io/rolfje.com/2015/11/01/measuring-coax-length-and-loss/</link><pubDate>Sat, 31 Oct 2015 22:37:39 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/11/01/measuring-coax-length-and-loss/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=06N-5aUaV9w">&lt;img src="100-1015-bnc-t-connector.jpg" alt="100-1015 BNC T Connector">
+&lt;/a>Ever wondered how well your 50Ω coaxial cable is working? If you have a reasonably fast oscilloscope, preferably up to 100MHz and a signal generator which can generate short bursts, you can measure not only the length of your cable, but also the &lt;a href="https://en.wikipedia.org/wiki/Return_loss">return loss&lt;/a> at a certain frequency. From that, we can learn the attenuation of the cable.&lt;/p>
+&lt;p>This blog post describes the classic time domain reflection measurement using the following setup:&lt;/p>
+&lt;p>&lt;img src="tdr-measurement.png" alt="Measuring TDR">&lt;/p>
+&lt;!-- more -->The generator on the left generates a pulse or signal which travels down the cable. This signal is called $latex U_i$, the incident wave. Because the end of the cable at the right is open, there can be no current, and the wave has to travel back to the left. This wave is called $latex U_r$, the reflected wave. When the reflected wave hits the generator, it will disappear into the 50Ω impedance of the generator.
+&lt;p>When the wave travels through the cable and back, it encounters resistance and inductance of the copper, and capacitance towards the shielding. If we can measure the returning waveform, we can say something about the cable loss.&lt;/p>
+&lt;p>To measure $latex U_i$ and $latex U_r$ we need to use a 10x signal probe so that we influence the signal as little as possible. If we would use a 1x signal probe, the load of the probe will make it look like our cable has quite a bit of loss. In reality, it will be the probe that is influencing the measurement.&lt;/p>
+&lt;p>It takes the signal a certain time to travel through the cable. In a vacuum, the signal travels at the &lt;a href="https://en.wikipedia.org/wiki/Speed_of_electricity">speed of light&lt;/a>. In a cable, the signal actually travels &lt;em>slower&lt;/em>. Different cables have different speeds. The manufacturer of the cable provides this speed as a factor relative to the speed of light, called the &lt;a href="https://en.wikipedia.org/wiki/Velocity_factor">&amp;quot;velocity factor&amp;quot;&lt;/a>. If we know the velocity factor of the cable, and the time the signal took to return, we can say something about its length.&lt;/p>
+&lt;p>I'm using an &lt;a href="http://owonchina.en.made-in-china.com/product/XKrECsfAHmUj/China-OWON-50MHz-Dual-Channel-Modulated-Waveform-Generator-AG2052F-.html">OWON AG2052&lt;/a> function generator, and have set it up to generate a &amp;quot;burst&amp;quot;. A 25MHz sinewave, 2 cycles. The voltage is not really important, anywhere from 1 to 5 Volts makes the measurement comfortable, well above the noise floor.&lt;/p>
+&lt;p>&lt;a href="img_1964.jpg">&lt;img src="img_1964.jpg" alt="IMG_1964">
+&lt;/a>&lt;/p>
+&lt;p>The signal generator is connected through an RG58 cable and a BNC T-connector to the coax we're testing, in this case a few meters of &lt;a href="http://www.hamshop.com/ecoflex-15-coax-kabels.html">Ecoflex 15&lt;/a>.&lt;/p>
+&lt;p>Remember those funny little springy things you received with your new 10x 100MHz probes? This is a nice example of how to use them:&lt;/p>
+&lt;p>&lt;a href="img_1972.jpg">&lt;img src="img_1972.jpg" alt="Proper Probing">
+&lt;/a>&lt;/p>
+&lt;p>If everything went well, you should see $latex U_i$ and $latex U_r$ on your oscilloscope screen. To make an accurate measurement, stretch them out big enough so they just fit the screen of the scope. Since I'm measuring the peak voltage, I don't need the lower part of the wave. Using your scope like this makes better use of your A/D converter resolution, and uses more pixels on the screen, which means better accuracy.&lt;/p>
+&lt;p>&lt;a href="25mhz-2cycles.png">&lt;img src="25mhz-2cycles.png?w=450" alt="25MHz-2cycles">
+&lt;/a>&lt;/p>
+&lt;p>Cursor A and B are on the top of the second sine of $latex U_i$ and $latex U_r$. I could also have used the first, it doesn't really matter. The first sine is higher because of a little overshoot in the generator. We see that $latex U_{i (peak)}=654mV$ and $latex U_{r (peak)}=578mV$. To calculate the loss from these two voltages, we use the formula we found for calculating return loss from the &lt;a href="https://en.wikipedia.org/wiki/Reflection_coefficient">reflection coefficient&lt;/a> $latex \Gamma$ (gamma):&lt;/p>
+&lt;p>$latex RL_{(db)}=-20 \times \log_{10}\left(\Gamma \right)$ where $latex \Gamma =\frac{U_r}{U_i}$&lt;/p>
+&lt;p>Which means that in our case:&lt;/p>
+&lt;p>$latex RL_{(db)}=-20 \times \log_{10}\left(\frac{0.578}{0.654} \right)=-1.073dB$&lt;/p>
+&lt;p>We're interested in attenuation, the cable loss one-way, so we need to devide the return loss by two:&lt;/p>
+&lt;p>$latex \frac{-1.073}{2}=-0.54dB$&lt;/p>
+&lt;p>This attenuation is meaningless without knowing the length of the cable. To be able to calculate the length, we must know how fast the signal is traveling in the cable. According to the manufacturer, the velocity factor of Ecoflex 15 is 0.86. This means that a signal in this cable travels at 0.86 times the light speed:&lt;/p>
+&lt;p>$latex 299,792,458 \times 0.86=257,821,513.9:^m/_s$&lt;/p>
+&lt;p>The cursors A and B are 270nS apart. This means that the signal traveled&lt;/p>
+&lt;p>$latex 257,821,513.9 \times 270 \times 10^{-9}=69.61, m$&lt;/p>
+&lt;p>This is of course twice the length of the cable, so our cable is &lt;strong>34.8 meter&lt;/strong> long.&lt;/p>
+&lt;p>Now that we know the length and the loss of our cable, we can compare it with the manufacturer's specifications. The specifications of Ecoflex 15 say that the typical attenuation is 0.86dB per 100m at 10MHz, and 1.96dB per 100m at 50MHz. Lets assume that the attenuation is linear with the frequency between those two. The attenuation on 25MHz should be approximately 1.3dB per 100m.&lt;/p>
+&lt;p>We have a cable of 34.8 meter with 0.54dB attenuation, so per 100 meter that would be:&lt;/p>
+&lt;p>$latex \frac{100}{34.8} \times -0.54=-1.5,dB$&lt;/p>
+&lt;p>That's about 15% worse than the specification, but this can be easily explained by inaccuracies in our measurement, the resolution of the oscilloscope, and loss in cables and plugs. When repeating this measurement on my setup it's easy to see variations of 20% in the results.&lt;/p>
+&lt;p>&lt;strong>What if your generator is slower&lt;/strong>
+When your generator can not do short bursts, or can't generate a high enough frequency, you can at least measure the cable length by sending a square wave down the line. This is the most common measurement to do, but doesn't give you much information about the attenuation on a certain frequency. The frequency of the square wave does not matter much, as long as the edges have a decent rise time.&lt;/p>
+&lt;p>&lt;a href="square-wave.png">&lt;img src="square-wave.png?w=450" alt="Square wave">
+&lt;/a>&lt;/p>
+&lt;p>With this measurement you see $latex U_i$ on the left, then a period where the reflected $latex U_r$ is added to $latex U_i$, and then the last part of the $latex U_r$. The length of the first &amp;quot;Step&amp;quot; is the length of your cable, and the difference between $latex U_i$ and $latex U_r$ is your DC resistance.&lt;/p>
+&lt;p>Another possibility is that your generator can generate a burst, but not short enough. You can then still do both the return loss and cable length measurements, but it will look a bit different.&lt;/p>
+&lt;p>&lt;a href="25mhz-20cycles.png">&lt;img src="25mhz-20cycles.png?w=450" alt="25MHz-20cycles">
+&lt;/a>&lt;/p>
+&lt;p>Here, the middle section where $latex U_i$ and $latex U_r$ are added should not be interpreted in any way. Depending on the length of the cable, and the phase of $latex U_r$ you can even see a lower signal here, where $latex U_r$ cancels out $latex U_i$. Only use the first and last parts of the signal,indicated with $latex U_i$ and $latex U_r$ above.&lt;/p>
+&lt;p>**Gotchas:
+**Pay attention to more than one reflection: If there is more than one reflection, your generator is not the same impedance of the cable. I made the mistake of adding a 50Ω terminator at the generator side. But since the generator was already 50Ω, I created a 25Ω impedance, which reflected $latex U_r$ and sent it back into the cable.&lt;/p>
+&lt;p>Also make sure you always measure an open ended cable. If an antenna is connected, the reflection measurement will work, but the return loss can not be determined. After all, the antenna is made to dissipate energy, and we don't know how much energy is lost in the cable, and how much is lost in the antenna.&lt;/p>
+&lt;p>Have fun experimenting,
+Rolf&lt;/p>
+&lt;p>P.S. The formulas in this article are rendered by the WordPress LaTeX plugin, and I used the &lt;a href="http://www.codecogs.com/latex/eqneditor.php">codecogs equations editor&lt;/a> to edit and preview them.&lt;/p></description></item><item><title>Better modulation for the Baofeng UV-5RA</title><link>https://realrolfje.github.io/rolfje.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/</link><pubDate>Sun, 10 May 2015 10:32:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/05/10/better-modulation-for-the-baofeng-uv-5ra/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=h73EYcyszf8">&lt;img src="baofeng-uv-5ra-plus.jpg" alt="baofeng-uv-5ra-plus">
+&lt;/a>Undoubtedly the Baofeng UV-5Rx delivers a lot of radio for your buck. However some models in the range have a bad reputation for the transmitted audio sounding soft and muffled.&lt;/p>
+&lt;p>In 2013, Remco PA3FYM obtained the schematics of the radio and &lt;a href="http://remco.org/index.php?s=baofeng">devised a modification&lt;/a> where transistor Q17 of the VOX is re-purposed as preamplifier in the microphone audio circuit. It works wonders for your radio. For people needing a bit more visual guidance, below is a walktrough of how I did this to my Baofeng UV-5RA.&lt;/p>
+&lt;!-- more -->On the left you find the original schematics of the microphone and vox circuits. On the right, I've marked the modifications we're about to do in red.
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![uv5r-schema-before](uv5r-schema-before.png)
+](uv5r-schema-before.png)
+&lt;/td>
+&lt;td >[![uv5r-schema-after](uv5r-schema-after.png)
+](uv5r-schema-after.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Step 1: Open the radio
+**Open up the Baofeng UV-5RA. There is plenty information online on how to do this, check out [the teardown at takapart](https://www.takeitapart.com/guide/9) for instance. You need to open the radio up to the point that you can access the components on the back of the keypad.
+&lt;p>Remember: the radio comes apart without force. If you feel something is not giving, look for solder joints or screws you missed. For easy removal of the display, I used solder wick to remove the solder on the backlight connections:&lt;/p>
+&lt;p>&lt;a href="step-1-desolder-display.jpg">&lt;img src="step-1-desolder-display.jpg" alt="Step 1-desolder-display">
+&lt;/a>Just to be sure I desoldered the antenna connection but you can also unscrew the antenna connector and carefully force it over the aluminum ridge.&lt;/p>
+&lt;p>&lt;a href="step-1-desolder-antenna.jpg">&lt;img src="step-1-desolder-antenna.jpg?w=450" alt="Step 1-desolder antenna">
+&lt;/a>&lt;/p>
+&lt;p>**Step 2: Locate components
+**Locate the components in the schematic on the printed circuit board. Use a multimeter to ensure yourself that you are looking at the right components:&lt;/p>
+&lt;p>&lt;a href="step-2-locate-components.jpg">&lt;img src="step-2-locate-components.jpg" alt="Step 2 Locate components">
+&lt;/a>&lt;/p>
+&lt;p>Step 3: Disconnect Emitter of Q17
+Take a (very very) small drillbit and carefully disconnect the emitter of Q17:&lt;/p>
+&lt;p>&lt;a href="step-3-disconnect-emitter.jpg">&lt;img src="step-3-disconnect-emitter.jpg?w=450" alt="Step 3 disconnect emitter">
+&lt;/a>&lt;/p>
+&lt;p>The end result should look like this:&lt;/p>
+&lt;p>&lt;a href="step-3-result.jpg">&lt;img src="step-3-result.jpg" alt="step 3 result">
+&lt;/a>&lt;/p>
+&lt;p>**Step 4: Add 560 Ohm resistor
+**Use a very small soldering iron tip and small tweezers or toothpick put the 560 (or 680) Ohm resistor in place:&lt;/p>
+&lt;p>&lt;a href="step-4-resistor-in-place.jpg">&lt;img src="step-4-resistor-in-place.jpg?w=450" alt="Step 4 resistor in place">
+&lt;/a>&lt;/p>
+&lt;p>In my case, the 560 Ohm resistor gave a bit too much amplification. For a bit more modest result, choose 680 (like Remco did), or anything up to 1k Ohm.&lt;/p>
+&lt;p>&lt;strong>Step 5: Remove C135 and disconnect L44&lt;/strong>
+Using the small tip of your soldering iron, heat up and wipe down on C135 to remove it. Take care to not hit other components, repairs will be almost impossible. Use the small drillbit to disconnect L44 by cutting the little trace between C137 and L44:&lt;/p>
+&lt;p>&lt;a href="step-5-disconnect-l44.jpg">&lt;img src="step-5-disconnect-l44.jpg" alt="Step 5 disconnect L44">
+&lt;/a>&lt;/p>
+&lt;p>**Step 6: Connect Q17 to L44
+**Take a small piece of enamel coated wire, strip 2mm at the ends and connect the collector of Q17 to L44:&lt;/p>
+&lt;p>&lt;a href="step-6-connect-l44.jpg">&lt;img src="step-6-connect-l44.jpg?w=450" alt="Step 6 Connect L44">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Step 7: Close it up&lt;/strong>
+Put your radio back together. Don't forget to solder the antenna connector and backlight connections I mentioned in step 1.&lt;/p>
+&lt;p>When snapping the PCB back into the case, make sure that the rubber of the PTT button does not fold behind the PCB board. Make sure the rubber is nice and flat after inserting the PCB, like this:&lt;/p>
+&lt;p>&lt;a href="step-7-ptt-buttons.jpg">&lt;img src="step-7-ptt-buttons.jpg?w=450" alt="Step 7 PTT buttons">
+&lt;/a>&lt;/p>
+&lt;p>Have fun with your new and improved modulation!&lt;/p>
+&lt;p>73, Rolf.&lt;/p></description></item><item><title>IARU Region 1 Bandplan up to 500MHz</title><link>https://realrolfje.github.io/rolfje.com/2014/11/02/iaru-region-1-bandplan-up-to-500mhz/</link><pubDate>Sun, 02 Nov 2014 17:17:31 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/11/02/iaru-region-1-bandplan-up-to-500mhz/</guid><description>
+&lt;p>For some reason I have trouble finding a document which lists the complete &lt;a href="http://www.iaru-r1.org/">IARU Region 1&lt;/a> Band Plans. To end my &amp;quot;can I transmit here&amp;quot; quests, I've combined the information from several resources into a usable graphical representation of all Amateur Radio bands and modes up to 500MHz. I've not listed bands above 500MHz, please post links to those in the comments if you have them.&lt;/p>
+&lt;p>Exact use of a frequency may differ in your local region, so always listen first.&lt;/p>
+&lt;p>&lt;a href="iaru-reg-1-bandplan-up-to-500mhz.png">&lt;img src="iaru-reg-1-bandplan-up-to-500mhz.png?w=660" alt="IARU Region 1, Up to 500MHz">
+&lt;/a>&lt;/p></description></item></channel></rss>

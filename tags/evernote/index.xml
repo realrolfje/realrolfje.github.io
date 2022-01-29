@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Evernote on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/evernote/</link><description>Recent content in Evernote on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 07 Mar 2014 22:41:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/evernote/index.xml" rel="self" type="application/rss+xml"/><item><title>There's life without Google. Or iCloud. Or Facebook.</title><link>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</link><pubDate>Fri, 07 Mar 2014 22:41:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</guid><description>
+&lt;p>&lt;a href="https://threema.ch/en/">&lt;img src="appicon128.png" alt="Threema, the secure Whatsapp alternative">
+&lt;/a>Regular readers of this blog already know that I am &lt;a href="http://rolfje.wordpress.com/2011/07/03/1355/">not using dropbox&lt;/a>, and I was an Evernote user, but recently decided it became to dangerous and &lt;a href="http://rolfje.wordpress.com/?s=evernote">replaced it with my own scripts&lt;/a>. I had an interesting discussion on Twitter which made me decide to show you how I run my digital life without the help of Google, Facebook, Dropbox, Whatsapp or iCloud, and still be able to have all the functionality these services offer.&lt;/p>
+&lt;p>The search was hard and sometimes I need to reconsider some of the choices, but the last few years the selection of products was very stable and the setup has worked flawlessly. Searching for a secure replacement for Whatsapp or Google? It's in here.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tbody >
+&lt;tr >
+Original
+The Safer Alternative:
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Whatsapp
+&lt;/td>
+&lt;td >[**Threema**](https://threema.ch/en/). Hands-down the best safe messaging service. Easy to use, group chats, image and video transfers. Under the hood it always uses true end-to-end encryption, and does not store any data about you or contacts your addressbook while still being able to find your friends. Threema costs a mere €1,70 for the iPhone and €1,60 for Android, and is very clear about their revenue model. Sending a message is free of charge. No I don't use Telegram.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mail
+&lt;/td>
+&lt;td >**[Hushmail](https://www.hushmail.com/services/hushmail/)**. A Canadian email provider which at least claims it respects your privacy and is not bound to American legislation. I use their [Premium service](https://www.hushmail.com/premium/) which costs $35 a year. A bargain.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Search
+&lt;/td>
+&lt;td >**[DuckDuckGo](https://duckduckgo.com)**. Although there are some sceptics out there who argue that there is no way to verify how duckduckgo is any different than Google's search engine, I still think it is a better alternative. One of the most important ones is that they don't ["bubble"](http://dontbubble.us) you. Image searching is not possible yet. so I do fall back to Google for that every now and than, but only in a separate, private browser session with cleared cookies.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Maps
+&lt;/td>
+&lt;td >The Apple [**Maps**](http://appleinsider.com/articles/13/06/26/new-maps-app-in-os-x-mavericks-extends-tools-for-reporting-fixing-errors) app, or if you don't have a Mac or need to search online: [Mapquest](http://www.mapquest.com) provides a good alternative to Google maps. Not the prettiest interface, but any product other than a Google product gives them less data to harvest on me. Always remember: If you're not paying for the product, you're the product.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Calendar, Contacts
+&lt;/td>
+&lt;td >[**Owncloud**](http://owncloud.org). In my case, I have bought a $40 Raspberry Pi which is beautifully running Owncloud to sync Calendars over SSL between my iPhone and all my Macs. It requires a bit of Linux skills and isn't really safe "out of the box", but can be made pretty airtight. **Remember to close all ports and only access Owncloud over**** SSL** (most tutorials wrongly teach you otherwise), and don't expect high performance from the Raspberry when it comes to rendering browser pages. I've added a little script that sends backups to my file server via SMB.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >File synching (Dropbox)
+&lt;/td>
+&lt;td >[**SpiderOak**](https://spideroak.com/signup/referral/4b01a22f64d398afbd846637080bd2b4/). A true zero-knowledge encrypted file storage. With the new ["Hive" feature](https://spideroak.com/hive/) it behaves exactly like Dropbox, but has additional features like a backup service. Choose a safe password and store it somewhere secure, because Spideroak can not recover your password or your files if you loose it. I started with the 2GB free for life account, but it soon grew to a 50GB account. Great stuff, very reliable, safe.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Evernote
+&lt;/td>
+&lt;td >**[SpiderNote](http://rolfje.wordpress.com/2014/03/02/replace-evernote-with-spidernote/)**. It may be a bit cobbled together, but as an old Evernote fan I needed a good alternative and it should be able to sync between all my Macs. So I save my notes in a SpiderOak folder and search them with Spotlight. Not as fancy as Evernote, but the price (risk) of storing my data unencrypted on an American server became too high. **
+**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Facebook
+&lt;/td>
+&lt;td >[**Twitter**](https://twitter.com/rolfje#). I hate to dissapoint you, but Facebook is free of charge and they store your entire digital life. What do you think is Facebook's product precisely? Also, I see that you have 86.355 "friends" on Facebook. I hate to disappoint you but those are called "random strangers". Even if your account is *cough* private (except for Mark $uckeberg). I like to talk to people too, that's why I have this blog, and for the smaller chit-chat I use Twitter. My real friends are on Threema, or, if need be, I talk to them. It's very old-fashioned. I drive over and meet them in person. And sometimes they even come to my house. I know, crazy right? Old school.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >LinkedIn
+&lt;/td>
+&lt;td >None. I could hold the same rant for Facebook and LinkedIn alike. They're not there for you. You're there for them. I did make the mistake of creating a LinkedIn account a long time ago because people said "you need this". After quite a few mails from LinkedIn requesting me to endorse people, update my profile or water their plants, I realized that I was working for them, not the other way around. I cancelled and deleted my account. Guess what? I'm still alive and well. If you're a developer, you're better off by gaining community based reputation on sites like **[Stackoverflow](https://stackoverflow.com/users/21134/rolf)**.
+&lt;/td>
+&lt;/tr>
+&lt;tr valign="top" >
+&lt;td >Local Backups
+&lt;/td>
+&lt;td >**[Encrypted TimeMachine](http://support.apple.com/kb/PH11102)** and Time Capsule volumes. My local drives are also full-disk encrypted using Apple's built-in [FileVault 2](http://support.apple.com/kb/HT4790?viewlocale=en_US&amp;locale=en_US). There is a Mac Mini file server in the house which holds all familiy photos  so that we can view them on the TV for example. The photos are on a read-only fileshare and are backed up using Time Machine locally.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Remote/Offsite Backups
+&lt;/td>
+&lt;td >[**Crashplan Free**](https://www.code42.com/store/), sending the data on the TimeMachine drive on the fileserver to another fileserver at my parents' house. His fileserver backs up on my machine and vice-versa. One house can completely burn down and we still have all data, without it ever being uploaded to some unencrypted company server.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Why not Telegram?**
+A few words of advice on using Telegram: Whatever they tell you, the data is *not* (properly) encrypted and it is easy to tell: The data is [stored in their "cloud"](http://unhandledexpression.com/2013/12/17/telegram-stand-back-we-know-maths/) and provided to you on all your devices. Even worse: They are [showing your data to "potential friends"](http://mcleaver.blogspot.nl/2014/02/telegram-verses-whatsapp.html?m=1) who [do not have you in their contact](https://twitter.com/GVerbaan/status/436909531625697280) lists or may have never heard of you. They upload your complete address book to their servers. They also know the [geolocation of your phone](http://blog.hackapp.com/2013/12/telegram-secret-chat-geolocation-leak.html). Unencrypted. They have your data, and show it by leaking it. They can fix the leaks and tell you it's safe, but they still have your data. It's also fishy that they clearly [have money to pimp their server farm](https://twitter.com/telegram/status/437745646007631872), even when the app and the messages are free of charge. Who do you think is the product here?
+&lt;p>&lt;a href="https://www.netmess.org/only-threema-rated-uncritical-telegram-rated-critical-for-privacy/">&lt;img src="telegram.png" alt=""Come in to the dark side. We have privacy"">
+&lt;/a>&lt;/p></description></item><item><title>Replace Evernote with Spidernote</title><link>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</link><pubDate>Sun, 02 Mar 2014 19:30:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</guid><description>
+&lt;p>&lt;a href="http://www.washingtonpost.com/wp-dyn/content/article/2010/07/28/AR2010072806141.html">&lt;img src="evernotensa.png" alt="Resistance is futile">
+&lt;/a>&lt;/p>
+&lt;p>In the past I have used Evernote extensively, it really helped me in my research for this blog and keeping track of meeting notes, todo lists and even making pictures of whiteboards at work searchable. As a product, there is no note taking app that can beat Evernote. But there is a little problem that has become a deal breaker for me, and that is basically the NSA and the way Americans, and particularly the American government seems to think about people's privacy and online security.&lt;/p>
+&lt;p>Evernote is an American company, which sadly has to comply with whatever ridiculous request by the U.S. government to turn over data of innocent people all over the world (yes, even outside the U.S. border, I know, it’s amazing). This, combined with the fact that Evernote clearly can not use zero-knowledge encryption because of the services it provides, makes that all the data you and I put into Evernote are at NSA’s fingertips at all times. If you find that as scary as I do, and you have a Mac, there is a way to solve this.&lt;!-- more -->&lt;/p>
+&lt;p>If you use Evernote to sync notes between multiple Macs, you have to solve the syncing problem first. Ofcourse Dropbox is a no-go, because that is an American company storing unencrypted data too. I’m &lt;a href="https://rolfje.wordpress.com/2011/07/03/1355/">using SpiderOak  since 2011&lt;/a>, and it is much better than Dropbox in many ways. Check it out.&lt;/p>
+&lt;p>If you’re using Evernote on your iPhone I do not have a solution for you yet. But as for me, that is not a big deal, I thought the iPhone is not the ideal note taking platform anyway as this old man is not very fast on the touch keyboard.&lt;/p>
+&lt;p>&lt;a href="spidy_5407spx_02.jpg">&lt;img src="spidy_5407spx_02.jpg" alt="Spidernote Icon">
+&lt;/a>With all that out of the way, let’s migrate away from Evernote and replace it with a smart script and some synced Spideroak folders. I like to call it ”SpiderNote”.&lt;/p>
+&lt;p>&lt;strong>1. Create a folder structure&lt;/strong>
+Inside your Spideroak shared folder or Hive, create a ”Spidernote” folder, and in that folder, create a ”notes” folder.&lt;/p>
+&lt;p>&lt;strong>2: Export all Evernote Notes&lt;/strong>
+Start up your trusty Evernote client and select all your notes. From the ”File” menu, select ”Export Notes…” and store them in a folder called ”Evernote”, inside the ”notes” folder you just created. You should now have a folder called Spidernote/notes/Evernote somewhere inside your Spideroak folder, or somewhere locally on your Mac.&lt;/p>
+&lt;p>&lt;strong>3: Getting Spotlight and Finder to work for you&lt;/strong>
+Open the Finder and press Cmd-, or select ”Preferences…” On the ”Advanced” tab, under ”When performing a Search” select ”Search the current Folder”. After you do this, you will find that when you open the notes folder in Finder, you can type some text and your old Evernote notes will popup. Look ma, no hands! And no Evernote!&lt;/p>
+&lt;p>&lt;a href="finder-search-settings.png">&lt;img src="finder-search-settings.png?w=450" alt="Finder Search Settings">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>4: Create a new template note&lt;/strong>
+OSX comes with a decent richtext editor, named ”TextEdit” which we are going to use for our note taking.Open TextEdit and save an empty file inside the notes folder which is called ”empty.rtf”. This will be your note template, the start of every new note. Remember you can set preferences that are stored with this file, like the default font and colors and tabs if you like.&lt;/p>
+&lt;p>&lt;strong>5: Script to create a new note&lt;/strong>
+Create a file called ”newnote.command” in the Spidernote folder and copy/paste the following contents into it:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot;]
+#!/bin/bash
+date=&lt;code>date +%Y%m%d-%H%M%S&lt;/code>
+BASEDIR=$(dirname $0)
+cd $BASEDIR&lt;/p>
+&lt;p>notesdirectory=&amp;quot;notes/${date}&amp;quot;&lt;/p>
+&lt;p>clear
+echo &amp;quot;Note will be stored in ${BASEDIR}/${notesdirectory}.&amp;quot;
+echo &amp;quot;Type title/filename for note (without extension):&amp;quot;
+read filename&lt;/p>
+&lt;p>if [[ X&amp;quot;&amp;quot; = X&amp;quot;$filename&amp;quot; ]]; then
+filename=&amp;quot;note.rtf&amp;quot;;
+fi&lt;/p>
+&lt;p>mkdir &amp;quot;${notesdirectory}&amp;quot;
+cp notes/empty.rtf &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+rm -f lastnote.rtf
+ln -s &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot; latestnote.rtf
+open -a TextEdit &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+[/sourcecode]&lt;/p>
+&lt;p>You should now have a folder structure which looks something like this:&lt;/p>
+&lt;p>&lt;a href="folder-structure-1.png">&lt;img src="folder-structure-1.png" alt="Spidernote Folder Structure">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>6: Add Spidernote to your Dock&lt;/strong>
+Drag the Spidernote folder next to your Trashcan in the doc (not IN your Trashcan, of course). Change the settings to have it’s icon show as a folder, and it’s context as a list. All set!&lt;/p>
+&lt;p>&lt;strong>7: Create your first note&lt;/strong>
+From the Dock, click on the Spidernote folder and click on ”newnote.command”. A Terminal window will pop up, asking you for the (optional) title of your note (this will be the filename of the *.rtf file, so that it is easier to scan your search results later). After you press ”enter”, TextEdit will come up and you can type away.&lt;/p>
+&lt;p>When you are done and close the editor, you can easily find your note by searching, or by the ”latest note” link which the script creates for you in the Spidernote folder, so that you always can return to what you were doing when you accidentally close that note.&lt;/p>
+&lt;p>That’s it for now. I know it does not OCR scan your images, and it is really a poor-man’s Evernote, but these days your private has become a valuable asset to scrupules people and it has to be protected.&lt;/p>
+&lt;p>I know that there are a lot of note taking apps out there but frankly none of them work for me. If you have any tips on how to solve the OCR and tagging/organizing stuff please let me know.&lt;/p>
+&lt;p>Oh and don't forget to &lt;a href="https://evernote.com/contact/support/kb/#!/article/23403793">deactivate your Evernote account and remove all its data&lt;/a>. After all, that's what started all this sad stuff.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Arduino on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/arduino/</link><description>Recent content in Arduino on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 02 Jan 2017 19:53:59 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/arduino/index.xml" rel="self" type="application/rss+xml"/><item><title>Make the ESP8266 talk 9600 baud</title><link>https://realrolfje.github.io/rolfje.com/2017/01/02/make-the-esp8266-talk-9600-baud/</link><pubDate>Mon, 02 Jan 2017 19:53:59 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/01/02/make-the-esp8266-talk-9600-baud/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/0IRvtw22JIc">&lt;img src="b1262-0.jpg" alt="Surprise video">
+&lt;/a>The default serial speed on the ESP8266 WiFi chip is 115200 baud. If you connect this chip to an Arduino and want to use SoftSerial to talk to it, it will not work. The SoftSerial library is limited to 9600 baud because of hardware limitations of the Arduino. If you want to talk to the ESP8266 with an Arduino at lower speeds, you need to tell the ESP8266 to slow down.&lt;/p>
+&lt;!-- more -->[Remco.org](http://remco.org/) noted that sending 115200 baud with SoftSerial works just well enough to throw a command to the ESP8266. So below is a sketch that will do just that for you.
+&lt;pre>&lt;code> 1. Load or copy/paste the sketch in your Arduino IDE.
+2. Connect the ESP8266 board to the Arduino as follows:
+&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>ESP TX pin to Arduino softRX pin 4&lt;/li>
+&lt;li>ESP RX pin to Arduino softTx pin 5
+3. Open the Serial Monitor of the Arduino IDE and set it to 9600 bps and CR/LF.
+4. Compile and upload this sketch to the  Arduino.
+5. Wait for the Serial monitor to show:
+AT
+OK
+-- Sketch stopped.&lt;/li>
+&lt;/ul>
+&lt;p>You can now use your ESP8266 at 9600 baud. The setting is stored in non-volatile memory, so you only need to do this once.&lt;/p>
+&lt;p>Here's the sketch:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;cpp&amp;quot; gutter=&amp;quot;false&amp;quot;]
+/*&lt;/p>
+&lt;ul>
+&lt;li>This sketch switches the ESP8266 from its&lt;/li>
+&lt;li>factory-default setting of 115200 bps to&lt;/li>
+&lt;li>9600 bps so that we can use SoftSerial to&lt;/li>
+&lt;li>communicate with it.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>
+&lt;ol>
+&lt;li>Connect the ESP8266:&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ul>
+&lt;li>ESP TX pin to Arduino softRX pin 4&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;ul>
+&lt;li>ESP RX pin to Arduino softTx pin 5&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;ol start="2">
+&lt;li>Open the Serial Monitor of the&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Arduino IDE and set it to 9600 bps and&lt;/li>
+&lt;li>CR/LF.&lt;/li>
+&lt;li>
+&lt;ol start="3">
+&lt;li>Compile and upload this sketch to the&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Arduino.&lt;/li>
+&lt;li>
+&lt;ol start="4">
+&lt;li>Sit back and watch the magic.&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="5">
+&lt;li>If you see &amp;quot;AT OK&amp;quot;, it worked.&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>Settings are stored in Flash memory, you&lt;/li>
+&lt;li>only need to execute this sketch once.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>Please note: Although softserial is used&lt;/li>
+&lt;li>to transmit at 115200 bps, you'll notice&lt;/li>
+&lt;li>we never wait for an answer. That is&lt;/li>
+&lt;li>because SoftSerial is not built to receive&lt;/li>
+&lt;li>at speeds above 9600 bps.&lt;/li>
+&lt;li>You have been warned.
+*/
+#include &amp;lt;SoftwareSerial.h&amp;gt;&lt;/li>
+&lt;/ul>
+&lt;p>const long sourcebaudrate = 115200;
+const long targetbaudrate = 9600;&lt;/p>
+&lt;p>const int softRX = 4;
+const int softTX = 5;&lt;/p>
+&lt;p>SoftwareSerial softSerial(softRX, softTX);&lt;/p>
+&lt;p>void setup() {
+Serial.begin(targetbaudrate);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Tell the ESP8266 to switch from &amp;quot;
++ String(sourcebaudrate) + &amp;quot; to &amp;quot;
++ String(targetbaudrate) + &amp;quot; bps.&amp;quot;);&lt;/p>
+&lt;p>softSerial.begin(sourcebaudrate);
+softSerial.print(&amp;quot;AT+IPR=&amp;quot;
++ String(targetbaudrate)
++ &amp;quot;\r\n&amp;quot;);&lt;/p>
+&lt;p>delay(500);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Talk to the ESP8266 at &amp;quot;
++ String(targetbaudrate) + &amp;quot; bps.&amp;quot;);
+softSerial.begin(targetbaudrate);
+softSerial.print(&amp;quot;AT\r\n&amp;quot;);&lt;/p>
+&lt;p>delay(500);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Reply from the ESP8266:&amp;quot;);
+while(softSerial.available() &amp;gt; 0 ) {
+char a = softSerial.read();
+if(a == '\0') continue;
+if(a != '\r' &amp;amp;&amp;amp; a != '\n' &amp;amp;&amp;amp; (a &amp;lt; 32)) continue;
+Serial.print(a);
+}&lt;/p>
+&lt;p>Serial.println(&amp;quot;-- Sketch stopped.&amp;quot;);
+}&lt;/p>
+&lt;p>void loop() {
+}
+[/sourcecode]&lt;/p></description></item><item><title>Arduino and the QVGA 2.2" TFT SPI screen</title><link>https://realrolfje.github.io/rolfje.com/2014/11/17/arduino-and-the-qvga-2-2-tft-spi-screen/</link><pubDate>Mon, 17 Nov 2014 10:37:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/11/17/arduino-and-the-qvga-2-2-tft-spi-screen/</guid><description>
+&lt;p>&lt;a href="http://www.elecfreaks.com/store/22%C3%82%E2%80%99-tft-lcd-tft0122sp-p-672.html">&lt;img src="2-2sp_a.jpg" alt="QVGA SPI 2.2" 320x240 screen">
+&lt;/a>I went through all the struggles everybody else seems to be going through to get this screen connected to my &lt;a href="http://arduino.cc/en/Main/arduinoBoardNano">Arduino Nano&lt;/a>. I had the 5V to 3.3V voltage conversion problem, and the &amp;quot;only works with software interrupts&amp;quot; problem which makes the display run slow. The solutions are not complicated but not very wel documented. Until now.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;strong>Step 1: It's a 3.3V screen&lt;/strong>
+Before connecting the screen to your Arduino, it's important to know that this screen uses 3.3V logic. That means that connecting your Arduino to it will likely ruin the screen. If you're not using the CF cardreader on the screen then the communication is one-way to the screen. Converting your 5V outputs to 3.3V is really simple, all you need is a couple of cheap 1N4148 diodes and a few resistors (for alternatives, see below). Connect your screen as follows:&lt;/p>
+&lt;p>&lt;a href="foto-2.jpg">&lt;img src="foto-2.jpg" alt="Simple Level Conversion">
+&lt;/a>&lt;/p>
+&lt;p>Please make sure you wire &lt;em>all&lt;/em> connections in this schematic.&lt;/p>
+&lt;p>&lt;strong>Step 2: Hidden pins in the code&lt;/strong>
+The &lt;a href="https://github.com/adafruit/Adafruit_ILI9340">Adafruit ILI9340 library&lt;/a> contains some examples on how to get the screen running. You'll need the SPI and Adafruit_GFX libraries too, as shown in the header of the examples. Let's look at a little code that alternates the screen between black and white:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;cpp&amp;quot;]
+/*&lt;/p>
+&lt;ul>
+&lt;li>Example code to make the TFT alternate&lt;/li>
+&lt;li>between black and white using hardware SPI:
+*/
+#include &amp;quot;SPI.h&amp;quot;
+#include &amp;quot;Adafruit_GFX.h&amp;quot;
+#include &amp;quot;Adafruit_ILI9340.h&amp;quot;&lt;/li>
+&lt;/ul>
+&lt;p>// TFT pin mappings for UNO/NANO
+#define _sclk 13
+#define _miso 12
+#define _mosi 11
+#define _cs 10
+#define _dc 9
+#define _rst 8&lt;/p>
+&lt;p>// Use hardware SPI
+Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);&lt;/p>
+&lt;p>void setup() {
+tft.begin();
+tft.fillScreen(ILI9340_GREEN);
+}&lt;/p>
+&lt;p>void loop() {
+tft.fillScreen(ILI9340_BLACK);
+tft.fillScreen(ILI9340_WHITE);
+}
+[/sourcecode]&lt;/p>
+&lt;p>Note that there is something funny going on here. The constructor for the Adafruit_ILI9340 object only has _cs, _dc, and _rst as parameter. Initially I thought &amp;quot;Great, only 3 connections to the display!&amp;quot;. Alas, this is not the case. &lt;em>&lt;strong>You still need to wire the _sclk and _mosi port to the display&lt;/strong>&lt;/em>. The _miso port can be left out, but you can't use it for anything else on the Arduino side because the library seems to be accessing it.&lt;/p>
+&lt;p>If you have your connections correct and upload the example above to your Arduino, you should see your screen continuously alternate between black and white. You will be able to see the drawing of the screen, but it should not take more than 1 second to fill the whole screen. If it takes more than a second to fill the screen, you're likely using the software SPI method. Check the code and the connections again.&lt;/p>
+&lt;p>This is how the data on the _mosi pin looks on a &lt;a href="http://www.radiomuseum.org/r/tektronix_storage_oscilloscope_7623a.html">Tektronix 7623A oscilloscope&lt;/a> when drawing graphics on the TFT screen. It's not a perfect square because of the capacitance of the diodes, but the difference between high and low states is good enough and the slope is just fast enough so that the display sees all the bits that are sent to it:&lt;/p>
+&lt;p>&lt;a href="foto.jpg">&lt;img src="foto.jpg" alt="MOSI data">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Alternative 5V to 3.3V conversions:&lt;/strong>
+&lt;img src="foto-1.jpg" alt="Zener conversion">
+If you don't have enough diodes, you can use zener diodes as shown on the right. I have not tested this on my screen but it should give you similar results, and saves you a few components.&lt;/p>
+&lt;p>A much nicer, two-way level conversion enables you to connect the _miso port to talk to the CF Card Reader. You can make this
+with an N-Channel MOSFET. Check Andrew's blog on &lt;a href="http://www.rocketnumbernine.com/2009/04/10/5v-33v-bidirectional-level-converter">how to use an N-channel FET to do the conversion&lt;/a>:&lt;/p>
+&lt;p>&lt;a href="http://www.rocketnumbernine.com/2009/04/10/5v-33v-bidirectional-level-converter">&lt;img src="level-converter-mosfet.jpg" alt="level-converter-mosfet">
+&lt;/a>&lt;/p>
+&lt;p>If you need more speed or less components, you can also check out &lt;a href="http://www.maximintegrated.com/en/app-notes/index.mvp/id/3007">Maxim's range of level conversion ICs&lt;/a>.&lt;/p>
+&lt;p>Have fun!&lt;/p>
+&lt;p>&lt;a href="http://www.waterman.com/en/6-pens">&lt;img src="foto-3.jpg" alt="Waterman fountain pen">
+&lt;/a>&lt;/p></description></item></channel></rss>

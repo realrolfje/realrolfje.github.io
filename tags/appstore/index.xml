@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AppStore on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/appstore/</link><description>Recent content in AppStore on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 09 Jan 2011 13:37:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/appstore/index.xml" rel="self" type="application/rss+xml"/><item><title>Why some App Store apps won't install</title><link>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</link><pubDate>Sun, 09 Jan 2011 13:37:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</guid><description>
+&lt;p>&lt;a href="http://pcweenies.com/tag/mac-app-store-comics/">&lt;img src="schermafbeelding-2011-01-09-om-12-28-53.png" alt="App Store Icon">
+&lt;/a>I was happily playing around with the appstore, and came across this funny free game called &amp;quot;Hedgewars&amp;quot;. Originally a free Linux game, it apparently got ported to the Mac and put in the App Store, just as a slew of Flash-based games (yes, Steve has some 'splainin' to do).&lt;/p>
+&lt;p>I tried to install Hedgewars on my trusty Mac Mini and got this message saying &amp;quot;This Application can not be installed on this machine&amp;quot;:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2011-01-08-om-16-45-40.png">&lt;img src="schermafbeelding-2011-01-08-om-16-45-40.png?w=300" alt="">
+&lt;/a>&lt;/p>
+&lt;!-- more -->There was no additional information on what was causing this. So the first thing I did was check out my computer information and the requirements for running this game, which seemed to check out fine:
+&lt;table width="100%" class="aligncenter" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](schermafbeelding-2011-01-09-om-00-40-38.png?w=122)
+](schermafbeelding-2011-01-09-om-00-40-38.png)
+&lt;/td>
+&lt;td >[![](schermafbeelding-2011-01-09-om-12-15-55.png)
+](schermafbeelding-2011-01-09-om-12-15-55.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+I was running the correct version of OSX, so what was the problem here? My neighbor came over and I showed him this funny problem. He found out that Hedgewars could be downloaded from the developers site, and so we did. After opening the DMG, we were greeted with the funny Application Icon decoration show on the right:
+&lt;p>&lt;a href="schermafbeelding-2011-01-09-om-12-18-25.png">&lt;img src="schermafbeelding-2011-01-09-om-12-18-25.png" alt="">
+&lt;/a>Usually this means that the application is compiled for a different system than you're trying to run it on. This can happen when you have an older generation PowerPC processor and try to run a non-universal-binary Intel application. So we checked the properties on the application, and it looked like OSX had it wrong. It's an Intel app, and we're running an Intel Mac. So what gives?&lt;/p>
+&lt;p>The next step was to open the Terminal so we could dissect this app on the command line, showing it's inner guts. Apps have all kinds of interesting XML and plist files telling the operating system what to do and how to start it up. Here's what we found:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,2,8&amp;quot;]
+rolf@Mac-mini$ cd Hedgewars.app/Contents/MacOS/
+rolf@Mac-mini$ ls -l
+total 21344
+-rwxr-xr-x 1 rolf admin 2627208 27 dec 21:39 hedgewars
+-rwxr-xr-x@ 1 rolf admin 5913164 27 dec 21:37 hedgewars-server
+-rwxr-xr-x@ 1 rolf admin 2381240 27 dec 21:37 hwengine&lt;/p>
+&lt;p>rolf@Mac-mini$ file *
+hedgewars: Mach-O 64-bit executable x86_64
+hedgewars-server: Mach-O executable i386
+hwengine: Mach-O universal binary with 1 architecture
+hwengine (for architecture x86_64): Mach-O 64-bit executable x86_64
+[/sourcecode]&lt;/p>
+&lt;p>The Hedgewars package has 3 executables, one 64-bit x86, one i386, and one universal binary which only contains an executable for 64-bit x86. We guess the developers made a bit of a mess of this. As expected, we could start the i386 executable just fine:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1&amp;quot;]
+rolf@Mac-mini$ ./hedgewars-server
+Listening on port 46631
+^C
+[/sourcecode]&lt;/p>
+&lt;p>But the x86_64 executable and the universal binary would not start:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,4&amp;quot;]
+rolf@Mac-mini$ ./hedgewars
+-bash: ./hedgewars: Bad CPU type in executable&lt;/p>
+&lt;p>rolf@Mac-mini$ ./hwengine
+-bash: ./hwengine: Bad CPU type in executable
+[/sourcecode]&lt;/p>
+&lt;p>Because this Mac Mini runs a Core Duo, we figured the x86 was okay, but we weren't sure about the 64-bit architecture. A quick peek at &lt;a href="http://en.wikipedia.org/wiki/Intel_Core">Wikipedia&lt;/a> confirmed our suspicion: The Intel Core Duo is not a 64 bit processor. In fact, 64-bit is the major difference between &amp;quot;Core Duo&amp;quot; and &amp;quot;Core 2 Duo&amp;quot;. Additional &amp;quot;Googling&amp;quot; showes that &lt;a href="http://support.apple.com/kb/ht3696">Apple Support knows that&lt;/a>, too.&lt;/p>
+&lt;p>So there you have it. The Mac App Store does not tell you what the problem really is, but chances are that if you get the &amp;quot;Could not install this Application on this machine&amp;quot; error, you have 32-bit architecture (the Core Duo) and the developer compiled the application for 64-bit architecture (the Core 2 Duo).&lt;/p>
+&lt;p>Why in god's name hedgewars has to be a 64-bit application beats me, but that's something I'm not going to change I'm afraid. It turns out that this as been &lt;a href="http://code.google.com/p/hedgewars/issues/detail?id=147&amp;amp;q=core%20duo">reported as a bug&lt;/a> to the Hedgewars team, which hasn't been picked up yet.&lt;/p>
+&lt;p>The good news for older model Intel Mac Mini Core Duo owners out there: You can replace your CPU with a Core 2 Duo processor. You'll need one of these:&lt;/p>
+&lt;ul>
+&lt;li>Core 2 Duo T7200 (2.00Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7400 (2.16Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7600 (2.33Ghz).&lt;/li>
+&lt;/ul>
+&lt;p>The processors are quite pricey, our quick check showed that they're all above the $200 price mark, which may be a bit steep for a processor upgrade. We expected about half that, so that was a bummer. Should you want to upgrade your CPU, buy thermal paste, and follow a good howto. To get a feeling of what you're getting into, check out the &lt;a href="http://www.ifixit.com/Teardown/Mac-mini-Model-A1283-Teardown/659/1">iFixit teardown of the Mac Mini&lt;/a>.&lt;/p>
+&lt;p>The other option would be to trade in your Core Duo Mac Mini for a Core 2 Duo Mac mini. It's safer and probably about as costly as buying one of the strangely priced Core 2 Duo processors.&lt;/p></description></item></channel></rss>

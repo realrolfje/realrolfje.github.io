@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>T-Mobile on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/t-mobile/</link><description>Recent content in T-Mobile on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 27 Sep 2011 20:06:24 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/t-mobile/index.xml" rel="self" type="application/rss+xml"/><item><title>The €2800,- Roaming Gigabyte</title><link>https://realrolfje.github.io/rolfje.com/2011/09/27/the-e2800-roaming-gigabyte/</link><pubDate>Tue, 27 Sep 2011 20:06:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/09/27/the-e2800-roaming-gigabyte/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=bjf-6p76rhA">&lt;img src="burnmoney.jpg" alt="T-Mobile is scum">
+&lt;/a>We all know the stories about how vacationing smartphone users became the victim of high &lt;a href="http://en.wikipedia.org/wiki/Roaming">roaming&lt;/a> charges, resulting in monthly bills sometimes exceeding €1000. To put an end to this, the EU has come up with a &lt;a href="http://en.wikipedia.org/wiki/Regulation_on_roaming_charges_in_the_European_Union">rule&lt;/a> stating that carriers can no longer charge more than €50 per month for roaming, and are obliged to warn the user before reaching this limit. That all sounds nice and consumer friendly, but I recently tested this, and received an &amp;quot;interesting&amp;quot; monthly bill from T-Mobile.&lt;/p>
+&lt;!-- more -->I've got an iPhone 4, and like many Dutch iPhone users, I got mine with a T-Mobile contract. I always used Vodafone because it has much better coverage, but when the iPhone 3 came out, T-Mobile was the only way to go and after some hesitation, I switched providers. To this day, the network coverage is not as good as Vodafone's, I miss calls even when I have full bars, and even if I can get "3G", the speeds are not nearly as good as friends with iPhones on the Vodafone network.
+&lt;p>Having said that, my contract is an old contract which means I have a truly unlimited data plan, for a reasonable price. That is, until you cross the border.&lt;/p>
+&lt;p>A few weeks ago, we went to France for a week of Eurodisney with the kids and grand kids. Because of the project stress at work, and de possibility to share pictures with my parents, I decided to enable roaming on my iPhone. I did try to check the T-Mobile site for data plans and bundles, but these were either not meeting my needs (day passes), or were too hard to compare with each other. I checked my contract and the roaming charges seemed only slightly higher than the blocks, box-packs, travel-smurf, stack-bundles, or whatever convoluted pricing schemes these carriers were trying to trick me in to. I decided to reset the usage info on my iPhone and keep an eye on it.&lt;/p>
+&lt;p>&lt;a href="img_2117-all.png">&lt;img src="img_2117-all.png" alt="Welcome to France">
+&lt;/a>I crossed the border and received the usual SMS, about rates everybody ignores. I did see that data was €2,- per MB (yes mega-byte) but it looked more like a typo to me, surely they didn't mean mega-byte, did they? During my stay in France, I got he absolute worse network coverage and data speeds you can imagine. No matter where I was, reading text-only email turned into a chore taking sometimes minutes to load. Twitter feeds were barely coming through, and sending a downscaled 100kB image actually took several retries, and multiple minutes. It was horrible. And then, on day 4, it all came to a halt. No SMS, no warning, no mail, no phone call, just total data shutdown. I could still make &lt;a href="http://www.rense.com/general79/metal.htm">robot-voice calls&lt;/a>, but all data traffic stopped and I had no idea how to get that going again. And that turned out to be a good thing.&lt;/p>
+&lt;p>&lt;a href="img_2114.png">&lt;img src="img_2114.png?w=100" alt="Data usage">
+&lt;/a>I checked my usage, and guessed that I must have crossed the €50,- mark somewhere, and the carrier shut me down to &amp;quot;protect me&amp;quot; from high roaming charges. I tried to SMS a few people to let them know I was still alive, and that was that.&lt;/p>
+&lt;p>A few weeks after I got home, I got the bill, and yes, there it was: I had reached the €50,- mark. It was an expensive experiment, and well worth this blogpost. Here's why. On my home &lt;a href="http://www.xs4all.nl/consument/internetbellen/start.php">entry-level 8Mbit ADSL connection&lt;/a>, I have free VOIP, and unlimited data. I checked our ADSL traffic and my family seems to be doing about 20GB a month combined. My monthly bill is €45,- so if I don't use the phone you could say that a GB of traffic costs me (€45 / 20 GB) &lt;strong>€2,25 per GB.&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="factuur_30082011.png">&lt;img src="factuur_30082011.png" alt="The amazing T-Mobile roaming charges">
+&lt;/a>As you can see in my data usage screenshot on the iPhone, and the bill on the right, I hardly made use of voice or sms. So we can roughly do the same calculation, assuming that 99% of the bill is data. The monthly bill was €89,45, and that got me 31.450MB of data (yes, again: mega-byte). So the price of a roaming Gigabyte in Europe is (€89,45 / 0.031450 GB)&lt;/p>
+&lt;p>&lt;strong>€ 2844,20 per GB&lt;/strong>&lt;/p>
+&lt;p>What you see is no typo. Almost €3000,- per GB. So what the Phone company is telling me here, is that even though the networks in all countries are reaching right up to the border, and we live in an interconnected world where data travels freely across the globe, phone companies charge more than 1000x the regular price to get a bit of information across that border?&lt;/p>
+&lt;p>I think carriers need to be seriously investigated by the EU and Trading committees, because they are using their monopoly to charge us prices which are totally unrealistic. It also proves that privatization of public services like communication networks doesn't work. It nearly always results in a few greedy companies cobbling up a system which delivers crappy service for an outrageous price.&lt;/p>
+&lt;p>The first step for these leeches is to come back from &lt;a href="http://rolfje.com/2010/11/23/why-phone-comps-fail/">whatever cave they were in&lt;/a>, move forward in time to 2011, and replace the &amp;quot;MB&amp;quot; with &amp;quot;GB&amp;quot; on my bill, without changing anything else. That would &lt;em>still&lt;/em> make them 26% more expensive than my internet provider, but at least it would take the roaming charges to an acceptable level, even for the crappy data speeds they blatantly market as &amp;quot;high speed&amp;quot;.&lt;/p></description></item><item><title>T-Mobile Network Quality</title><link>https://realrolfje.github.io/rolfje.com/2008/10/31/t-mobile-network-quality/</link><pubDate>Thu, 30 Oct 2008 23:00:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/10/31/t-mobile-network-quality/</guid><description>
+&lt;p>&lt;a href="img_0003.png">&lt;img src="img_0003.png?w=200" alt="">
+&lt;/a>As you've noticed, I bought an &lt;a href="http://rolfje.wordpress.com/2008/10/11/the-iphone-buying-experience/">iPhone&lt;/a>. When you're living in the Netherlands, you've got two options to get an iPhone. The first one is walk to an Apple reseller, buy an iPhone and sell your soul to T-Mobile. The second option is to drive to Belgium, convince a reseller to sell you a simlock-free iPhone, and get a &lt;a href="http://www.vodafone.nl/prive/favorieten/Super_SIM_Only">Vodafone iPhone &amp;quot;Super Sim Only&amp;quot; contract&lt;/a>. I went for the first option, and to be honest I kind of regret it. The iPhone is brilliant, but the T-Mobile network in the Netherlands sucks. Bigtime.&lt;/p>
+&lt;p>If your life depends on somebodies availabilty, please make sure to check they're not using the T-Mobile or Orange network (the companies merged). Don't let T-Mobile fool you with the &amp;quot;iPhone has bad reception hype&amp;quot;. I can make screenshots like you see here each day. I have &amp;quot;No service&amp;quot; but I can see the Vodafone and KPN networks just fine.&lt;/p>
+&lt;!-- more -->Although the [GSM coverage maps for T-Mobile](http://www.gsmworld.com/cgi-bin/ni_map.pl?x=0&amp;y=0&amp;z=0&amp;cc=nl&amp;net=t3) indicate that the gsm1800 coverage very good, a lot of customers, including me, will tell you otherwise from personal experience. I think the 3G coverage on the map is also unrealistic to say the least.
+&lt;p>Here's a short list of locations I went to the last couple of weeks. Please note that in all of these locations, I could reliably see the Vodafone network, inside and outside.&lt;/p>
+&lt;p> &lt;/p>
+&lt;table style="text-align:right;" border="0" >
+&lt;tbody >
+&lt;tr >
+Location
+Inside buildings
+Outside
+&lt;/tr>
+&lt;tr >
+&lt;td >[Amersfoort](http://maps.google.com/maps?f=d&amp;saddr=52.151924,5.411625&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=13&amp;sll=52.140231,5.414543&amp;sspn=0.096926,0.12188&amp;ie=UTF8&amp;ll=52.142549,5.408363&amp;spn=0.096921,0.12188&amp;z=13)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-4.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Amsterdam, VU hospital](http://maps.google.com/maps?f=q&amp;hl=nl&amp;q=Vu+Medisch+Centrum,+Nederland&amp;sll=52.373812,4.890951&amp;sspn=0.376443,0.487518&amp;g=Vu+Medisch+Centrum,+Nederland&amp;ie=UTF8&amp;cd=2&amp;geocode=FeKSHgMd9h5KAA&amp;ll=52.334775,4.860184&amp;spn=0.011774,0.015235&amp;z=16)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-2.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Beverwijk](http://maps.google.com/maps?f=d&amp;saddr=52.481735,4.664254&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=15&amp;sll=52.482754,4.662666&amp;sspn=0.02347,0.03047&amp;ie=UTF8&amp;ll=52.482101,4.663568&amp;spn=0.02347,0.03047&amp;z=15)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;td >![](bars-5.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Haaksbergen](http://maps.google.com/maps?f=d&amp;saddr=Elektrostraat&amp;daddr=&amp;hl=nl&amp;geocode=FYwjHAMdZfNmAA%3B&amp;mra=mr&amp;sll=52.156785,6.738631&amp;sspn=0.094573,0.12188&amp;ie=UTF8&amp;ll=52.166562,6.745605&amp;spn=0.094552,0.12188&amp;z=13)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Haarlem](http://maps.google.com/maps?f=d&amp;saddr=52.384021,4.63696&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=16&amp;sll=52.382384,4.63505&amp;sspn=0.011762,0.015235&amp;ie=UTF8&amp;ll=52.384689,4.636724&amp;spn=0.011761,0.015235&amp;z=16)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-5.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >Haarlem
+([Parking Central Station](http://maps.google.com/maps?f=d&amp;saddr=52.386772,4.63902&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=16&amp;sll=52.386785,4.639728&amp;sspn=0.01176,0.015235&amp;ie=UTF8&amp;ll=52.386366,4.639063&amp;spn=0.011761,0.015235&amp;z=16))
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-4.png)
+![](edge-icon.png)
+![](3g-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[Leusden](http://maps.google.com/maps?f=d&amp;saddr=52.11457,5.40699&amp;daddr=&amp;hl=nl&amp;geocode=&amp;mra=dme&amp;mrcr=0&amp;mrsp=0&amp;sz=14&amp;sll=52.117574,5.418062&amp;sspn=0.047328,0.06094&amp;ie=UTF8&amp;ll=52.112673,5.406475&amp;spn=0.047333,0.06094&amp;z=14)
+&lt;/td>
+&lt;td >![](bars-none.png)
+![](edge-no-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;td >![](bars-3.png)
+![](edge-icon.png)
+![](3g-no-icon.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+ 
+&lt;p>Terrible right? In Amersfoort, Amsterdam, Haaksbergen and Leusden I actually had to walk outside to make calls, or to see if I had missed any.&lt;/p>
+&lt;p>I really hope that this will improve significantly, otherwise I have to try to unlock my iPone and buy a Vodafone simcard. T-Mobile will then probably hold my phonenumber hostage until the end of my contract just because they can. I've had the same phonenumber for the past 15 odd years.&lt;/p>
+&lt;p>If you've got a choice, try to get an iPhone from Belgium, and avoid T-Mobile because you will be frustrated by the lack of connectivity. The only thing you'll miss is the Visual Voicemail, but if your network is good, you don't need voicemail all that much.&lt;/p>
+&lt;p>For now, I'm going to check if my hart surgeon uses the T-Mobile network. If so, I need to switch to a smarter surgeon ;-)&lt;/p></description></item><item><title>The iPhone buying experience</title><link>https://realrolfje.github.io/rolfje.com/2008/10/11/the-iphone-buying-experience/</link><pubDate>Sat, 11 Oct 2008 18:28:36 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/10/11/the-iphone-buying-experience/</guid><description>
+&lt;p>Ok so I've been &lt;a href="http://rolfje.wordpress.com/2007/01/10/apple-reinvents-phone-ipod-and-userinterface-in-1-go/">blogging about&lt;/a> &lt;a href="http://rolfje.wordpress.com/2007/01/13/see-the-iphone-demo/">the iPhone&lt;/a> and&lt;a href="http://rolfje.wordpress.com/2008/08/07/cowbell/"> it's &amp;quot;apps&amp;quot;&lt;/a> for a while now. After a lot of consideration and switching between Nokia and iPod touch, doing nothing and buying a 16GB 3G iPhone, I finally went for the latter. What a bittersweet experience.&lt;/p>
+&lt;!-- more -->We have no real Apple stores. They're called "Apple authorized resellers" and may look like an Apple store, but they're not. Because they are run by slow Dutch people (I get to that in a minute), and don't have geniuous bars, and can't seem to be of help unless you want to buy something.
+&lt;p>In the Netherlands, you can by an iPhone at T-mobile shops, or at the Apple store. At the T-Mobile stores, there are often no iPhones in stock. At the Apple stores (let's call 'em that, to humor them) the employees know nothing of cellphone contracts. Because I like the interiour of the Apple store better, I decided to get my iPhone there.&lt;/p>
+&lt;p>I went for the black 16GB 3G model, because the white one is just a bit to &amp;quot;girly&amp;quot;, and is easy to spot 100 miles away for any bad guys out to steal iPhones. I came prepared with copies of my passport and old SIM card. The guy behind the counter went into the storage room to get one. Then something strange happened: a &lt;a href="http://www.parallels.com/">Parallels&lt;/a> session was started up, and an Internet Explorer browser opened to show a HTTPS page at which we could fill in a contract form. It took ages to start up, and the T-Mobile &amp;quot;special registration form&amp;quot; was teribly slow. The Apple salesman was not very fast either, I had to correct him more than once because he didn't read the instruction on the screen. All in all I spent 37 minutes (measured) in the store to get everything registered and payed.&lt;/p>
+&lt;p>(I am still wondering why the T-Mobile registration page could not have been opened in Firefox or Safari on OSX.)&lt;/p>
+&lt;p>After a week, T-mobile sent a letter saying that my old number could not be ported. I called customer support and as it turned out, the guy at the Apple store still didn't fill in the form correctly (I wonder what he missed after staring at 2 html forms for 37 minutes). After being on hold for over 28 minutes at the T-Mobile helpdesk, they solved everything and my original number got transfered within 3 days.&lt;/p>
+&lt;p>So here I am, with an iPhone. Prepare to read a lot about it. ;-)&lt;/p></description></item></channel></rss>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GForge on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/gforge/</link><description>Recent content in GForge on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 04 Mar 2008 20:26:27 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/gforge/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrate CVS repository to GForge</title><link>https://realrolfje.github.io/rolfje.com/2008/03/05/migrate-cvs-repository-to-gforge/</link><pubDate>Tue, 04 Mar 2008 20:26:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/03/05/migrate-cvs-repository-to-gforge/</guid><description>
+&lt;p>At work we were testdriving &lt;a href="http://www.collab.net/products/sfee/new_4.4.html">SourceForge Enterprise Edition&lt;/a>. It is a great system to keep all your project information, source code, documents, bug reports and changes together, and linked. As you may have noticed, the pricing model of the Enterprise Edition is a well kept secret on the site. Our management bargained with the Colabnet people, but the costs (or TCO) were way to steep to keep SourceForge as our main system.&lt;/p>
+&lt;p>Another product which promises to do almost the same thing is &lt;a href="http://gforgegroup.com/es/">GForge Advanced Server&lt;/a>. GForge originally started as a fork of the (then open source) SourceForge code, and is not as advanced as SourceForge is today. But their pricing is more to the likings of our financial people, and we decided it has a good tradeoff between function and price.&lt;/p>
+&lt;p>Having said all this, we need to migrate a few projects from SourceForge to GForge. If you'd like to know how to do this, this article is for you. It describes how to get your CVS repository into GForge in 6 steps.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;strong>Step 1: Disabling writer access to CVS in SourceForge&lt;/strong>&lt;/p>
+&lt;p>To be on the safe side, block write access to the CVS repository to prevent people from committing (and loosing) changes. You can block access using the settings in your SourceForge project, or modifying the &lt;a href="http://ximbiot.com/cvs/manual/cvs-1.11.22/cvs_2.html#SEC36">&amp;quot;writers&amp;quot; file&lt;/a> to the CVSROOT of your repository. If you're not migrating from a SourceForge machine, you'll probably want to use the latter method.&lt;/p>
+&lt;p>&lt;strong>Step 2: Getting the modules from SourceForge&lt;/strong>&lt;/p>
+&lt;p>Log into your SourceForge server, go to the root of the CVS tree for your project. In our example, we'll use &amp;quot;project1&amp;quot; and the modules &amp;quot;modulefoo&amp;quot; and &amp;quot;modulebar&amp;quot; (for the &lt;a href="http://en.wikipedia.org/wiki/Foo_bar">foobar&lt;/a> minded). An example ssh session will look like this:&lt;/p>
+&lt;pre>&lt;code>[root@projects /]# cd /cvsroot/project1
+[root@projects project1]# ls -al
+drwxrws--- 10 nobody reps1010 4096 Mar 4 20:12 .
+drwxr-sr-x 10 root root 4096 Feb 20 13:59 ..
+drwxrwsr-x 3 nobody reps1010 4096 Dec 28 14:23 CVSROOT
+drwxrwsr-x 6 nobody reps1010 4096 Mar 4 14:26 modulefoo
+drwxrwsr-x 5 nobody reps1010 4096 Mar 4 14:27 modulebar
+[root@projects project1]#
+tar -czf project1.tar.gz modulefoo modulebar
+&lt;/code>&lt;/pre>
+&lt;p>Please note that we do not put the CVSROOT in the tar file. This prevents us from overwriting the CVSROOT later on in the GForge repository. After building the tar file, we need to send it to the GForge machine. You can do this by a secure copy. Put the tar file in the home directory of the user you're using to connect to GForge during the copy. We'll move it later.&lt;/p>
+&lt;p>Remove the tar file from the SourceForge server and disconnect. We're done at the SourceForge server.&lt;/p>
+&lt;p>&lt;strong>Step 3: Add CVS to your GForge project&lt;/strong>&lt;/p>
+&lt;p>We need a project to host our sourcefiles (and more). Using a web browser, connect to your GForge machine and create a project, or use an existing one if you've allready done so. Now go into the &amp;quot;Admin&amp;quot; tab of the project, and select &amp;quot;CVS repository&amp;quot; as your scm (Source Code Management) and press Submit:&lt;/p>
+&lt;p>&lt;img src="afbeelding-3a.png" alt="Add CVS SCM to GForge">&lt;/p>
+&lt;p>After you've done this, you should have a proper CVS repository set up on your GForge server, in which we can unpack the tarfile we've just created.&lt;/p>
+&lt;p>&lt;strong>Step 4: Unpack the tar file on the GForge machine&lt;/strong>&lt;/p>
+&lt;p>In this example, I'm using the root user for convenience. Depending on your administrator, maybe you're not allowed to be root (for good reason). Should you not have enough permissions to execute any of the following commands in the right locations, ask your administrator to execute Step 4 and 5 for you.&lt;/p>
+&lt;p>Log on to the GForge machine, and become root. Move the tar file to the cvsroot location of your project, and unpack the modules there. Your session should look something like this:&lt;/p>
+&lt;pre>&lt;code>[root@gforge ~]# cd /cvsroot/project1
+[root@gforge project1]# mv /home/someuser/project1.tar.gz .
+[root@gforge project1]# tar -xzf project1.tar.gz
+[root@gforge project1]# rm project1.tar.gz
+[root@gforge project1]# ls -al
+drwxrws--- 5 nobody project1 4096 Feb 20 14:20 .
+drwxr-xr-x 12 root root 4096 Mar 4 19:49 ..
+drwxrwsr-x 3 nobody project1 4096 Feb 20 14:19 CVSROOT
+drwxrwsr-x 6 nobody 519 4096 Mar 3 11:57 modulefoo
+drwxrwsr-x 7 nobody 519 4096 Feb 20 16:14 modulebar
+[root@gforge project1]#
+&lt;/code>&lt;/pre>
+&lt;p>At this point, the modules are in GForge, but we can not access them yet.&lt;/p>
+&lt;p>&lt;strong>Step 5: Setting the permissions&lt;/strong>&lt;/p>
+&lt;p>The files and folders in the modules are having the wrong ownership and permissions because they came from a different machine with different users. To be able to set the permissions, we need a username and a group to add to these files. When adding a project in GForge, a group with the same name as the project is also made.&lt;/p>
+&lt;p>First we need to change the ownership of the files, without touching the CVSROOT:&lt;/p>
+&lt;pre>&lt;code>chown -R nobody:project1 modulefoo modulebar
+&lt;/code>&lt;/pre>
+&lt;p>Next, we need to set the permissions of all directories (except for CVSROOT) in the tree. We do this by recursively finding all directories in the modules and executing chmod against them. Type the following on 1 line, exactly as shown:&lt;/p>
+&lt;pre>&lt;code>find modulefoo modulebar -type d -exec
+chmod u+rwx,g+rwxs,o+rx,o-w {} \;
+&lt;/code>&lt;/pre>
+&lt;p>The files have slightly different permissions. You can set these by typing the following on 1 line, exactly as shown:&lt;/p>
+&lt;pre>&lt;code>find modulefoo modulebar -type f -exec
+chmod u+r,u-wx,g+r,g-wxs,o+r,o-wx {} \;
+&lt;/code>&lt;/pre>
+&lt;p>To check that everything has worked, take a look at the file and directory permissions of modulefoo:&lt;/p>
+&lt;pre>&lt;code>[root@gforge project1]# ls -al modulefoo
+drwxrwsr-x 6 nobody project1 4096 Mar 3 11:57 .
+drwxrws--- 5 nobody project1 4096 Feb 20 14:20 ..
+drwsrwsr-x 2 nobody project1 4096 Feb 20 14:20 Attic
+-r--r--r-- 1 nobody project1 16330 Mar 3 11:57 build.properties,v
+-r--r--r-- 1 nobody project1 15195 Mar 3 11:57 .cvsignore,v
+...
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Step 6: Restart and Check GForge Access&lt;/strong>&lt;/p>
+&lt;p>CVS access will now work, but in GForge you will get an error in the CVS browser. To get rid of this error you need to restart apache. As root, do:&lt;/p>
+&lt;pre>&lt;code>cd /etc/init.d
+apachectl restart
+&lt;/code>&lt;/pre>
+&lt;p>Close your ssh session. Open your browser and go to your GForge server. Open your project, and click on the &amp;quot;CVS&amp;quot; tab on the right. You should now see the root of the project, with modulefoo and modulebar as folders in a list. Congratulations, you're done.&lt;/p>
+&lt;p>Should you get the dreaded &amp;quot;Python error&amp;quot; with some rubbish text about not having enough permissions, you did not restart apache, or something went wrong while setting the file permissions and ownershisps. Double check them, and make sure you didn't touch the CVSROOT directory, or the current or parent directories. If you did, simply &lt;a href="http://thedailywtf.com/Articles/Immaculate_Backup_.aspx">restore from your backup&lt;/a> and retry :-)&lt;/p>
+&lt;p>Have fun migrating your projects.&lt;/p></description></item><item><title>GForge CVS/SSH Authentication Failures</title><link>https://realrolfje.github.io/rolfje.com/2008/02/26/gforge-cvsssh-authentication-failures/</link><pubDate>Tue, 26 Feb 2008 10:48:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/02/26/gforge-cvsssh-authentication-failures/</guid><description>
+&lt;p>Recently we had a problem connecting to our GForge CVS through SSH. We added the public RSA key to the GForge user, but because of wrong configuration on the client we tried to connect a couple of times with the wrong key. After a while the GForge CVS will return the following error:&lt;/p>
+&lt;p>Received disconnect from &lt;GForge ip>: 2: Too many authentication failures for &lt;username>&lt;/p>
+&lt;p>To solve this, simple ask a GForge administrator to edit the GForge user, and press the &amp;quot;Save&amp;quot; button without changing anything. You will be able to reconnect immediately after the administrator has pressed &amp;quot;Save&amp;quot;.&lt;/p></description></item><item><title>Link CVS/SVN commit to GForge Tracker Item</title><link>https://realrolfje.github.io/rolfje.com/2008/02/21/link-cvssvn-commit-to-gforge-tracker-item/</link><pubDate>Thu, 21 Feb 2008 12:47:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/02/21/link-cvssvn-commit-to-gforge-tracker-item/</guid><description>
+&lt;p>Today I spent some time figuring out what the exact format of the CVS comment is when I want to link a commit to a GForge tracker item. I'll try to explain it a bit simpler:&lt;/p>
+&lt;pre>&lt;code> * We have [GForge](http://gforge.org/) installed at work. We use GForge to manage a software project for a customer.
+* The customer reports a bug in the Tracker of GForge. This bug gets assigned to me.
+* I read the code, find the problem and fix it. Now I want to commit the fix to the GForge integrated CVS, and have it automatically linked to the Tracker item for future reference.
+&lt;/code>&lt;/pre>
+&lt;p>I spent 30 minutes Googling for an example, and did find a lot of info, but no real usage examples. The info says &amp;quot;Include the tracker item id in the commit comment&amp;quot;. I spent anther 10 to 20 minutes trying to figure out if this meant just the number, the number with the prefix, or brackets, or both. To save more people from searching, you should copy-paste the complete tracker id from the tracker item screen.&lt;/p>
+&lt;!-- more -->**Example:**
+&lt;p>To connect a CVS commit to Tracker Item 123, use the following comment:&lt;/p>
+&lt;p>cvs commit xyz.txt &lt;em>&amp;quot;This is a commit comment for &lt;strong>[#123]&lt;/strong> in GForge project XYZ&amp;quot;&lt;/em>&lt;/p>
+&lt;p>GForge will then automatically link the commit to the tracker item(s). You can have multiple item id's in there, and you can also do multiple commits for a single tracker item.&lt;/p>
+&lt;p>Another great tip:  Enable the &amp;quot;Require Tracker Item ID on commit&amp;quot; to force people to do this. Then, create a seperate tracker item titled &amp;quot;Generic Work&amp;quot; so that people who are NOT working on a specific Tracker kan still commit. This forces people to think about what thei're committing for.&lt;/p>
+&lt;p>One step further would be to have a seperate tracker item for &amp;quot;refactoring&amp;quot; and &amp;quot;configuration management&amp;quot; or have todo tracker items for a release. This way you can link commits to certain types of work, maybe even to a time tracking tool.&lt;/p></description></item></channel></rss>

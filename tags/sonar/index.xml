@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sonar on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/sonar/</link><description>Recent content in Sonar on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 06 Oct 2009 08:38:26 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/sonar/index.xml" rel="self" type="application/rss+xml"/><item><title>Sonar "Close Connection" warning workaround.</title><link>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</link><pubDate>Tue, 06 Oct 2009 08:38:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</guid><description>
+&lt;p>When you use Spring and Ibatis and SQLTemplates, you could have code in your project which looks somewhat like this:&lt;/p>
+&lt;pre>&lt;code>Connection connection = DataSourceUtils.getConnection(getDataSource());
+...&amp;lt;do connection stuff here&amp;gt;...
+DataSourceUtils.releaseConnection(connection, getDataSource());
+&lt;/code>&lt;/pre>
+&lt;p>Sonar will report that you did not close the connection, while in fact, Spring did that for you. You can not just add a &lt;em>&amp;quot;connection.close()&amp;quot;&lt;/em> to the code because the whole point of calling &lt;em>&amp;quot;releaseConnection()&amp;quot;&lt;/em> is to have Spring handle all the smart stuff on committing, closing, and returning the connection to the pool if needed.&lt;/p>
+&lt;!-- more -->In our company, not closing the connection is a major blocking violation (and it should be). But in this case, there is no way to make the Jedi wave to Sonar, telling it that "this code will do just fine". So I added the following trick, albeit a bit dirty:
+&lt;pre>&lt;code>if (connection.isClosed()){
+// This code is only here to keep Sonar from
+// warning us that the connection is not
+// closed. Please note: Do not just close an
+// unclosed connection, Spring should handle
+// connection closing and returning to the pool.
+connection.close();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Use it to your advantage, but use this responsibly. If you see any problems in my solution, or if there is a better way to do this I'd be happy to hear about it.&lt;/p>
+&lt;p>&lt;strong>Edit (2009-12-01):&lt;/strong>&lt;/p>
+&lt;p>There is a much better way to do this if you have Spring/Ibatis integration. In stead of DataSourceUtils.getConnection() you can create a new ConnectionCallback object, like so:&lt;/p>
+&lt;pre>&lt;code>JdbcTemplate template = new JdbcTemplate(getDataSource());
+Object resultObject = template.execute(new ConnectionCallback() {
+public Object doInConnection(Connection conn) 
+throws SQLException, DataAccessException {
+// Do connection stuff here (can return object);
+return null;
+});
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this code does NOT contain any Connection.close() references. The connection is passed to you, you can use it, and after your method completes, the framework will do whatever is needed to clean everything up. Sonar will not complain because the whole open/close handeling is done outside your method.&lt;/p></description></item></channel></rss>

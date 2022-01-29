@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Toyota on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/toyota/</link><description>Recent content in Toyota on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 04 Aug 2012 21:16:52 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/toyota/index.xml" rel="self" type="application/rss+xml"/><item><title>Toyota (Corolla Verso) iPhone Bluetooth connection</title><link>https://realrolfje.github.io/rolfje.com/2012/08/04/toyota-corolla-verso-iphone-bluetooth-connection/</link><pubDate>Sat, 04 Aug 2012 21:16:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/08/04/toyota-corolla-verso-iphone-bluetooth-connection/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=2QawYoignHI">&lt;img src="toyota-iphone-bluetooth.png" alt="Connect your iPhone to your Toyota's Bluetooth system">
+&lt;/a>My sisters in law bought a beautiful 2006 Toyota Corolla Verso. They could not get the iPhone to pair with the car's Bluetooth system. The dealer told them that this was an iPhone problem, but after some fiddling, it turns out there is a simple workaround. If you want to pair an iPhone to your car, and the car says &amp;quot;pairing failed&amp;quot; as soon as you tap on your iPhone, this simple trick might help for you. This article contains detailed steps for the Toyota Corolla Verso, but on other cars this might work too.&lt;/p>
+&lt;pre>&lt;code> * &amp;lt;!-- more --&amp;gt;Start the car (don't start driving), and take out your iPhone.
+* On the iPhone, tap **&amp;quot;Settings&amp;quot;**, **&amp;quot;General&amp;quot;** and **&amp;quot;Bluetooth&amp;quot;**. Make sure Bluetooth is switched on. Leave the iPhone on this screen.
+* Press and hold **&amp;quot;mode&amp;quot;** on the steering wheel of the car.
+* When the car says &amp;quot;Setup Menu&amp;quot;, say **&amp;quot;Pair Phone&amp;quot;**
+* On the iPhone, tap the **&amp;quot;TOYOTA&amp;quot;** network.
+&lt;/code>&lt;/pre>
+&lt;p>The car will almost immediately say &amp;quot;Pairing failed&amp;quot;. On your phone, the password prompt will show. Do not do anything, let the phone stay on this screen.&lt;/p>
+&lt;p>&lt;a href="interior-2008-toyota-corolla-verso-bourgas-pic-2-334.jpg">&lt;img src="interior-2008-toyota-corolla-verso-bourgas-pic-2-334.jpg" alt="Toyota Corolla Verso Dashboard">
+&lt;/a>This is because the iPhone probably tries to connect with a default password like &amp;quot;0000&amp;quot;, the car immediately aborts, and doesn't allow a second try. The phone detects the connection failure and will popup a &amp;quot;password&amp;quot; screen for you to enter a number that does work, but the car has already given up. Not to worry, read on:&lt;/p>
+&lt;p> &lt;/p>
+&lt;pre>&lt;code> * Press and hold **&amp;quot;mode&amp;quot;** on the steering wheel again.
+* When the system says &amp;quot;Setup Menu&amp;quot;, say **&amp;quot;Pair Phone&amp;quot;**
+&lt;/code>&lt;/pre>
+&lt;p>The car enters pairing mode for the second time. Because the phone is still in the &amp;quot;Password prompt&amp;quot; screen, it is already past the detection phase,  and will not try to send the default password. Now you can enter your password and the connection will succeed on the &amp;quot;first&amp;quot; try as seen from your car.&lt;/p>
+&lt;pre>&lt;code> * With the iPhone still in the password screen, enter **&amp;quot;1234&amp;quot;** (or whatever password the car tells you) press **&amp;quot;Connect&amp;quot;**.
+&lt;/code>&lt;/pre>
+&lt;p>Congratulations, your phone is now paired.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>repair on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/repair/</link><description>Recent content in repair on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 07 Jan 2012 13:30:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/repair/index.xml" rel="self" type="application/rss+xml"/><item><title>Drobo FS Lion Time Machine Fix</title><link>https://realrolfje.github.io/rolfje.com/2012/01/07/drobo-fs-lion-time-machine-fix/</link><pubDate>Sat, 07 Jan 2012 13:30:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/01/07/drobo-fs-lion-time-machine-fix/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=6xe7bIfj7VM">&lt;img src="drobo-bandaid.png" alt="">
+&lt;/a>Many Drobo FS owners out there who upgraded to Lion were unpleasantly surprised by the fact that their Drobo no longer behaved like they used to. After months, drobo released new firmware, but it didn't improve things all that much. With the new firmware, the Drobo FS:&lt;/p>
+&lt;pre>&lt;code> * is slow or entirely unresponsive, Time Machine backups don't finish at all or take days
+* doesn't show up in the Finder of Lion Macbook owners connecting through wifi
+* has a transfer speed of 20MB/s, even when connecting through GB Ethernet, regardless of OSX version (tested with Snow Leopard, Lion)
+&lt;/code>&lt;/pre>
+&lt;p>If you have one or more of the problems listed above, you will be pleased to hear that there is a &amp;quot;fix&amp;quot;, although it may not be what you were hoping for.&lt;/p>
+&lt;p>&lt;strong>&lt;!-- more -->The Good&lt;/strong>
+Late 2010 I discovered drobo. Until then, I had always managed my storage space myself, transferring data to &lt;a href="http://rolfje.wordpress.com/2008/09/07/a-bigger-timemachine-without-changing-history/">bigger disks&lt;/a> as time went on. The idea of a device which would automatically do that by just plugging in a new drive sounded like a real time saver. That, and the fact that it could handle a disk failure without data loss, and behave like network Time Machine share made me buy a Drobo FS.&lt;/p>
+&lt;p>On December 19th 2010, I spent a whopping €615,- on a diskless Drobo, and threw another €300,- worth of 1TB disks in there, along with some old disks I had lying around.&lt;/p>
+&lt;p>I moved all &lt;a href="http://rolfje.wordpress.com/2010/12/30/move-time-machine-data-to-a-drobo/">backups to the Drobo&lt;/a>. Life would be good. Or so I thought.&lt;/p>
+&lt;p>&lt;strong>The Bad&lt;/strong>
+The Drobo does what is called &lt;a href="http://en.wikipedia.org/wiki/Thin_provisioning">&amp;quot;Thin Provisioning&amp;quot;&lt;/a>. This means that it will tell your computer that it is 16TB in size, although physically it isn't. This means that when you run out of physical storage space, you replace one of the drives with a bigger one and your computer wouldn't even notice.&lt;/p>
+&lt;p>When I created a Time Machine share on the drobo, I discovered that this was not entirely true. When you create a Time Machine share on the drobo, you must choose a size in order to keep Time Machine from filling up your drobo. But unlike other shares on the drobo, you can't change the size of the Time Machine share when you decide you need more room.&lt;/p>
+&lt;p>I got over it, chose large enough Time Machine shares for all my machines, and everything worked fine for a couple of months. Performance wasn't great, particularly mounting the sparse bundles took quite some time and a lot of disk access on the drobo, but hey. It's seamless automated backup to a redundant disk array so it was acceptable.&lt;/p>
+&lt;p>Skip forward to July 20th, 2011. The release date of OSX 10.7, Lion. Because I wanted to make sure everything still worked in Lion, I waited until September 2011 before upgrading my Macbook. My other machines are too old and are still running Leopard (OSX 10.5) or Snow Leopard (OSX 10.6).&lt;/p>
+&lt;p>One of the reasons I had to wait until September was drobo. They didn't have their software ready for Lion, and drobo actually &lt;a href="http://halmueller.wordpress.com/2011/07/28/drobo-fs-problems-under-mac-os-x-lion/">tried to blame Apple for it&lt;/a>. Yes you read that right. The OSX Lion developer preview had been out since &lt;a href="http://www.apple.com/apple-events/october-2010/">October 20, 2010&lt;/a> but somehow drobo didn't seem to have bothered to check compatibility all that time, and as a result effectively bricked all drobo's for Lion users.&lt;/p>
+&lt;p>&lt;strong>The Ugly&lt;/strong>
+After the storm had passed, and Drobo released a firmware upgrade, I switched to Lion on my Macbook after installing the new firmware on the Drobo FS. The Lion upgrade went very smooth and I happily played with Lion's new features. After a few hours, I noticed that the Drobo stopped working. No backups. Yikes!&lt;/p>
+&lt;p>The drobo wasn't visibile when connecting over wifi and at first Lion was blamed for this problem. But my Mac Mini running Snow Leopard also started complaining about not being able to backup. I filed my first drobo support call at 09/18/2011 04:46 AM with the title &amp;quot;New Drobo FS firmware doesn't work with Snow Leopard TimeMachine&amp;quot;.&lt;/p>
+&lt;p>It was downhill from there. Drobo support had me throw away Time Machine shares (losing data), reset the whole drobo (losing ALL data on the drobo), install bleeding edge firmware which was not even available through the normal drobo dashboard, advised me to both up- AND downgrade the drobo and the dashboard, repeatedly closed my support calls without actually solving them, refused to answer to replies not coming from the first email address I used, had me send numerous diagnostic files to them, and told me &amp;quot;they were working on a new firmware&amp;quot; but never when it was scheduled for release.&lt;/p>
+&lt;p>In less than 4 months, I exchanged more than 80 mails with Drobo Support, and the drobo had lost all my data 4 times. It had become more unreliable than any disk I had ever owned before. I was lucky to run backups-of-backups. The drobo may be able to handle drive failures, but the firmware developers and &lt;a href="http://www.stolensnapshots.com/dontdodrobo">drobo support people are a lot less worried about your data&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>The Fix&lt;/strong>
+During these months, I struggled to keep my backups running. On December 13th 2011, I finally bit the bullet and fixed my drobo backup problems. If you want to fix your drobo Time Machine backup problems for once and for all, do the following:&lt;/p>
+&lt;pre>&lt;code> 1. Connect to your drobo with an admin account, and using the Finder, copy all sparse bundles from all Time Machine shares to a location other than the drobo. Do the same for all other data you might have on there.
+2. Go the the Apple store and [buy a Time Capsule](http://store.apple.com/us/product/MD032LL/A/Time-Capsule-2TB) (as a bonus, this also upgraded my wifi speed a great deal)
+3. If you have just one machine you want to backup, plug it in and open Time Machine preferences on your Mac, and choose the Time Capsule as backup location. If you don't want to transfer your old backups, you're done.
+4. For more technically inclined people, you can create encrypted and limited size sparse bundles for each of your machines on the TIme Capsule. Read [this article](http://michaelnozbe.com/mac-osx-lion-secure-backup-to-time-capsule-wi) by Michael &amp;quot;Nozbe&amp;quot; Sliwinski on how to do that. It works beautifully.
+5. If you want to transfer the data in your old Time Machine sparse bundle from your drobo, you can use [this tip](http://www.unlikelywords.com/2009/01/05/moving-a-time-machine-backup-to-a-time-capsule/) to do that, but frankly I haven't tried that, I just created new, clean, backups.
+6. Now go and sell your drobo to somebody who doesn't care about his data that much, or just wants a NAS for his Windows machine.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;img src="time-capsule.jpeg" alt="">
+The Time Capsule has run beautifully out of the box, doesn't have a butt-ugly dashboard like the drobo's, and is actually faster over wifi than the drobo is over GB ethernet. Go figure.&lt;/p>
+&lt;p>I really hope that some day, somebody will create a drobo-like product which actually works.&lt;/p>
+&lt;p>P.S. If you like a challenge, you can actually already build a drobo-like fileshare with much higher performance at a lower cost by buying an HP proliant server, some disks, installing &lt;a href="http://en.wikipedia.org/wiki/OpenIndiana">OpenIndiana&lt;/a> on it and run a &lt;a href="http://en.wikipedia.org/wiki/ZFS">ZFS array&lt;/a>. A friend of mine has replaced his troublesome drobo with this setup and can reliably copy files to it at 120MB/s over GB ethernet, and swap out drives while he's doing that. Drobo isn't even close.&lt;/p></description></item><item><title>How to fix a Krups XN2001 Nespresso machine</title><link>https://realrolfje.github.io/rolfje.com/2011/08/27/how-to-fix-a-krups-xn2001-nespresso-machine/</link><pubDate>Sat, 27 Aug 2011 12:57:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/27/how-to-fix-a-krups-xn2001-nespresso-machine/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=FpHwCmobz88">&lt;img src="krups_xn20011.jpeg" alt="Click here to see some amazing Latte Art">
+&lt;/a>Maybe the title of this post should read &amp;quot;how to open a Krups XN2001 Nespresso machine&amp;quot;. The Krups XN2001 is almost identical to the newer XN2002 and XN2003. While the XN2003 has normal Torx screws, Krups was a bit more &amp;quot;protective&amp;quot; when they built the XN2001. It has screws that can not be gripped by any screwdriver. Still, there is an easy trick you can use to get headless screws out of any machine.&lt;/p>
+&lt;!-- more -->My Krups XN2001 Nespresso maker has been working fine for the past few years. I descale it almost monthly with very cheap vinegar, but otherwise it needs no maintenance. Just after I repaired my [free Aeroccino](http://rolfje.com/2011/08/16/aeroccino-motor-replaced/), the power button of the Krups XN2001 started to fail. It was hard to turn the machine on, like there was a bad contact.
+&lt;p>When I tried to open the Krups XN2001, I noticed these funny looking screws, which looked more like nails. After I discovered that these were actually normal screws, I needed to figure out how to get to the ones at the bottom.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Yes, it's a screw, not a nail!](img_2180.jpg)
+](img_2180.jpg)
+&lt;/td>
+&lt;td >[![No Dremel in the world could reach those...](img_2181.jpg?w=112)
+](img_2181.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+I took the Nespresso machine to a hardware store I frequently visit, and talked to a new hire there. I showed him the machine and he took off on a rant about how I should not open it, that it was dangerous, and it would void the warranty. I told him it was a five year old machine and it was for fun. Just when he got irritated and told me "doesn't matter, you can't open it", a colleague of him overheard our conversation. He looked at the new hire, smiled, and while pointing at me said "but he can".
+&lt;p>A few laughs and a short discussion later, it turned out that they did not have tools that would fit or grip the headless screws. I went into &lt;a href="http://www.youtube.com/watch?v=09UlB17cgKw">&amp;quot;MacGyver mode&amp;quot;&lt;/a> and got an aluminum rod that fit nicely on top of the screw head without touching the plastics of the case, and grabbed a tube of industrial strength superglue.&lt;/p>
+&lt;p>At home, I cut the rod into a few shorter bushings, and used the lathe to make them nice and flat. I carved a slot on the other end of each bushing with a dremel tool. Then, I carefully superglued the bushings onto the screws without touching the plastic, and let them settle for a few minutes.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Super Glue and a bushing. Note the slot for the screwdriver.](img_2183.jpg)
+](img_2183.jpg)
+&lt;/td>
+&lt;td >[![Removed screw with the bushing glued to it.](img_2187.jpg?w=200)
+](img_2187.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+After the glue set, it was very easy to use a normal screwdriver to get the screws out. I took the screws with the glued bushings back to the hardware store to show them what I did and got me some new philips head screws with matching size.
+&lt;p>Once you open it, you can see how simple this machine is. There's not much that can break, and parts look like they can be easily replaced. Instead of just cleaning the contacts in the button, I decided to go a little further and replaced the existing ones. I had to cut away some placeholders for the old pushbuttons, and drill a hole to hold the green led which tells you what the machine is doing.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![All the electronics. Not much to it, really.](img_2191.jpg)
+](img_2191.jpg)
+&lt;/td>
+&lt;td >[![I also replaced the "dispense" button](img_2195.jpg?w=112)
+](img_2195.jpg)
+&lt;/td>
+&lt;td >[![The repaired Aeroccino and the repaired Nespresso happily together.](img_2205.jpg)
+](img_2205.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+As you can see my Krups XN2001 now looks a bit "steampunked" but it works like a charm!</description></item><item><title>Aeroccino Motor Replaced</title><link>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</link><pubDate>Tue, 16 Aug 2011 18:56:51 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</guid><description>
+&lt;p>Months ago, I got this broken Aeroccino milk frother for free. This week I fiddled with it for a few hours, and got it to work:&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=kNEqWH3ILDc]&lt;/p>
+&lt;!-- more -->... and this is how you get it apart. First carefully pull out the button on the front:
+&lt;p>&lt;a href="aeroccino-button-remove-1.png">&lt;img src="aeroccino-button-remove-1.png" alt="Removing the front button">
+&lt;/a>&lt;/p>
+&lt;p>And then remove the rubber plugs to get to the screws at the bottom.&lt;/p>
+&lt;p>&lt;a href="aeroccino-bottom-screws.png">&lt;img src="aeroccino-bottom-screws.png?w=300" alt="Remove rubber plugs to get to the screws">
+&lt;/a>&lt;/p>
+&lt;p>You're on your own from here. Be careful not to break any wires when you pull it apart, and take pictures along the way so you know how to put it back together.&lt;/p></description></item><item><title>How to replace the headlights on a Citroen Xsara</title><link>https://realrolfje.github.io/rolfje.com/2006/03/11/how-to-replace-the-headlights-on-a-citroen-xsara/</link><pubDate>Sat, 11 Mar 2006 19:43:06 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/03/11/how-to-replace-the-headlights-on-a-citroen-xsara/</guid><description>
+&lt;p>Recently my left headlight broke. I thought I'd change it quickly, but after half an hour of fiddling I decided to ask my dealer to do it for me, while I was looking. That was not a bad idea. It turned out to be not so straightforward after all, and you actually need tools (which you don't get when buying the car) to do this! This lead me to write a &amp;quot;small&amp;quot; article on how to replace the headlights of a Citroen Xsara. Enjoy.&lt;/p>
+&lt;!-- more -->[![My Citroen Xsara 1.4 Hdi](r_citroen-xsara-break-14-hdi.thumbnail.jpg)
+&lt;p>](r_citroen-xsara-break-14-hdi.jpg)** The Car**
+This is my Citroen Xsara break 1.4 HDi. No, that's not the picasso model, you've seen that right. I think car manufacturers need to stop naming a complete line of cars with just one name. Nobody knows what car you are driving, even if you tell them. Good examples are the Citroen Xsara and the Renault Megane. But that's not what this article is about.&lt;/p>
+&lt;p>Recently my left headlight broke. I thought I'd change it quickly, but after half an hour of fiddling I decided to ask my dealer to do it for me, while I was looking. That was not a bad idea. It turned out to be not so straightforward after all, and you actually need tools to do this! You will need a 10mm wrench and a screwdriver. If you have thick fingers, I'd recommend a pair of pliers as well.&lt;/p>
+&lt;p>I wrote the whole procedure down here, for other Xsara owners to read. It can save you a costly trip to the garage, or a trip without headlights in a very dark area. The left headlight is the hardest to replace, the right headlight can be done without tools (although still a bit hard to reach).&lt;/p>
+&lt;p>(Click on the images to zoom in)&lt;/p>
+&lt;p>&lt;a href="r_citroen-headlight-booklet-picture.jpg">&lt;img src="r_citroen-headlight-booklet-picture.thumbnail.jpg" alt="Headlight from the manual">
+&lt;/a>&lt;strong>1. Check the manual&lt;/strong>
+The first thing you need to do (if you care for a laugh) is check the manual on &amp;quot;changing lights&amp;quot;. You will find a nice picture of the back of the headlight unit, with arrows pointing to the different lights. Surely this is to motivate you to do it yourself, but they kindly &amp;quot;forgot&amp;quot; to include the 9 missing steps to even get to the rear of the headlight unit.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-cover-arrow.jpg">&lt;img src="r_citroen-remove-cover-arrow.thumbnail.jpg" alt="Left Engine Cover clips">
+&lt;/a>&lt;strong>2. Remove left engine cover&lt;/strong>
+Open up the hood (or stop reading here if you can't ;-). You will see some plastic engine covers. Yes, those are the same covers you need to remove on the right side to fill up your windshield wiper fluid. The first sign the designer must have been a complete and utter idiot.&lt;/p>
+&lt;p>For the left headlight, remove the left engine cover (that's the right one if you are facing the front bumper ;-). Turn the little knobs 90 degrees counter clockwise and carefully lift up the plastic. The knobs are very flimsy, be careful not to break them.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-tube-arrows.jpg">&lt;img src="r_citroen-remove-air-intake-tube-arrows.thumbnail.jpg" alt="Aire Intake Tube">
+&lt;/a>&lt;strong>3. Remove air intake tube&lt;/strong>
+The air intake tube is connected to a plastic box behind the headlight, with a bajonet lock. Turn the top of the tube slightly towards you, and then pull it out of the plastic box.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-box-screw-arrow.jpg">&lt;img src="r_citroen-remove-air-intake-box-screw-arrow.thumbnail.jpg" alt="air intake box nut">
+&lt;/a>&lt;strong>4. Remove air intake box nut&lt;/strong>
+Below where the air intake tube was, you will find a 10mm nut hodling the bottom of the air intake box. Use a 10mm wrench to undo it. Be careful not to drop it into the engine compartment.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-air-intake-peg.jpg">&lt;img src="r_citroen-remove-air-intake-peg.thumbnail.jpg" alt="Remove air intake box peg">
+&lt;/a>&lt;a href="r_citroen-air-intake-peg.jpg">&lt;img src="r_citroen-air-intake-peg.thumbnail.jpg" alt="The peg after removal">
+&lt;/a>&lt;strong>5. Remove air intake box peg&lt;/strong>
+The top of the air intake box is held by a plastic peg. To pull the center pin out, you'll need to lift the pin with a screwdriver (look carefully at the picture). It should not take much force to take it out, please be carefull with this piece of plastic. I think Citroen will charge a pretty unfair amount of money to replace it should you've broken or lost it.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-abs-plug-cover-arrow.jpg">&lt;img src="r_citroen-remove-abs-plug-cover-arrow.thumbnail.jpg" alt="ABS plug cover">
+&lt;/a>&lt;strong>6. Remove ABS plug cover&lt;/strong>
+Allways wanted to know what that aluminum box is with those steel lines comming out the top? Well that's your anti-blocking system unit, and you're about to disconnect it. First, you need to remove the cover which protects the plug from moisture. You better change your headlights while it is not raining, because chances are that your ABS will stop working if you get the connector to corrode.&lt;/p>
+&lt;p>&lt;a href="r_citroen-unlock-abs-plug-arrows.jpg">&lt;img src="r_citroen-unlock-abs-plug-arrows.thumbnail.jpg" alt="Unlock and remove ABS plug">
+&lt;/a>&lt;strong>7. Unlock and remove ABS plug&lt;/strong>
+Pull out the red handle. The ABS connector plug should almost immediately loosen, and removing the connector should take absolutely &lt;em>no force&lt;/em>. If it sticks, you probably didn't pull out the red handle enough. Carefully look at the picture.&lt;/p>
+&lt;p>&lt;a href="r_citroen-remove-rear-headlight-cover-arrow.jpg">&lt;img src="r_citroen-remove-rear-headlight-cover-arrow.thumbnail.jpg" alt="headlight cover">
+&lt;/a>&lt;strong>8. Remove rear headlight cover&lt;/strong>
+The lamp cover is a simple plastic lid. Just pull it away from the headlight unit.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>&lt;a href="r_citroen-unplug-main-headlight-arrow.jpg">&lt;img src="r_citroen-unplug-main-headlight-arrow.thumbnail.jpg" alt="Unplug headlight">
+&lt;/a>&lt;strong>9. Unplug headlight&lt;/strong>
+Remove the grey and brown wired plug from the rear of the lamp.
+.&lt;/p>
+&lt;p>.&lt;/p>
+&lt;p>&lt;a href="r_citroen-lamp-clip.jpg">&lt;img src="r_citroen-lamp-clip.thumbnail.jpg" alt="How to remove the clip">
+&lt;/a>&lt;strong>10. Remove lamp clip&lt;/strong>
+With a flashlight, you can see that the lamp is held in place by a clip. This clip has two handles at the top of the lamp. Push them towards the headlight unit, and then outward. The lamp can now be taken out. Please take note on it's orientation when taking it out, there is only one way of putting it back in without damaging your headlight unit or blinding oncomming traffic.&lt;/p>
+&lt;p>&lt;a href="r_citroen-headlight-h7-out.jpg">&lt;img src="r_citroen-headlight-h7-out.thumbnail.jpg" alt="The H7 Lamp out of it’s reflector">
+&lt;/a>&lt;strong>11. Replace lamp&lt;/strong>
+Replace the lamp with a H7 type lamp, again note the orientation of the lamp. Don't touch the glass with your fingers. Touching the glass will leave grease on the glass. When the lamp heats up, it will become hotter than normal, shortening it's lifetime. Even worse: the grease will vaporize and leave a non-removable milky deposit on your reflectors. Reflectors are very expensive to replace. The dealer will charge you for a complete headlight unit.&lt;/p>
+&lt;p>&lt;a href="r_citroen-reinstall-air-intake-box-arrows.jpg">&lt;img src="r_citroen-reinstall-air-intake-box-arrows.thumbnail.jpg" alt="Reinstall Air Intake Box (arrows)">
+&lt;/a>&lt;strong>12. Put it all back together&lt;/strong>
+Connect the lamp and make sure it is working. After that, re-install all parts in revers order. Make sure that when you re-install the air intake box, the clips (pointed out by arrows 1 and 2 in the picture) are around the steel rimm. If the air intake box is not correctly placed, the plastic pin will not go through the misaligned holes, and the bottom slot will not align with the thread on which the 10mm nut goes.&lt;/p>
+&lt;p>I hope this will help other owners of Citroen Xsara's in replacing their own headlights. If you do not feel confident of something when replacing your headlights, please contact your local dealer. Needless to say, messing aroung with your brake system should be done with care and professionalism.&lt;/p>
+&lt;p>Take care!&lt;/p></description></item><item><title>Rotten Rotor</title><link>https://realrolfje.github.io/rolfje.com/2006/02/14/rotten-rotor/</link><pubDate>Mon, 13 Feb 2006 20:36:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/14/rotten-rotor/</guid><description>
+&lt;p>&lt;a href="o_img_3581.jpg">&lt;img src="o_img_3581.thumbnail.jpg" alt="Kawasaki KL 650 Tengai crankshaft drawing">
+&lt;/a>Last week I tried to pull the rotor by using a rotor puller, and a socket (from a socket wrench set) to block it. The socket burried it's way into the first thread of the crankshaft. After realising this, I tried to fit the rotor bolt, and it wouldn't go in. Since only the first thread was damaged, I carefully drilled it out (only needed to go 2 mm deep), and now the rotor bolt fits nicely again.&lt;!-- more -->&lt;/p>
+&lt;p>&lt;a href="o_img_3574.jpg">&lt;img src="o_img_3574.thumbnail.jpg" alt="Kawasaki Rotor bolt made into Rotor puller stub">
+&lt;/a>To prevent this from happening again, I ordered a new rotorbolt, and changed the old one to a stub to rest the rotor puller against. You can see the stub on the left. This is needed because the crankshaft is hollow, and the rotor puller has nothing to press against.&lt;/p>
+&lt;p>This evening, I spent another few hours of battering the crankshaft and the rotorpuller, still nothing. No matter what I do, the rotor does not want to let go of the crankshaft. I even tried heating the rotor up until the point I could not touch it with my hands. I protected the magnets from direct heat of the flame with a strip of aluminium, but I didn't want to take the risk to melt the plastic holding them.&lt;/p>
+&lt;p>&lt;a href="o_img_3580.jpg">&lt;img src="o_img_3580.thumbnail.jpg" alt="Rotor puller side view">
+&lt;/a>&lt;a href="r_img_3579.jpg">&lt;img src="r_img_3579.thumbnail.jpg" alt="Rotor puller after failed attemt to pull kawa rotor">
+&lt;/a>In the process, my trusty old rotor puller even almost gave up on me, I think it is time for it's retirement. The thread inside the nut is defintely at it's end, and the handle is bent out of shape from the force applied to try to seperate the rotor from the crank. That, and the beating of the hammer on the inside bolt has turned this rotor puller into a paper weight (almost).&lt;/p>
+&lt;p>I decided to give it another rest, I'm going to a motorbike exposition/dealer show next friday, maybe I can talk to people there about my problem. Sometimes the experienced bike repair shops have simple but effective tips to solve seemingly impossible problems.&lt;/p>
+&lt;p>To make my evening productive I measured the valve clearances. They are pretty nice, only 1 valves is slightly low on their clearance. This strikes me as funny because usually the clearance increases because of wear. Maybe the original clearance was allready low, or the disassembly and reassembly of the head has changed the clearing because I tightened the bolts a bit harder, I don't know. I am fairly sure I measured the clearances correctly, and at the correct camshaft angles.&lt;/p>
+&lt;p>Clearances are:&lt;/p>
+&lt;table >
+&lt;tr >
+&lt;td >
+&lt;/td>
+left
+right
+Allowed
+&lt;/tr>
+&lt;tr >
+exhaust
+&lt;td >0.15mm (just enough)
+&lt;/td>
+&lt;td >0.09mm (0.06 too little)
+&lt;/td>
+&lt;td >0.15~0.25mm
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+inlet
+&lt;td >0.12mm (spot on)
+&lt;/td>
+&lt;td >0.15mm (spot on)
+&lt;/td>
+&lt;td >0.10~0.20mm
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+So, I probaly need to buy a 0.06mm to 0.1mm thinner shim for the right exhaust valve cam to be on the safe side, but I will re-measure the clearances once the head is on the bike, to see how much the wrenching influences the measurements.</description></item></channel></rss>

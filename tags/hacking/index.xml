@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>hacking on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/hacking/</link><description>Recent content in hacking on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 09 Feb 2018 21:37:19 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/hacking/index.xml" rel="self" type="application/rss+xml"/><item><title>Interdigital Bandpass for RTL2832U Receiver</title><link>https://realrolfje.github.io/rolfje.com/2018/02/09/interdigital-bandpass-for-rtl2832u-receiver/</link><pubDate>Fri, 09 Feb 2018 21:37:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/02/09/interdigital-bandpass-for-rtl2832u-receiver/</guid><description>
+&lt;p>&lt;img src="bandpassfilter.gif" alt="">
+Building a receiver for a voice repeater system in this area I set up a &lt;a href="https://www.thumbsat.com/thumbnet-radios">thumbsat receiver&lt;/a> connected to a Raspberry Pi. The receiver is part of the repeater system to widen it's receiving range. However, the performance turned out not to be too optimal. I guessed that the GSM and Wifi signals around here could cause the RTL2832U to overload, so I decided to build an intedigital bandpassfilter using &lt;a href="http://www.changpuak.ch/electronics/interdigital_bandpass_filter_designer.php">Ajarn Changpuak&lt;/a>'s excelent interdigital bandpass filter calculator.&lt;/p>
+&lt;!-- more -->
+&lt;p>Because size was an issue and the GSM and Wifi bands are not very close to the receive frequency, I decided on a 2 element filter with 8MHz passband and 0.2dB ripple. Playing with the calculator got me the following filter dimensions:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot;]
+Length interior Element : 54.54 mm or 2.147 inch
+Length of end Element : 54.72 mm or 2.154 inch
+Ground plane space : 20 mm or 0.787 inch
+Rod Diameter : 4 mm or 0.157 inch
+End plate to center of Rod : 10 mm or 0.394 inch
+Tap to shorted End : 1.41 mm or 0.055 inch&lt;/p>
+&lt;p>**** Dimensions, mm (inch) ****&lt;/p>
+&lt;h1 id="end-to-center-center-center-gk-qcoup">End to Center Center-Center G[k] Q/Coup&lt;/h1>
+&lt;p>0 0.00 (0.000)
+1 10.00 (0.394) 35.97 (1.416) 1.038 0.714
+2 45.97 (1.810) 0.00 (0.000) 0.675 1.738
+3 55.97 (2.204)&lt;/p>
+&lt;p>**** Box inside dimensions ****
+Height : 59.00 mm or 2.323 inch
+Length : 55.97 mm or 2.204 inch
+Depth : 20.00 mm or 0.787 inch
+[/sourcecode]&lt;/p>
+&lt;p>As I discovered later, forgetting to refresh the calculations one last time resulted in incorrect dimentions (yes, the dimensions are incorrect in the list above).&lt;/p>
+&lt;p>I built the filter with blank PCB sheet and brass rods I had lying around. The first version looked like this:&lt;/p>
+&lt;p>&lt;img src="img_6332.jpg" alt="">&lt;/p>
+&lt;p>Without the top screwed it performed beautifully, but that turned out to be coincedence. Closing the filter up showed some strange characteristicts and the passband was on a much lower frequency.&lt;/p>
+&lt;p>I used my &lt;a href="http://miniradiosolutions.com/54-2/">miniVNA Tiny&lt;/a> to look at the characteristics while fiddling with it. To make it work I used copper shielding of an RG213 cable to close the filter properly, connected the inside and outside copper on the PCB, and added two solid wires to create a stronger coupling and changing the frequency. A bit unconventional and structuraly unsound, but it worked, and it ended up looking like this:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](img_6400-small.jpg)
+](img_6400-small.jpg)
+&lt;/td>
+&lt;td >[![](img_6413-small.jpg)
+](img_6413-small.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The electrical performance is adequate enough, and a short test confirmed that the RTL2832U has a much better performance, even with the additional 1.3 dB insertion loss of the filter:
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](1270-mhz-bandpass-s12.png?w=150)
+](1270-mhz-bandpass-s12.png)
+&lt;/td>
+&lt;td >[![](img_6489-crop.jpg)
+](img_6489-crop.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The receiver with the bandpass filter is installed on the roof and is performing nicely.
+&lt;p>It still felt strange that the filter does not behave as designed so I returned to Ajarn Changpuak's page to re-check my calculations and it turned out to be incorrect. The correct dimensions would have been:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot;]
+Length interior Element : 54.53 mm or 2.147 inch
+Length of end Element : 54.72 mm or 2.154 inch
+Ground plane space : 20 mm or 0.787 inch
+Rod Diameter : 4 mm or 0.157 inch
+End plate to center of Rod : 10 mm or 0.394 inch
+Tap to shorted End : 1.78 mm or 0.070 inch&lt;/p>
+&lt;p>**** Dimensions, mm (inch) ****&lt;/p>
+&lt;h1 id="end-to-center-center-center-gk-qcoup-1">End to Center Center-Center G[k] Q/Coup&lt;/h1>
+&lt;p>0 0.00 (0.000)
+1 10.00 (0.394) 32.98 (1.298) 1.038 0.714
+2 42.98 (1.692) 0.00 (0.000) 0.675 1.738
+3 52.98 (2.086)&lt;/p>
+&lt;p>**** Box inside dimensions ****
+Height : 59.00 mm or 2.323 inch
+Length : 52.98 mm or 2.086 inch
+Depth : 20.00 mm or 0.787 inch
+[/sourcecode]&lt;/p>
+&lt;p>Aha. This explains it. After re-calculating, the rods should have been closer together and the tap to the shorted end should have been further from the casing. I guess I have to re-do this filter with the correct dimensions some time. After this adventure I'm fairly confident that I can get it to behave nicely.&lt;/p></description></item><item><title>Make the ESP8266 talk 9600 baud</title><link>https://realrolfje.github.io/rolfje.com/2017/01/02/make-the-esp8266-talk-9600-baud/</link><pubDate>Mon, 02 Jan 2017 19:53:59 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/01/02/make-the-esp8266-talk-9600-baud/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/0IRvtw22JIc">&lt;img src="b1262-0.jpg" alt="Surprise video">
+&lt;/a>The default serial speed on the ESP8266 WiFi chip is 115200 baud. If you connect this chip to an Arduino and want to use SoftSerial to talk to it, it will not work. The SoftSerial library is limited to 9600 baud because of hardware limitations of the Arduino. If you want to talk to the ESP8266 with an Arduino at lower speeds, you need to tell the ESP8266 to slow down.&lt;/p>
+&lt;!-- more -->[Remco.org](http://remco.org/) noted that sending 115200 baud with SoftSerial works just well enough to throw a command to the ESP8266. So below is a sketch that will do just that for you.
+&lt;pre>&lt;code> 1. Load or copy/paste the sketch in your Arduino IDE.
+2. Connect the ESP8266 board to the Arduino as follows:
+&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>ESP TX pin to Arduino softRX pin 4&lt;/li>
+&lt;li>ESP RX pin to Arduino softTx pin 5
+3. Open the Serial Monitor of the Arduino IDE and set it to 9600 bps and CR/LF.
+4. Compile and upload this sketch to the  Arduino.
+5. Wait for the Serial monitor to show:
+AT
+OK
+-- Sketch stopped.&lt;/li>
+&lt;/ul>
+&lt;p>You can now use your ESP8266 at 9600 baud. The setting is stored in non-volatile memory, so you only need to do this once.&lt;/p>
+&lt;p>Here's the sketch:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;cpp&amp;quot; gutter=&amp;quot;false&amp;quot;]
+/*&lt;/p>
+&lt;ul>
+&lt;li>This sketch switches the ESP8266 from its&lt;/li>
+&lt;li>factory-default setting of 115200 bps to&lt;/li>
+&lt;li>9600 bps so that we can use SoftSerial to&lt;/li>
+&lt;li>communicate with it.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>
+&lt;ol>
+&lt;li>Connect the ESP8266:&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ul>
+&lt;li>ESP TX pin to Arduino softRX pin 4&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;ul>
+&lt;li>ESP RX pin to Arduino softTx pin 5&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;ol start="2">
+&lt;li>Open the Serial Monitor of the&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Arduino IDE and set it to 9600 bps and&lt;/li>
+&lt;li>CR/LF.&lt;/li>
+&lt;li>
+&lt;ol start="3">
+&lt;li>Compile and upload this sketch to the&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Arduino.&lt;/li>
+&lt;li>
+&lt;ol start="4">
+&lt;li>Sit back and watch the magic.&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>
+&lt;ol start="5">
+&lt;li>If you see &amp;quot;AT OK&amp;quot;, it worked.&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>Settings are stored in Flash memory, you&lt;/li>
+&lt;li>only need to execute this sketch once.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>Please note: Although softserial is used&lt;/li>
+&lt;li>to transmit at 115200 bps, you'll notice&lt;/li>
+&lt;li>we never wait for an answer. That is&lt;/li>
+&lt;li>because SoftSerial is not built to receive&lt;/li>
+&lt;li>at speeds above 9600 bps.&lt;/li>
+&lt;li>You have been warned.
+*/
+#include &amp;lt;SoftwareSerial.h&amp;gt;&lt;/li>
+&lt;/ul>
+&lt;p>const long sourcebaudrate = 115200;
+const long targetbaudrate = 9600;&lt;/p>
+&lt;p>const int softRX = 4;
+const int softTX = 5;&lt;/p>
+&lt;p>SoftwareSerial softSerial(softRX, softTX);&lt;/p>
+&lt;p>void setup() {
+Serial.begin(targetbaudrate);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Tell the ESP8266 to switch from &amp;quot;
++ String(sourcebaudrate) + &amp;quot; to &amp;quot;
++ String(targetbaudrate) + &amp;quot; bps.&amp;quot;);&lt;/p>
+&lt;p>softSerial.begin(sourcebaudrate);
+softSerial.print(&amp;quot;AT+IPR=&amp;quot;
++ String(targetbaudrate)
++ &amp;quot;\r\n&amp;quot;);&lt;/p>
+&lt;p>delay(500);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Talk to the ESP8266 at &amp;quot;
++ String(targetbaudrate) + &amp;quot; bps.&amp;quot;);
+softSerial.begin(targetbaudrate);
+softSerial.print(&amp;quot;AT\r\n&amp;quot;);&lt;/p>
+&lt;p>delay(500);&lt;/p>
+&lt;p>Serial.println(&amp;quot;Reply from the ESP8266:&amp;quot;);
+while(softSerial.available() &amp;gt; 0 ) {
+char a = softSerial.read();
+if(a == '\0') continue;
+if(a != '\r' &amp;amp;&amp;amp; a != '\n' &amp;amp;&amp;amp; (a &amp;lt; 32)) continue;
+Serial.print(a);
+}&lt;/p>
+&lt;p>Serial.println(&amp;quot;-- Sketch stopped.&amp;quot;);
+}&lt;/p>
+&lt;p>void loop() {
+}
+[/sourcecode]&lt;/p></description></item><item><title>Seeed ESP8266 WiFi Breakout Board Pinout</title><link>https://realrolfje.github.io/rolfje.com/2017/01/01/seeed-esp8266-wifi-breakout-board-pinout/</link><pubDate>Sun, 01 Jan 2017 17:02:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/01/01/seeed-esp8266-wifi-breakout-board-pinout/</guid><description>
+&lt;p>[caption id=&amp;quot;attachment_2130&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;450&amp;quot;]&lt;img src="pinout1.png" alt="WiFi Serial Transceiver Module Breakout Board w&amp; ESP8266 pinout">
+WiFi Serial Transceiver Module Breakout Board w&amp;amp; ESP8266 pinout[/caption]&lt;/p>
+&lt;p>This is the pinout for the &lt;a href="https://www.seeedstudio.com/WiFi-Serial-Transceiver-Module-Breakout-Board-w%26amp%3B-ESP8266-p-2081.html#">Seeed WiFi ESP8266 breakout board&lt;/a>. Please be careful, it only accepts 3.3 Volt nominal input voltage and logic. Putting 5 Volts on any of the pins may permanently damage the chip.&lt;/p>
+&lt;p>The ESP8266 on this board is programmed to do serial communications at 115.2 kilobaud, and accepts &lt;a href="https://room-15.github.io/blog/2015/03/26/esp8266-at-command-reference/">AT commands&lt;/a>.&lt;/p></description></item><item><title>Arduino and the QVGA 2.2" TFT SPI screen</title><link>https://realrolfje.github.io/rolfje.com/2014/11/17/arduino-and-the-qvga-2-2-tft-spi-screen/</link><pubDate>Mon, 17 Nov 2014 10:37:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/11/17/arduino-and-the-qvga-2-2-tft-spi-screen/</guid><description>
+&lt;p>&lt;a href="http://www.elecfreaks.com/store/22%C3%82%E2%80%99-tft-lcd-tft0122sp-p-672.html">&lt;img src="2-2sp_a.jpg" alt="QVGA SPI 2.2" 320x240 screen">
+&lt;/a>I went through all the struggles everybody else seems to be going through to get this screen connected to my &lt;a href="http://arduino.cc/en/Main/arduinoBoardNano">Arduino Nano&lt;/a>. I had the 5V to 3.3V voltage conversion problem, and the &amp;quot;only works with software interrupts&amp;quot; problem which makes the display run slow. The solutions are not complicated but not very wel documented. Until now.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;strong>Step 1: It's a 3.3V screen&lt;/strong>
+Before connecting the screen to your Arduino, it's important to know that this screen uses 3.3V logic. That means that connecting your Arduino to it will likely ruin the screen. If you're not using the CF cardreader on the screen then the communication is one-way to the screen. Converting your 5V outputs to 3.3V is really simple, all you need is a couple of cheap 1N4148 diodes and a few resistors (for alternatives, see below). Connect your screen as follows:&lt;/p>
+&lt;p>&lt;a href="foto-2.jpg">&lt;img src="foto-2.jpg" alt="Simple Level Conversion">
+&lt;/a>&lt;/p>
+&lt;p>Please make sure you wire &lt;em>all&lt;/em> connections in this schematic.&lt;/p>
+&lt;p>&lt;strong>Step 2: Hidden pins in the code&lt;/strong>
+The &lt;a href="https://github.com/adafruit/Adafruit_ILI9340">Adafruit ILI9340 library&lt;/a> contains some examples on how to get the screen running. You'll need the SPI and Adafruit_GFX libraries too, as shown in the header of the examples. Let's look at a little code that alternates the screen between black and white:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;cpp&amp;quot;]
+/*&lt;/p>
+&lt;ul>
+&lt;li>Example code to make the TFT alternate&lt;/li>
+&lt;li>between black and white using hardware SPI:
+*/
+#include &amp;quot;SPI.h&amp;quot;
+#include &amp;quot;Adafruit_GFX.h&amp;quot;
+#include &amp;quot;Adafruit_ILI9340.h&amp;quot;&lt;/li>
+&lt;/ul>
+&lt;p>// TFT pin mappings for UNO/NANO
+#define _sclk 13
+#define _miso 12
+#define _mosi 11
+#define _cs 10
+#define _dc 9
+#define _rst 8&lt;/p>
+&lt;p>// Use hardware SPI
+Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);&lt;/p>
+&lt;p>void setup() {
+tft.begin();
+tft.fillScreen(ILI9340_GREEN);
+}&lt;/p>
+&lt;p>void loop() {
+tft.fillScreen(ILI9340_BLACK);
+tft.fillScreen(ILI9340_WHITE);
+}
+[/sourcecode]&lt;/p>
+&lt;p>Note that there is something funny going on here. The constructor for the Adafruit_ILI9340 object only has _cs, _dc, and _rst as parameter. Initially I thought &amp;quot;Great, only 3 connections to the display!&amp;quot;. Alas, this is not the case. &lt;em>&lt;strong>You still need to wire the _sclk and _mosi port to the display&lt;/strong>&lt;/em>. The _miso port can be left out, but you can't use it for anything else on the Arduino side because the library seems to be accessing it.&lt;/p>
+&lt;p>If you have your connections correct and upload the example above to your Arduino, you should see your screen continuously alternate between black and white. You will be able to see the drawing of the screen, but it should not take more than 1 second to fill the whole screen. If it takes more than a second to fill the screen, you're likely using the software SPI method. Check the code and the connections again.&lt;/p>
+&lt;p>This is how the data on the _mosi pin looks on a &lt;a href="http://www.radiomuseum.org/r/tektronix_storage_oscilloscope_7623a.html">Tektronix 7623A oscilloscope&lt;/a> when drawing graphics on the TFT screen. It's not a perfect square because of the capacitance of the diodes, but the difference between high and low states is good enough and the slope is just fast enough so that the display sees all the bits that are sent to it:&lt;/p>
+&lt;p>&lt;a href="foto.jpg">&lt;img src="foto.jpg" alt="MOSI data">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>Alternative 5V to 3.3V conversions:&lt;/strong>
+&lt;img src="foto-1.jpg" alt="Zener conversion">
+If you don't have enough diodes, you can use zener diodes as shown on the right. I have not tested this on my screen but it should give you similar results, and saves you a few components.&lt;/p>
+&lt;p>A much nicer, two-way level conversion enables you to connect the _miso port to talk to the CF Card Reader. You can make this
+with an N-Channel MOSFET. Check Andrew's blog on &lt;a href="http://www.rocketnumbernine.com/2009/04/10/5v-33v-bidirectional-level-converter">how to use an N-channel FET to do the conversion&lt;/a>:&lt;/p>
+&lt;p>&lt;a href="http://www.rocketnumbernine.com/2009/04/10/5v-33v-bidirectional-level-converter">&lt;img src="level-converter-mosfet.jpg" alt="level-converter-mosfet">
+&lt;/a>&lt;/p>
+&lt;p>If you need more speed or less components, you can also check out &lt;a href="http://www.maximintegrated.com/en/app-notes/index.mvp/id/3007">Maxim's range of level conversion ICs&lt;/a>.&lt;/p>
+&lt;p>Have fun!&lt;/p>
+&lt;p>&lt;a href="http://www.waterman.com/en/6-pens">&lt;img src="foto-3.jpg" alt="Waterman fountain pen">
+&lt;/a>&lt;/p></description></item><item><title>Print posters on a regular printer with Excel.</title><link>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</link><pubDate>Thu, 15 May 2014 20:24:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=_wwVRJ4_Ayk">&lt;img src="ts-50-rx-tx-board-banner.jpg" alt="TS-50-RX-TX-board-banner">
+&lt;/a>&lt;/p>
+&lt;p>I recently needed to print out a big schematic diagram of the RX/TX board of a Kenwood TS50 Transceiver. This did not fit on a single piece of paper. Instead of downloading all kinds of crappy tools or uploading the image to some &amp;quot;free&amp;quot; site which is going to use it for whatever they think justifies their definition of &amp;quot;free&amp;quot;, I found out you can do this in Excel. Here's how:&lt;/p>
+&lt;pre>&lt;code> 1. Make sure the image you want to print out as a poster has a decent resolution
+2. Open Excel (maybe this will work in LibreOffice too, I haven't tested, let me know)
+3. Drag the image into a new worksheet so that it is top-left of the sheet.
+4. Open the &amp;quot;Print preview&amp;quot; (the little icon in the bottom left of the window)
+5. Resize the image so that it covers more than one page, up to the number of pages you'd like the poster to be. Your screen should now look somewhat like this:
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="screen-shot-2014-05-15-at-21-58-23.png">&lt;img src="screen-shot-2014-05-15-at-21-58-23.png" alt="Screen Shot 2014-05-15 at 21.58.23">
+&lt;/a>
+6. Optional: Adjust the page margins.
+7. Print.&lt;/p>
+&lt;p>After this, you'll be gluing the pages together, but I think you already figured that out beforehand.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Anonimatron: Quick Start</title><link>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</link><pubDate>Sun, 03 Nov 2013 14:33:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=opk4x7jzRS4">&lt;img src="homer.png" alt="Anonymous customer">
+&lt;/a>After reading my last blogpost on Anonimatron, you must have asked yourself &amp;quot;Great, but how do I actually use Anonimatron to de-personalize my database&amp;quot;? I tried my best to make basic Anonimatron configuration as self-explanatory as possible, just start it without any command line arguments and it will tell you.&lt;/p>
+&lt;p>Less adventurous or in a big hurry? This blogpost will show how simple it is to install and configure Anonimatron on an example MySQL database.&lt;/p>
+&lt;!-- more -->**Setting up a test database**
+&lt;p>To demonstrate what Anonimatron can do to your data, we will create a little test database to play with. Anonimatron connects to all kinds of databases, including MySQL, Postgress and Oracle. In this example, we use MySQL. Here are all the statements you need to create a little database with 2 tables, a user, and some &amp;quot;private&amp;quot; data:&lt;/p>
+&lt;p>[code lang=&amp;quot;sql&amp;quot; gutter=&amp;quot;false&amp;quot;]
+create database mydb;
+create user myuser identified by 'mypassword';
+grant all privileges on &lt;em>.&lt;/em> to 'myuser'@'localhost'
+identified by 'mypassword' with grant option;&lt;/p>
+&lt;p>create table mydb.userdata (
+id int not null auto_increment primary key,
+firstname varchar(20),
+lastname varchar(20),
+creditcardnr varchar(20)
+);&lt;/p>
+&lt;p>create table mydb.lastnames (
+id int not null auto_increment primary key,
+lastname varchar(20)
+);&lt;/p>
+&lt;p>insert into mydb.userdata
+(firstname,lastname, creditcardnr)
+values ('Homer', 'Simpson','1234'),
+('Marge', 'Simpson','5678'),
+('Ned', 'Flanders','3456'),
+('Charles', 'Burns','3456');&lt;/p>
+&lt;p>insert into mydb.lastnames (lastname)
+values ('Simpson'), ('Flanders'), ('Burns');
+[/code]&lt;/p>
+&lt;p>After all the hard work, you should be able to connect to the database with 'myuser' and see the &amp;quot;private&amp;quot; data in there:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Homer
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >1234
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Marge
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >5678
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ned
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Charles
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+[code language="sql" light="true"]
+select * from mydb.lastnames;
+[/code]
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Let's pretend that this is a copy of a production database, and you want to de-personalize or anonymize it.
+&lt;p>&lt;strong>Installing Anonimatron&lt;/strong>
+To anonymize your data,  &lt;a href="http://http://anonimatron.sourceforge.net">download Anonimatron&lt;/a> and unzip it in a directory of your choice. You should find an &amp;quot;anonimatron.sh&amp;quot; and &amp;quot;anonimatron.bat&amp;quot; file there. Depending on your system, run it without arguments. If you have java installed on your system you should see something like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh&lt;/p>
+&lt;p>This is Anonimatron 1.7, a command line tool to consistently
+replace live data in your database with data data which
+can not be traced back to the original data.
+You can use this tool to transform a dump from a production
+database into a large representative dataset you can
+share with your development and test team.
+Use the -configexample command line option to get an idea of
+what your configuration file needs to look like.&lt;/p>
+&lt;p>usage: java -jar anonimatron.jar
+-config The XML Configuration file describing what to
+anonymize.
+-configexample Prints out a demo/template configuration file.
+-dryrun Do not make changes to the database.
+-synonyms The XML file to read/write synonyms to. If the file
+does not exist it will be created.
+[/code]&lt;/p>
+&lt;p>Victory! You've installed Anonimatron. Yes, life can really be that easy.&lt;/p>
+&lt;p>&lt;strong>Configuring Anonimatron&lt;/strong>
+Next, we need to tell Anonimatron how to connect to our database, and which tables and columns to process and how. The hardest part of this is probably figuring out how to create a jdbc connect string. Anonimatron can help you with that. If you start anonimatron with the &amp;quot;-configexample&amp;quot; parameter, it will scan the jdbcdrivers directory for available and supported drivers, and will show you how a jdbc URL for any of these should look:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -configexample&lt;/p>
+&lt;p>Supported Database URL formats:
+Jdbc URL format By Driver
+jdbc:oracle:oci8:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@[HOST]:[PORT]:[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:oci:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:postgresql://[HOST]:[PORT]/[DB] org.postgresql.Driver
+jdbc:mysql://[HOST]:[PORT]/[DB] org.gjt.mm.mysql.Driver&lt;/p>
+&lt;p>Anonimatron will try to autodetect drivers which are
+stored in the lib directory. Add you driver there.&lt;/p>
+&lt;p>...
+[/code]&lt;/p>
+&lt;p>In this example, we have just created a MySQL database, so we'll use that URL and fill in the blanks. We use the rest of the configuration example and with some copy-pasting we come up with the following configuration:&lt;/p>
+&lt;p>[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;configuration jdbcurl="jdbc:mysql://localhost:3306/mydb"
+userid="mydata" password="mypassword">&lt;/p>
+&lt;table name="userdata">
+&lt;column name="firstname" type="ROMAN_NAME" />
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;column name="creditcardnr" type="RANDOMDIGITS"/>
+&lt;/table>
+&lt;table name="lastnames">
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;/table>
+&lt;/configuration>
+[/code]
+&lt;p>This simple configuration file will tell Anonimatron the following things:&lt;/p>
+&lt;pre>&lt;code> * How to connect to the mydb database
+* The values in username.firstname should be processed with the ROMAN_NAME Anonymizer. Anonymizers are little plugins which are able to generate data with certain properties, sometimes based on the original data. This particular Anonymizer generates Roman Names by picking syllables from a builtin list.
+* The values in username.lastname should be replaced by Elven names. This is almost identical to Roman names but with a different Syllable file.
+* The userdata.creditcardnr should be replaced by a set of random digits of the same length. In our case, 4 digits will be replaced by 4 differnt digits. Should you really need numbers which are semantically correct credit card numbers, you could write your own Anonymizer plugin. We'll cover that in a later blogpost.
+* The lastnames.lastname column is also an Elven name. Because of the way Anonimatron handles data, strings in this column will be processed exactly the same way as the userdata.lastname column, as we will see below.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Anonymize!&lt;/strong>
+Now that we have configured Anonimatron, it's time to start it up and tell it to use our configuration file and store synonyms. It will be finished in the blink of an eye, and your output should look somewhat like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -config config.xml -synonyms synonyms.xml&lt;/p>
+&lt;p>Anonymization process started&lt;/p>
+&lt;p>Jdbc url : jdbc:mysql://localhost:3306/mydb
+Database user : mydata
+To do : 2 tables.&lt;/p>
+&lt;p>Anonymizing table 'lastnames', total progress [100%, ETA 11:36:56 PM]
+Anonymization process completed.&lt;/p>
+&lt;p>Writing Synonyms to synonyms.xml ...[done].
+[/code]&lt;/p>
+&lt;p>If Anonimatron complains or does not run, you might want to check out the &lt;em>anonimatron.log&lt;/em> file for clues. Most log entries will be pretty self-explanatory. If not, please register an issue and we'll see what we can do to fix that.&lt;/p>
+&lt;p>Let's check the results. First, we can check what synonyms were generated by looking into the synonyms.xml file we told it to create:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ cat synonyms.xml
+[/code]
+[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;synonyms>
+&lt;string type="ELVEN_NAME" from="QnVybnM=" to="RGhvZWxsaWFu"/>
+&lt;string type="ELVEN_NAME" from="RmxhbmRlcnM=" to="QWhlbGhhbGRldGhlc3M="/>
+&lt;string type="ELVEN_NAME" from="U2ltcHNvbg==" to="QWhkdWxlbGhhbGVs"/>
+&lt;string type="ROMAN_NAME" from="SG9tZXI=" to="QmVudWxhdWJlbGl1cw=="/>
+&lt;string type="ROMAN_NAME" from="TmVk" to="RWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="TWFyZ2U=" to="QWxudWxhdWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="Q2hhcmxlcw==" to="QWxudXM="/>
+&lt;string type="RANDOMDIGITS" from="NTY3OA==" to="ODY5OA=="/>
+&lt;string type="RANDOMDIGITS" from="MTIzNA==" to="NDM0Mw=="/>
+&lt;string type="RANDOMDIGITS" from="MzQ1Ng==" to="NjEyNQ=="/>
+&lt;/synonyms>
+[/code]
+&lt;p>You'll note that the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; values look a bit garbled. This is because Anonimatron used Base64 encoding to store values of synonyms. This is so that we can store the values bit for bit, without worying about encodings. If you wanted to, you could easily decode these strings by writing a little program.&lt;/p>
+&lt;p>Even without decoding we can see some interesting things about this file. Remember we had lastnames configured as Elven names? Although we have 4 entries in the username table, we see only 3 Elven names. That is because Homer and Marge have the same lastname. These same synonyms are also used by the lastnames.lastname column. The same goes for the creditcard numbers. As might have noticed that Ned Flanders and Charles Burns used the same credit card number in this system.&lt;/p>
+&lt;p>Enough staring at XML. Let's get to what matters most: our database. First, let's see if the names and numbers have changed:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Benulaubelius
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >4343
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Alnulaucus
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >8698
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ecus
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Alnus
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+That looks much better. The first and lastnames are (almost) pronounceable names which probably would look realistic in a screenshot or testcase, yet there is no trace left of the original data that was there. When we check the lastnames table we see that lastnames are being translated consistently with the userdata table:
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.lastnames;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+This consistent behavior makes sure that queries where the userdata table and the lastnames table are joined based on lastname will still work.
+&lt;p>If you want to play some more with Anonimatron, recreate the original tables, add additional (overlapping) data and re-run anonimatron against it with the synonym file you just created. You'll notice that any &amp;quot;Simpson&amp;quot; lastname will be translated to &amp;quot;Ahdulelhalel&amp;quot; constently on each run. If you don't want that to happen, simply throw away the synonym file or don't tell Anonimatron to use it. You can also generate the synonym file first without doing anything to the database by using the -dryrun option, and later do the same run based on the synonyms generated earlier.&lt;/p>
+&lt;p>Remember: The private data &amp;quot;moved&amp;quot; from the database into the synonyms.xml file we created. So that becomes the new data to watch. Store it in a safe place where nobody can access it.&lt;/p>
+&lt;p>Have fun experimenting!&lt;/p></description></item><item><title>How big is 5 Zettabyte?</title><link>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</link><pubDate>Sun, 23 Jun 2013 19:42:47 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</guid><description>
+&lt;p>&lt;a href="http://www.spyvsspyhq.com/images.html">&lt;img src="3050431703_spyblack_answer_2_xlarge.jpeg" alt="Spy vs Spy">
+&lt;/a>Since the interview of &lt;a href="http://www.guardian.co.uk/world/video/2013/jun/09/nsa-whistleblower-edward-snowden-interview-video">Edward Snowden with the Guardian&lt;/a>, the discussion about privacy and companies storing and sharing unencrypted private data is picking up. Particularly Americans are worried about what it does for their National security and their private data. But that's actually a naive thought, given the NSA stores worldwide data.&lt;/p>
+&lt;p>In a &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">recent coverage on theblaze.com&lt;/a> (a rather tabloid-looking news station in the U.S.), the interviewers are shocked to see that the NSA spies on &amp;quot;every American&amp;quot;.&lt;/p>
+&lt;p>This is a limited view of the world and failing to see the importance of spying on people &lt;em>outside&lt;/em> the U.S., but lets start with technical side of things first. What data are they storing and how big is their hard-disk?&lt;/p>
+&lt;!-- more -->As you may know, the internet is a [packet switching network](https://en.wikipedia.org/wiki/Routing). Although people try to mess with the routing and sometimes even [disconnect whole countries](http://www.bgpmon.net/syria-shuts-down-the-internet/), it is hard to make a packet travel a certain route or prevent it from traveling through a certain country. Much of the internet traffic passes through the U.S. regardless of it's source and destination. But even if it didn't, the NSA has that covered. Many companies, Like Facebook, [Google](http://highscalability.com/google-architecture) has [servers all over the world](http://serverfault.com/questions/370385/location-of-google-servers). Since Google and Facebook are companies registered in the U.S. the [NSA could technically indirectly tap into](http://www.breitbart.com/Big-Government/2013/06/09/NSA-Obtains-Data-From-50-Companies) one of their servers in a foreign country which contains data which never travelled through the US in the first place.
+&lt;p>According to the &lt;a href="http://www.internetworldstats.com/stats.htm">worldwide distribution of internet users&lt;/a>, if the NSA wanted to store data just about Americans, they could have built a much smaller, simpler facility. But they didn't, which make you think. So how big is this facility exactly?&lt;/p>
+&lt;p>**&lt;a href="http://img.pr0gramm.com/2009/04/funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg">&lt;img src="funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg" alt="Holy Crepe">
+&lt;/a>5 Zettabyte**
+If you've watched the &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">coverage&lt;/a>, you'll hear James Bamford say that the facility that the NSA is building can hold enough physical machines to store around 5 Zettabyte of data, given current technology standards. It sounds like a lot, but how big is a Zettabyte really?&lt;/p>
+&lt;p>According to &lt;a href="http://en.wikipedia.org/wiki/Zettabyte">wikipedia&lt;/a>, 5 Zettabyte is 5,000,000,000,000,000,000,000 bytes. If, like me, you can not get your head around a number with 21 zeroes in it, I'll give you some of the calculations I made to understand just how big this is.&lt;/p>
+&lt;p>I started with the Internet Archive. Currently, the Internet Archive and it's &lt;a href="http://vimeo.com/59207751">Wayback machine holds 10 Petabytes&lt;/a> of data (10,000,000,000,000,000 bytes). The servers at the Internet Archive crawl the Internet and store all public data they can find in a searchable manner. They provide the public with that data, so you can do cool things like &lt;a href="http://web.archive.org/web/*/http://www.rolfje.com">see how my blog looked 10 years ago&lt;/a>. The Internet Archive is pretty big you might think. With 5ZB, the NSA could store the complete Internet Archive &lt;em>500,000 times&lt;/em>.&lt;/p>
+&lt;p>&lt;strong>Relative to world population&lt;/strong>
+Ok so maybe the size of the internet, or the size of a Petabyte are not very imaginable. Let's take it to the individual level. At the time of this writing, there are &lt;a href="http://www.worldometers.info">roughly 7.124.855.134 people on the world&lt;/a>.&lt;/p>
+&lt;p>If the NSA would wanted to store information on every person in the world, regardless if they were a president or a newborn African child, they would have 701,768,654,374 bytes per person to do so:&lt;/p>
+&lt;p>&lt;img src="5zbperperson.png" alt="5ZB per person">&lt;/p>
+&lt;p>Yes, they can store 701GB for each person in the world. My personal email archive is around 5GB right now, and I have a 1TB hard-disk containing every (digital or digitized) photo I have ever made. If I would be the standard (which I am probably not), the NSA could very easily store everybody's personal data, worldwide.&lt;/p>
+&lt;p>&lt;strong>Relative to the people connected to the internet&lt;/strong>
+Not everybody is connected to the internet (in fact that's not entirely true but we'll come to that later). As you have probably already seen on the &lt;a href="http://worldmeters.info">worldmeters.info&lt;/a> site, there are roughly 2,552,435,328 active internet users (at the time of writing). So let's see what the NSA can store if they &amp;quot;only&amp;quot; target the internet users:&lt;/p>
+&lt;p>&lt;img src="5zbperuser.png" alt="5ZB per Internet User">&lt;/p>
+&lt;p>Ah that's better. Almost &lt;strong>2TB per Internet user&lt;/strong>. The NSA can now not only store my private data, photo's and videos, but now there is room to spare so I can put a couple of blockbuster movies in there, too.&lt;/p>
+&lt;p>Since the NSA probably does some smart data reduction, like storing an email I send to you just once instead of a copy for each of us, I'm guessing the practical space per user will be more like 4TB.&lt;/p>
+&lt;p>**&lt;a href="http://www.youtube.com/watch?v=YozC8yFrZKI">&lt;img src="p.png" alt="Homer">
+&lt;/a>Am I connected to the internet?**
+In short: Yes. We are all connected in some way to the internet. Particularly if you are living in a &lt;a href="https://en.wikipedia.org/wiki/Western_world">&amp;quot;Western Country&amp;quot;&lt;/a> you can be sure that in some way you, or at least data about your existance, is online somewhere. Cities store data about their inhabitants and share them with other departments and services to do their work. By default, this data travels accross the internet and we all know how good governements are at protecting and encrypting their data, right?&lt;/p>
+&lt;p>Let's do an interesting thought experiment to see how far this goes. Suppose I have never connected to the internet, and neither have you. I own an old &lt;a href="https://en.wikipedia.org/wiki/Toyota_Corolla_(E70)">Toyota Corolla E70&lt;/a> and you and I stayed with our trusty &lt;a href="http://nokiamuseum.info/nokia-p-30/">Nokia P-30&lt;/a>'s. Now let's say I lend you my car. The NSA would know about that, instantly. How? My car is registered to me. The roads are covered with cameras to detect traffic violations, but in fact, the most governments like to store data about which car is going where. Our cellphones are connected to cell towers, which reveals &lt;a href="https://en.wikipedia.org/wiki/Mobile_phone_tracking">pretty accurate data&lt;/a> about where they are. So the NSA can map the time and place of my car to the time and place of my cell phone and all cell phones I've called. They would quickly and easily discover that my car is moving with your cellphone in it. The fact that their data shows that my cellphone is at home means that you are probably driving my car. Based on our cellphone data, it would even be pretty easy to see our daily commutes, see where you and I work and when and where we met in person.&lt;/p>
+&lt;p>Conspiracy? &lt;em>Maybe.&lt;/em> Possibility? &lt;em>Yes.&lt;/em> Privacy breach? &lt;em>Absolutely.&lt;/em>&lt;/p>
+&lt;p>Different countries have different meanings of the word &lt;a href="https://en.wikipedia.org/wiki/Privacy">&amp;quot;Privacy&amp;quot;&lt;/a>. By definition, gathering of data which is considered to be private (secret or confidential) in the country of origin, is &lt;a href="https://en.wikipedia.org/wiki/Espionage">Espionage&lt;/a>. This is not surprising, as &lt;a href="https://en.wikipedia.org/wiki/Cold_War">old habbits die hard&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>I don't care, I have nothing to hide.&lt;/strong>
+&lt;a href="http://www.youtube.com/watch?v=N5VAgSdGnSQ">&lt;img src="gollum.jpg" alt="Gollum has something to hide">
+&lt;/a>Not so fast grasshopper. You do. In fact, the NSA just introduced the very need to keep your data private and store it locally, indefinitely. In the example above, suppose you used my car to take pictures as a hobby photographer of a crime scene that was in the news. With the data they gathered, the NSA could frame either you or me at that scene, at their peril. Because you and I have no access to the data they are storing about us, it will be very hard for you or me to prove that we weren't, because the NSA will not provide you or the court with data that will prove otherwise.&lt;/p>
+&lt;p>The same goes for mail and other communications. Tabloid journalists can explain how to use one email, or once sentence from an email out of context to start a nasty gossip. The NSA could do that too. Suppose you are sharing role-playing stories with a friend over email. Those emails could suddenly look very interesting when placed out of context. Don't think they will not do that. &lt;a href="http://www.whereisthemoney.org/1.1trillion.htm">Power corrupts.&lt;/a> They will, and very likely already have done so.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="https://en.wikipedia.org/wiki/Don't_Make_Me_Think">Don't make me think&lt;/a>&lt;/strong>
+I've always said that the failure to make stuff user friendly is the single most important reason for brilliant ideas to &lt;a href="http://www.washingtonpost.com/blogs/wonkblog/wp/2013/06/14/nsa-proof-encryption-exists-why-doesnt-anyone-use-it/">fail miserably&lt;/a>. In the light of current events and the power of modern computers, can we at least try to make strong encryption like &lt;a href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy">PGP&lt;/a> stupid-easy to use, and add &amp;quot;coolness&amp;quot; so people will &lt;em>want&lt;/em> to use it?&lt;/p>
+&lt;p>&lt;strong>Because much like openness, responsibility and privacy is now more important than ever.&lt;/strong>&lt;/p>
+&lt;p>Related material I found while writing this blog post:&lt;/p>
+&lt;pre>&lt;code> * [Surveiller et punir: Naissance de la Prison](https://en.wikipedia.org/wiki/Discipline_and_Punish) is a 1975 book by the French philosopher Michel Foucault. If he was still alive, Foucault would probably see that after a period of individualism and consumer-centric change, the NSA is the re-introduction the [Panopticon](https://en.wikipedia.org/wiki/Panopticon), a prison (or society) where the prisoners can not see the guards.
+* This Dutch program [&amp;quot;Dare to Think&amp;quot;](http://www.uitzendinggemist.nl/afleveringen/1304898) discusses how Foucault thought, and places it in the modern time. It discusses how modern individualism and a market driven society needs new mechanisms to steer the individual. The theory is in essence that people need to learn to steer themselves and check the self-set boundaries with others from time to time.
+* In the source of Windows NT 4 Service Pack 5 a [variable with the name _NSAKEY](https://en.wikipedia.org/wiki/NSAKEY) was discovered which led to speculation that Windows computers could leak private data to the NSA.
+* Because few people do, When you decide to use PGP to encrypt your mail, you are likely to gain some attention, particularly from American &amp;quot;authorities&amp;quot;. Because you stand out. If you decide to stand out and encrypt stuff, you better do it right. Gather some information about [Uncrackable Email](http://www.ncmilitia.org/spycounterspy/fs006.html) (yes it's possible). Please note that all your encrypted mails will be stored, so when somebody does find reason to detain you and get your passphrase, deleting your drive will be useless.
+* Estimations in the linked articles say that the NSA facility cost $2B to build, has it's own 65MW power station, 60,000 tons of cooling equipment, and an electricity bill of $40M per year (unclear if that includes running their own power station). If you looked closely at the WorldMeters link, you could have noticed that there are almost 4 million Cancer related deaths per year and 35 million HIV related deaths, versus [less than 8,000 terrorism related deaths in 2010](http://www.economist.com/blogs/dailychart/2011/09/global-terrorism-deaths). If the NSA is here to pretect us from dying, they'd better use their budget and intelligence to start investigating other stuff.
+&lt;/code>&lt;/pre></description></item><item><title>Aeroccino Motor Replaced</title><link>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</link><pubDate>Tue, 16 Aug 2011 18:56:51 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</guid><description>
+&lt;p>Months ago, I got this broken Aeroccino milk frother for free. This week I fiddled with it for a few hours, and got it to work:&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=kNEqWH3ILDc]&lt;/p>
+&lt;!-- more -->... and this is how you get it apart. First carefully pull out the button on the front:
+&lt;p>&lt;a href="aeroccino-button-remove-1.png">&lt;img src="aeroccino-button-remove-1.png" alt="Removing the front button">
+&lt;/a>&lt;/p>
+&lt;p>And then remove the rubber plugs to get to the screws at the bottom.&lt;/p>
+&lt;p>&lt;a href="aeroccino-bottom-screws.png">&lt;img src="aeroccino-bottom-screws.png?w=300" alt="Remove rubber plugs to get to the screws">
+&lt;/a>&lt;/p>
+&lt;p>You're on your own from here. Be careful not to break any wires when you pull it apart, and take pictures along the way so you know how to put it back together.&lt;/p></description></item><item><title>Why some App Store apps won't install</title><link>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</link><pubDate>Sun, 09 Jan 2011 13:37:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/09/why-some-app-store-apps-wont-install/</guid><description>
+&lt;p>&lt;a href="http://pcweenies.com/tag/mac-app-store-comics/">&lt;img src="schermafbeelding-2011-01-09-om-12-28-53.png" alt="App Store Icon">
+&lt;/a>I was happily playing around with the appstore, and came across this funny free game called &amp;quot;Hedgewars&amp;quot;. Originally a free Linux game, it apparently got ported to the Mac and put in the App Store, just as a slew of Flash-based games (yes, Steve has some 'splainin' to do).&lt;/p>
+&lt;p>I tried to install Hedgewars on my trusty Mac Mini and got this message saying &amp;quot;This Application can not be installed on this machine&amp;quot;:&lt;/p>
+&lt;p>&lt;a href="schermafbeelding-2011-01-08-om-16-45-40.png">&lt;img src="schermafbeelding-2011-01-08-om-16-45-40.png?w=300" alt="">
+&lt;/a>&lt;/p>
+&lt;!-- more -->There was no additional information on what was causing this. So the first thing I did was check out my computer information and the requirements for running this game, which seemed to check out fine:
+&lt;table width="100%" class="aligncenter" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](schermafbeelding-2011-01-09-om-00-40-38.png?w=122)
+](schermafbeelding-2011-01-09-om-00-40-38.png)
+&lt;/td>
+&lt;td >[![](schermafbeelding-2011-01-09-om-12-15-55.png)
+](schermafbeelding-2011-01-09-om-12-15-55.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+I was running the correct version of OSX, so what was the problem here? My neighbor came over and I showed him this funny problem. He found out that Hedgewars could be downloaded from the developers site, and so we did. After opening the DMG, we were greeted with the funny Application Icon decoration show on the right:
+&lt;p>&lt;a href="schermafbeelding-2011-01-09-om-12-18-25.png">&lt;img src="schermafbeelding-2011-01-09-om-12-18-25.png" alt="">
+&lt;/a>Usually this means that the application is compiled for a different system than you're trying to run it on. This can happen when you have an older generation PowerPC processor and try to run a non-universal-binary Intel application. So we checked the properties on the application, and it looked like OSX had it wrong. It's an Intel app, and we're running an Intel Mac. So what gives?&lt;/p>
+&lt;p>The next step was to open the Terminal so we could dissect this app on the command line, showing it's inner guts. Apps have all kinds of interesting XML and plist files telling the operating system what to do and how to start it up. Here's what we found:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,2,8&amp;quot;]
+rolf@Mac-mini$ cd Hedgewars.app/Contents/MacOS/
+rolf@Mac-mini$ ls -l
+total 21344
+-rwxr-xr-x 1 rolf admin 2627208 27 dec 21:39 hedgewars
+-rwxr-xr-x@ 1 rolf admin 5913164 27 dec 21:37 hedgewars-server
+-rwxr-xr-x@ 1 rolf admin 2381240 27 dec 21:37 hwengine&lt;/p>
+&lt;p>rolf@Mac-mini$ file *
+hedgewars: Mach-O 64-bit executable x86_64
+hedgewars-server: Mach-O executable i386
+hwengine: Mach-O universal binary with 1 architecture
+hwengine (for architecture x86_64): Mach-O 64-bit executable x86_64
+[/sourcecode]&lt;/p>
+&lt;p>The Hedgewars package has 3 executables, one 64-bit x86, one i386, and one universal binary which only contains an executable for 64-bit x86. We guess the developers made a bit of a mess of this. As expected, we could start the i386 executable just fine:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1&amp;quot;]
+rolf@Mac-mini$ ./hedgewars-server
+Listening on port 46631
+^C
+[/sourcecode]&lt;/p>
+&lt;p>But the x86_64 executable and the universal binary would not start:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,4&amp;quot;]
+rolf@Mac-mini$ ./hedgewars
+-bash: ./hedgewars: Bad CPU type in executable&lt;/p>
+&lt;p>rolf@Mac-mini$ ./hwengine
+-bash: ./hwengine: Bad CPU type in executable
+[/sourcecode]&lt;/p>
+&lt;p>Because this Mac Mini runs a Core Duo, we figured the x86 was okay, but we weren't sure about the 64-bit architecture. A quick peek at &lt;a href="http://en.wikipedia.org/wiki/Intel_Core">Wikipedia&lt;/a> confirmed our suspicion: The Intel Core Duo is not a 64 bit processor. In fact, 64-bit is the major difference between &amp;quot;Core Duo&amp;quot; and &amp;quot;Core 2 Duo&amp;quot;. Additional &amp;quot;Googling&amp;quot; showes that &lt;a href="http://support.apple.com/kb/ht3696">Apple Support knows that&lt;/a>, too.&lt;/p>
+&lt;p>So there you have it. The Mac App Store does not tell you what the problem really is, but chances are that if you get the &amp;quot;Could not install this Application on this machine&amp;quot; error, you have 32-bit architecture (the Core Duo) and the developer compiled the application for 64-bit architecture (the Core 2 Duo).&lt;/p>
+&lt;p>Why in god's name hedgewars has to be a 64-bit application beats me, but that's something I'm not going to change I'm afraid. It turns out that this as been &lt;a href="http://code.google.com/p/hedgewars/issues/detail?id=147&amp;amp;q=core%20duo">reported as a bug&lt;/a> to the Hedgewars team, which hasn't been picked up yet.&lt;/p>
+&lt;p>The good news for older model Intel Mac Mini Core Duo owners out there: You can replace your CPU with a Core 2 Duo processor. You'll need one of these:&lt;/p>
+&lt;ul>
+&lt;li>Core 2 Duo T7200 (2.00Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7400 (2.16Ghz)&lt;/li>
+&lt;li>Core 2 Duo T7600 (2.33Ghz).&lt;/li>
+&lt;/ul>
+&lt;p>The processors are quite pricey, our quick check showed that they're all above the $200 price mark, which may be a bit steep for a processor upgrade. We expected about half that, so that was a bummer. Should you want to upgrade your CPU, buy thermal paste, and follow a good howto. To get a feeling of what you're getting into, check out the &lt;a href="http://www.ifixit.com/Teardown/Mac-mini-Model-A1283-Teardown/659/1">iFixit teardown of the Mac Mini&lt;/a>.&lt;/p>
+&lt;p>The other option would be to trade in your Core Duo Mac Mini for a Core 2 Duo Mac mini. It's safer and probably about as costly as buying one of the strangely priced Core 2 Duo processors.&lt;/p></description></item><item><title>Move Time Machine data to a Drobo</title><link>https://realrolfje.github.io/rolfje.com/2010/12/30/move-time-machine-data-to-a-drobo/</link><pubDate>Thu, 30 Dec 2010 21:05:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/12/30/move-time-machine-data-to-a-drobo/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=6xe7bIfj7VM">&lt;img src="time-machine-drobo.png" alt="Remember, even Drobo's can die. Make sure your files are in at least three different physical locations, one of which preferably off-site.">
+&lt;/a>If Santa treated you particularly well this season, or you have put some of your savings to good use, chances are that you have a brand-new Drobo looking at you right now. Meanwhile, your Mac is happily making Time Machine backups to that trusty old local USB disk. So you want to use that new Drobo for Time Machine backups, but don't want to loose history? Here's how (baby steps, no tools required, screenshots included):&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Connect the Drobo (in my case a Drobo FS) to the network and configure an Administrator password for it. You should now have a working Drobo, with at least 2 drives in it, and it shares a &amp;quot;Public&amp;quot; share on the network.
+2. Make sure that the free space reported by the Drobo Dashboard is at least as big as your old USB Time Machine drive. Add drives to the Drobo as needed.
+3. In the Drobo Dashboard, click on &amp;quot;Advanced Controls&amp;quot;, go to the &amp;quot;Tools&amp;quot; tab, click on &amp;quot;Settings...&amp;quot; and then select the &amp;quot;Shares&amp;quot; tab.
+4. Create a new user for your Time Machine backup. It's important to create a non-admin user to keep your data safe. Trust me, you'll thank me later.
+5. Create a new Drobo share (the &amp;quot;+&amp;quot; on the bottom left), give it a meaningful name and select &amp;quot;Enable Time Machine on this drive&amp;quot;. Be careful in choosing the size, you can't change this later!
+6. Remove &amp;quot;Everyone&amp;quot; from the allowed users for this share (the &amp;quot;-&amp;quot; bottom right) and add the user you just created (the &amp;quot;+&amp;quot; on the bottom right). You should now have something like this:[![Create Time Machine share on the Drobo FS screenshot](schermafbeelding-2010-12-28-om-20-03-55.png?w=300)
+&lt;/code>&lt;/pre>
+&lt;p>](schermafbeelding-2010-12-28-om-20-03-55.png)
+7. Close Drobo Dashboard, we won't be needing it anymore.
+8. Open System Preferences on your Mac, and select &amp;quot;Time Machine&amp;quot;
+9. Click on the &amp;quot;Select Disk&amp;quot; option. Don't worry, we're not damaging or loosing your existing backup by doing this.
+10. In the popup, you'll see your newly created Time Machine share on the Drobo. Select this share and fill in the Userid and Password you just created on the Drobo.&lt;a href="schermafbeelding-2010-12-28-om-20-05-39.png">&lt;img src="schermafbeelding-2010-12-28-om-20-05-39.png" alt="Select Drobo Time Machine share">
+&lt;/a>
+11. Wait for Time Machine to start, or force it by using the &amp;quot;Backup now&amp;quot; menu option. Time Machine will first try to create a sparse bundle and calculate what to back up. As soon as you see the backup starting (the &amp;quot;zebra&amp;quot; stripes turn into a normal progress bar), click on the cancel button. We only used Time Machine to create a sparse bundle with the correct settings.
+12. In System Preferences, switch Time Machine off.
+13. Go to the Drobo Time Machine share you just created and mount the sparse bundle you see there.
+14. Open Disk Utility and select the USB Time Machine disk.
+15. Click on &amp;quot;Restore&amp;quot; and drag the partition of the old USB Time Machine drive to the &amp;quot;Source&amp;quot; box. Drag the partition on the mounted Drobo Time Machine disk to the &amp;quot;Destination&amp;quot; box. Double check my screen shot, it's important to get this right. Drag the partitions, not the disks itself. If you're not able to drag the disks as described, you may want to unmount your old Time Machine drive, remount it, and restart Disk Utility.&lt;a href="schermafbeelding-2010-12-28-om-20-17-22.png">&lt;img src="schermafbeelding-2010-12-28-om-20-17-22.png" alt="Drag partitions in Disk Utility">
+&lt;/a>
+16. Make sure &amp;quot;Erase Target&amp;quot; is selected and press &amp;quot;Restore&amp;quot;. Disk Utility may ask for your password.
+17. Prepare for a long wait. If you have more than a 500GB backup drive, you wish you had invested in Gigabit Ethernet right now (yes that speeds it up tremendously). My restore of 800GB over a 100Mb network took more than 2 days.
+18. Once the process is finished, do not forget to switch Time Machine back on in the System Preferences.&lt;/p>
+&lt;p>That's it. Time Machine will automatically mount the Drobo Share if needed. The first backup will take a bit more time, I think Apple built in a file check to see if the backup is still ok after moving it to another disk.&lt;/p>
+&lt;p>&lt;em>&lt;strong>Tip 1:&lt;/strong> Keep your old USB Time Machine disk next to the Drobo, even if you have an empty slot. By doing this, you can instantly replace a faulty drive without running to the store. Always keep a spare!&lt;/em>&lt;/p>
+&lt;p>&lt;em>&lt;strong>Tip 2:&lt;/strong> Storing data on your Drobo, and then backing up to a Time Machine bundle on that same Drobo is not a backup. A file is only safe if it is stored in 3 different physical locations, one of which is preferably off-site.&lt;/em>&lt;/p>
+&lt;p>Happy Drobo days!&lt;/p></description></item><item><title>Anonimatron featured on Softpedia</title><link>https://realrolfje.github.io/rolfje.com/2010/09/26/anonimatron-featured-on-softpedia/</link><pubDate>Sun, 26 Sep 2010 19:08:47 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/09/26/anonimatron-featured-on-softpedia/</guid><description>
+&lt;p>&lt;a href="http://www.softpedia.com/progClean/anonimatron-Clean-170141.html">&lt;img src="softpedia_clean_award_f.gif" alt="100% CLEAN award granted by Softpedia">
+&lt;/a>&lt;/p>
+&lt;p>As you may know I started working on a little tool to anonymize databases. Nothing fancy, just a Java tool that uses jdbc to replace live data with fake generated data which still looks representative enough to do testing and make believable screenshots. Oh and did I mention that it is 100% free of charge? You can get the &lt;a href="http://sourceforge.net/projects/anonimatron/">latest version&lt;/a> from SourceForge.net.&lt;/p>
+&lt;p>I recently received an email from Softpedia that &lt;a href="http://sourceforge.net/projects/anonimatron/">Anonimatron&lt;/a> has been added to their catalog. Their email states:&lt;/p>
+&lt;blockquote>"anonimatron" has been tested in the Softpedia labs using several industry-leading security solutions and found to be completely clean of adware/spyware components. We are impressed with the quality of your product and encourage you to keep these high standards in the future.&lt;/blockquote>
+&lt;p>Anonimatron is written in Java and will ron on Linux, OSX and Windows machines. The current version is 1.3, and it should be considered &amp;quot;beta&amp;quot; at this point.&lt;/p>
+&lt;p>&lt;a href="http://sourceforge.net/projects/anonimatron/support">Let me know&lt;/a> what you think!&lt;/p></description></item><item><title>Sonar "Close Connection" warning workaround.</title><link>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</link><pubDate>Tue, 06 Oct 2009 08:38:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/10/06/sonar-close-connection-warning-workdaround/</guid><description>
+&lt;p>When you use Spring and Ibatis and SQLTemplates, you could have code in your project which looks somewhat like this:&lt;/p>
+&lt;pre>&lt;code>Connection connection = DataSourceUtils.getConnection(getDataSource());
+...&amp;lt;do connection stuff here&amp;gt;...
+DataSourceUtils.releaseConnection(connection, getDataSource());
+&lt;/code>&lt;/pre>
+&lt;p>Sonar will report that you did not close the connection, while in fact, Spring did that for you. You can not just add a &lt;em>&amp;quot;connection.close()&amp;quot;&lt;/em> to the code because the whole point of calling &lt;em>&amp;quot;releaseConnection()&amp;quot;&lt;/em> is to have Spring handle all the smart stuff on committing, closing, and returning the connection to the pool if needed.&lt;/p>
+&lt;!-- more -->In our company, not closing the connection is a major blocking violation (and it should be). But in this case, there is no way to make the Jedi wave to Sonar, telling it that "this code will do just fine". So I added the following trick, albeit a bit dirty:
+&lt;pre>&lt;code>if (connection.isClosed()){
+// This code is only here to keep Sonar from
+// warning us that the connection is not
+// closed. Please note: Do not just close an
+// unclosed connection, Spring should handle
+// connection closing and returning to the pool.
+connection.close();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Use it to your advantage, but use this responsibly. If you see any problems in my solution, or if there is a better way to do this I'd be happy to hear about it.&lt;/p>
+&lt;p>&lt;strong>Edit (2009-12-01):&lt;/strong>&lt;/p>
+&lt;p>There is a much better way to do this if you have Spring/Ibatis integration. In stead of DataSourceUtils.getConnection() you can create a new ConnectionCallback object, like so:&lt;/p>
+&lt;pre>&lt;code>JdbcTemplate template = new JdbcTemplate(getDataSource());
+Object resultObject = template.execute(new ConnectionCallback() {
+public Object doInConnection(Connection conn) 
+throws SQLException, DataAccessException {
+// Do connection stuff here (can return object);
+return null;
+});
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this code does NOT contain any Connection.close() references. The connection is passed to you, you can use it, and after your method completes, the framework will do whatever is needed to clean everything up. Sonar will not complain because the whole open/close handeling is done outside your method.&lt;/p></description></item><item><title>Block Luntbuild 1.5.1 Anonymous Access</title><link>https://realrolfje.github.io/rolfje.com/2007/11/13/block-luntbuild-151-anonymous-access/</link><pubDate>Tue, 13 Nov 2007 13:52:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/11/13/block-luntbuild-151-anonymous-access/</guid><description>
+&lt;p>If you are using &lt;a href="http://luntbuild.javaforge.com/">luntbuild &lt;/a>for your continuous integration builds at work, you probably want to remove anonymous user access. In stead of adding that feature to the administrator &amp;quot;Properties&amp;quot; page where I'd expect it, you have to hack the Spring configuration in the webapps directory of luntbuild. Sigh. Here we go:&lt;/p>
+&lt;!-- more -->Open a command prompt and go to the directory where luntbuild is installed. Edit the _/webapps/luntbuild/luntbuild-login.html_ file and remove the following line:
+&lt;pre>&lt;code>&amp;lt;a href=&amp;quot;app.do?service=reset/Home&amp;amp;relogin=no&amp;quot;&amp;gt;Anonymous&amp;lt;/a&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>Open the &lt;em>/webapps/luntbuild/WEB-INF/applicationContext.xml&lt;/em> file and remove the following 2 Spring Beans:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;bean id=&amp;quot;anonymousProcessingFilter&amp;quot;
+class=&amp;quot;org.acegisecurity.providers.anonymous.AnonymousProcessingFilter&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;key&amp;quot;&amp;gt;&amp;lt;value&amp;gt;anonymous&amp;lt;/value&amp;gt;&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;quot;userAttribute&amp;quot;&amp;gt;&amp;lt;value&amp;gt;anonymous,ROLE_ANONYMOUS&amp;lt;/value&amp;gt;&amp;lt;/property&amp;gt;
+&amp;lt;/bean&amp;gt;
+&amp;lt;bean id=&amp;quot;anonymousAuthenticationProvider&amp;quot;
+class=&amp;quot;org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider&amp;quot;&amp;gt;
+&amp;lt;property name=&amp;quot;key&amp;quot;&amp;gt;&amp;lt;value&amp;gt;anonymous&amp;lt;/value&amp;gt;&amp;lt;/property&amp;gt;
+&amp;lt;/bean&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>In the same file, searchfor the &lt;em>filterChainProxy&lt;/em> bean and remove references to the &lt;em>anonymousProcessingFilter&lt;/em> bean, and save the file.&lt;/p>
+&lt;p>Double check that when you do a &lt;em>cat applicationContext.xml | grep anonymousProcessingFilter&lt;/em>, nothing is returned.&lt;/p>
+&lt;p>Now restart the luntbuild application. Please note that if you were logged in as anonymous before you rebooted the server, your session will still work. This is because you passed the security gates earlier, and Tomcat remembers your session. Press &amp;quot;Forget&amp;quot; and try to login as anonymous. This should no longer work.&lt;/p>
+&lt;p>I really hope that in luntbuild 2.0, anonymous access is removed or at least configurable from the administation pages, and that the &amp;quot;Forget&amp;quot; and &amp;quot;Logout&amp;quot; links are merged into one, because they seem to do the same thing to the user.&lt;/p></description></item><item><title>Phrack still in ASCII</title><link>https://realrolfje.github.io/rolfje.com/2007/08/04/phrack-still-in-ascii/</link><pubDate>Sat, 04 Aug 2007 17:43:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/08/04/phrack-still-in-ascii/</guid><description>
+&lt;p>It is a long time since I read this stuff, but I &lt;a href="http://www.phrack.org/issues.html?issue=64&amp;amp;id=11#article">stumbled upon a paper &lt;/a>discussing the non-executable stack on OSX (a trick to prevent buffer/stack overflow exploits). Ah, the good old days. And with all this markup, it's good to see that Phrack magazine stuck to their format. It's still the same as over 20 years ago... Well written articles, focussed on correctness and content, for the coders out there who are not afraid experimenting with some assembly. The amount of (nightly) hours that go into the research and proof of these articles are unbelievable, and it shows.&lt;!-- more -->&lt;/p>
+&lt;p>I'm afraid the years of Java have eroded my assembly knowledge, it's hard to keep up with the paper. But I loved to skim through the mov's, jne and jnz's, and the great comments. New young developers don't even learn how to write assembly anymore, the spoiled brats... :-)&lt;/p>
+&lt;p>For more trips down memory lane, also check the Dutch &lt;a href="http://www.hacktic.nl/">Hack-Tic magazine&lt;/a>. Someone actually scanned all the pages every written in Hacktic. See if you can find the first XS4ALL machine in there... Too bad that they didn't have photo's of te &amp;quot;Hacking at the end of the Universe&amp;quot; in 1993, I really liked that one. I did found the &lt;a href="http://www.well.com:70/0/hacking/hack-tic/galac.hac">invitation&lt;/a> online, and Fransisco wrote a &lt;a href="http://www.xs4all.nl/~fvjole/archief/artikelen/Volkskrant/1993/heu.html">nice article&lt;/a> for the Volkskrant. There are more links at the bottom of Fransisco's article if you like.&lt;/p>
+&lt;p>Now where did I leave my &lt;a href="http://nl.wikipedia.org/wiki/Jolt_Cola">Jolt&lt;/a>? Twice the energy, half the taste...&lt;/p></description></item><item><title>The Digital Revolution</title><link>https://realrolfje.github.io/rolfje.com/2007/05/04/the-digital-revolution/</link><pubDate>Thu, 03 May 2007 20:39:42 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/05/04/the-digital-revolution/</guid><description>
+&lt;p>Nice example of digital revolution and power to the people can be found at &lt;a href="http://blog.outer-court.com/archive/2007-05-02-n67.html">http://blog.outer-court.com/archive/2007-05-02-n67.html&lt;/a>. Let's hope manufacturers understand that people don't want to pay for crippled content.&lt;/p>
+&lt;p>Digital copies where copyright is removed are actually better than their DRM protected originals, which makes good willing people move to pirated content, like I &lt;a href="http://rolfje.wordpress.com/2007/01/25/opening-itunes-to-other-players/">stated earlier&lt;/a>. The important sentence here being &lt;em>&amp;quot;If I buy a DVD, I have to watch a few minutes of copyrights notices and commercials, without being able to skip them. If I rip it, and re-write it, these notices are gone...&amp;quot;&lt;/em>.&lt;/p>
+&lt;p>Viva la Revolution!&lt;/p></description></item><item><title>Lost Oracle SYS and SYSTEM password?</title><link>https://realrolfje.github.io/rolfje.com/2007/01/16/lost-oracle-sys-and-system-password/</link><pubDate>Mon, 15 Jan 2007 21:09:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/01/16/lost-oracle-sys-and-system-password/</guid><description>
+&lt;p>If your administration is as good as anybodies, you are bound to loose the not-so-frequently used password for the SYS and SYSTEM users of oracle. Here are a few ways I found to re-set those passwords:&lt;/p>
+&lt;p>&lt;strong>Method 1: SQLPLUS (Tested on AIX Oracle 9.2.0.1.0)&lt;/strong>&lt;/p>
+&lt;p>Log into the database server as a user belonging to 'dba' [unix ] or 'ora_dba' [windows ] group , typically 'oracle', or an administrator on your windos machine. You are able to log into Oracle as SYS user, and change the SYSTEM password by doing the following:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;$ &amp;lt;/span&amp;gt;&amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;sqlplus &amp;quot;/ as sysdba&amp;quot;&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SQL*Plus: Release 9.2.0.1.0 - Production on Mon Apr 5 15:32:09 2004&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;Copyright (c) 1982, 2002, Oracle Corporation. All rights reserved.&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;Connected to:
+Oracle9i Enterprise Edition Release 9.2.0.1.0 - Production
+With the OLAP and Oracle Data Mining options
+JServer Release 9.2.0.1.0 - Production&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SQL&amp;gt; &amp;lt;/span&amp;gt;&amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;show user&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;USER is &amp;quot;SYS&amp;quot;&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SQL&amp;gt; &amp;lt;/span&amp;gt;&amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;passw system&amp;lt;/span&amp;gt;
+Changing password for system
+New password:
+Retype new password:
+Password changed
+SQL&amp;gt; &amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;quit&amp;lt;/span&amp;gt;
+&amp;lt;/tt&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>Next, we need to change the password of SYS:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;$ &amp;lt;/span&amp;gt;&amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;sqlplus &amp;quot;/ as system&amp;quot;&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SQL*Plus: Release 9.2.0.1.0 - Production on Mon Apr 5 15:36:45 2004&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;Copyright (c) 1982, 2002, Oracle Corporation. All rights reserved.&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SP2-0306: Invalid option.
+Usage: CONN[ECT] [logon] [AS {SYSDBA|SYSOPER}]
+where &amp;lt;logon&amp;gt; ::= &amp;lt;username&amp;gt;[/&amp;lt;password&amp;gt;][@&amp;lt;connect_string&amp;gt;] | /
+Enter user-name: system
+Enter password:&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;Connected to:
+Oracle9i Enterprise Edition Release 9.2.0.1.0 - Production
+With the OLAP and Oracle Data Mining options
+JServer Release 9.2.0.1.0 - Production&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;
+&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;
+&amp;lt;/span&amp;gt;&amp;lt;/tt&amp;gt;&amp;lt;tt&amp;gt;&amp;lt;span style=&amp;quot;color:gray;&amp;quot;&amp;gt;SQL&amp;gt; &amp;lt;/span&amp;gt;&amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;passw sys&amp;lt;/span&amp;gt;
+Changing password for sys
+New password:
+Retype new password:
+Password changed
+SQL&amp;gt; &amp;lt;span style=&amp;quot;color:blue;&amp;quot;&amp;gt;quit&amp;lt;/span&amp;gt;
+&amp;lt;/tt&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>You should now be able to log on the SYS and SYSTEM users, with the passwords you just typed in.&lt;/p>
+&lt;p>&lt;strong>Method 2: Creating pwd file (Tested on Windows Oracle 8.1.7)&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. Stop the Oracle service of the instance you want to change the passwords of.
+2. Find the PWD###.ora file for this instance, this is usuallly located atC:\oracle\ora81\database\, where ### is the SID of your database.
+3. rename the PWD###.ora file to PWD###.ora.bak for obvious safety reasons.
+4. Create a new pwd file by issuing the command:
+&lt;/code>&lt;/pre>
+&lt;p>orapwd file=C:\oracle\ora81\database\PWD###.ora password=XXXXX
+where ### is the SID and XXXXX is the password you would like to use for the SYS and INTERNAL accounts.
+5. Start the Oracle service for the instance you just fixed. You should be able to get in with the SYS user and change other passwords from there.&lt;/p></description></item><item><title>Fun at "automatiseringsgids"</title><link>https://realrolfje.github.io/rolfje.com/2006/01/12/fun-at-automatiseringsgids/</link><pubDate>Wed, 11 Jan 2006 21:01:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/01/12/fun-at-automatiseringsgids/</guid><description>
+&lt;p>Even companies pretending to know about ICT, writing about companies doing it right or wrong, get it (very) wrong sometimes. People who have an account at &lt;a href="http://automatiseringgids.sdu.nl/ag/inlogpagina.jsp">De Automatiseringsgids&lt;/a> know the login screen. But have they also noticed how their username and password are sent to the server in plain text?&lt;/p>
+&lt;p>Another funny thing a colleque of mine discovered is the really wierd way of displaying error messages. The server returns the error message as part of a redirect. Yes, you've read that correctly. No serverside things here guys, must keep memory usage down. No sessions here, move along... A really funny thing you can do is display your own error messages, like so: &lt;a href="http://automatiseringgids.sdu.nl/ag/inlogpagina.jsp?message=%3Ch1%3EWie%20dit%20leest%20is%20gek%3C/h1%3E"> De automatiseringsgids with weird error&lt;/a>&lt;/p>
+&lt;p>&lt;a href="o_clipboard02.gif">&lt;img src="o_clipboard02.thumbnail.gif" alt="Wie dit leest is gek">
+&lt;/a>I think somebody will start playing with this, because you can do a lot more (very bad) things. Should they have it fixed allready when you are reading this, I saved a screenshot for you. You would have got something in the lines of this:&lt;/p>
+&lt;p>After discussing this wierd construction, we concluded that the programmers wanted to do a &amp;quot;post-by-redirect&amp;quot; construction, where you make the server return a redirect to the browser jsut after a post. This solves the &amp;quot;reload problem&amp;quot; where the browser asks if it can re-post the data for you. Since a redirect is a GET, the browser will just reload the page. Normally you solve this by storing thing in the session on the server and send a session reference to the browser. Combined with HTTP&lt;strong>S&lt;/strong>, this would give you a relatively strong, and still not to expensive protection against scripting and spoofing attacks.&lt;/p>
+&lt;p>A fine example of what happens if you trust an external company to build your web application, but you &amp;quot;forget&amp;quot; to check that they've delivered something that's up to your standards (or at least the standards you paid for). Have fun playing around with this, and let me know what interesting things you found. (hint: Iframes and javascript can do a lot on this page ;-)&lt;/p></description></item></channel></rss>

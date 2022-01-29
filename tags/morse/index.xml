@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>morse on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/morse/</link><description>Recent content in morse on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 27 May 2013 19:11:32 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/morse/index.xml" rel="self" type="application/rss+xml"/><item><title>Script: Text-to-NATO-spelling</title><link>https://realrolfje.github.io/rolfje.com/2013/05/27/script-text-to-nato-spelling/</link><pubDate>Mon, 27 May 2013 19:11:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/05/27/script-text-to-nato-spelling/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=dyWbu2y4QL4">&lt;img src="straight-key.jpg" alt="Straight Key">
+&lt;/a>In my morse training adventure on &lt;a href="http://lcwo.net/">lcwo.net&lt;/a>, I hit a slight bump in the road. At Koch lesson 33 (of 40 lessons total), I can't seem to copy with 90% accuracy, which is the criterea for moving to the next lesson. See my downward trend here. It is partly because of gradually speeding up the &lt;a href="http://www.justlearnmorsecode.com/farnsworth.html">Farnsworth timing&lt;/a> from 10wpm to 12wpm so I can be on 20wpm at lesson 40. It is also because of shorter, less focussed daily training sessions, I must confess.&lt;/p>
+&lt;p>&lt;a href="terrible-progress-lcwo.png">&lt;img src="terrible-progress-lcwo.png?w=450" alt="LCWO.net progress">
+&lt;/a>&lt;/p>
+&lt;p>I experimented a bit, and it seems I can recognize characters easily at &lt;a href="http://cgi2.lcwo.net/cgi-bin/cw.mp3?s=37&amp;amp;e=37&amp;amp;f=600&amp;amp;t=This%20is%2037wpm%20morse%20code%20%20%20%20%5E">37wpm&lt;/a>, but I can't form the words and recognize letters at the same time. More accurately: I can't seem to be able to remember 3 to 5 characters, form a word and listen to new characters at the same time.&lt;/p>
+&lt;!-- more -->To see if this was morse or memory related, I wrote a small program which spells out a text in speech, [NATO phonetic alphabet style](https://en.wikipedia.org/wiki/NATO_phonetic_alphabet). I converted some text with it, and proved that my analysis of my own morse problem was correct. This script can also be used to train "word building", so that's why I thought I'd share it with you.
+&lt;p>As for me, I am going to switch to morse word training on lcwo.net for a while, see if that helps. Here is the code for spelling out a text using Apple's built-in text-to-speech synthesizer. It takes a single argument as text file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; wraplines=&amp;quot;true&amp;quot; gutter=&amp;quot;false&amp;quot;]
+#!/bin/bash&lt;/p>
+&lt;h1 id="the-input-text-file-to-parse-first-argument">The input text file to parse (first argument)&lt;/h1>
+&lt;p>inputfile=&amp;quot;${1}&amp;quot;&lt;/p>
+&lt;h1 id="temporary-files-to-write">(Temporary) files to write&lt;/h1>
+&lt;p>outputfile=&amp;quot;${1}.m4a&amp;quot;
+lowercase=&amp;quot;${1}.lowercase.txt&amp;quot;
+tempfile=&amp;quot;${1}.spelled.txt&amp;quot;&lt;/p>
+&lt;h1 id="clean-up-in-case-we-crashed-last-time">clean up in case we crashed last time&lt;/h1>
+&lt;p>rm ${tempfile}
+rm ${lowercase}
+rm ${outputfile}&lt;/p>
+&lt;h1 id="everything-to-lower-case">everything to lower case&lt;/h1>
+&lt;p>tr '[:upper:]' '[:lower:]' &amp;lt; &amp;quot;${inputfile}&amp;quot; &amp;gt; &amp;quot;${lowercase}&amp;quot;&lt;/p>
+&lt;h1 id="spell-all-the-letters-change-or-add-as-needed">spell all the letters (change or add as needed)&lt;/h1>
+&lt;p>spell=&amp;quot;&amp;quot;
+while IFS= read -n1 char; do
+case &amp;quot;${char}&amp;quot; in
+&amp;quot;a&amp;quot;) spell=&amp;quot;${spell}, alpha&amp;quot; ;;
+&amp;quot;b&amp;quot;) spell=&amp;quot;${spell}, bravo&amp;quot; ;;
+&amp;quot;c&amp;quot;) spell=&amp;quot;${spell}, Charley&amp;quot; ;;
+&amp;quot;d&amp;quot;) spell=&amp;quot;${spell}, delta&amp;quot; ;;
+&amp;quot;e&amp;quot;) spell=&amp;quot;${spell}, echo&amp;quot; ;;
+&amp;quot;f&amp;quot;) spell=&amp;quot;${spell}, foxtrot&amp;quot; ;;
+&amp;quot;g&amp;quot;) spell=&amp;quot;${spell}, golf&amp;quot; ;;
+&amp;quot;h&amp;quot;) spell=&amp;quot;${spell}, hotel&amp;quot; ;;
+&amp;quot;i&amp;quot;) spell=&amp;quot;${spell}, India&amp;quot; ;;
+&amp;quot;j&amp;quot;) spell=&amp;quot;${spell}, Juliet&amp;quot; ;;
+&amp;quot;k&amp;quot;) spell=&amp;quot;${spell}, kilo&amp;quot; ;;
+&amp;quot;l&amp;quot;) spell=&amp;quot;${spell}, leehma&amp;quot; ;;
+&amp;quot;m&amp;quot;) spell=&amp;quot;${spell}, Mike&amp;quot; ;;
+&amp;quot;n&amp;quot;) spell=&amp;quot;${spell}, November&amp;quot; ;;
+&amp;quot;o&amp;quot;) spell=&amp;quot;${spell}, Oscar&amp;quot; ;;
+&amp;quot;p&amp;quot;) spell=&amp;quot;${spell}, papa&amp;quot; ;;
+&amp;quot;q&amp;quot;) spell=&amp;quot;${spell}, Quebec&amp;quot; ;;
+&amp;quot;r&amp;quot;) spell=&amp;quot;${spell}, Romeo&amp;quot; ;;
+&amp;quot;s&amp;quot;) spell=&amp;quot;${spell}, Sierra&amp;quot; ;;
+&amp;quot;t&amp;quot;) spell=&amp;quot;${spell}, tango&amp;quot; ;;
+&amp;quot;u&amp;quot;) spell=&amp;quot;${spell}, uniform&amp;quot; ;;
+&amp;quot;v&amp;quot;) spell=&amp;quot;${spell}, Victor&amp;quot; ;;
+&amp;quot;w&amp;quot;) spell=&amp;quot;${spell}, whiskey&amp;quot; ;;
+&amp;quot;x&amp;quot;) spell=&amp;quot;${spell}, X-ray&amp;quot; ;;
+&amp;quot;y&amp;quot;) spell=&amp;quot;${spell}, Yankee&amp;quot; ;;
+&amp;quot;z&amp;quot;) spell=&amp;quot;${spell}, Zulu&amp;quot; ;;
+&amp;quot;0&amp;quot;) spell=&amp;quot;${spell}, zero&amp;quot; ;;
+&amp;quot;1&amp;quot;) spell=&amp;quot;${spell}, one&amp;quot; ;;
+&amp;quot;2&amp;quot;) spell=&amp;quot;${spell}, two&amp;quot; ;;
+&amp;quot;3&amp;quot;) spell=&amp;quot;${spell}, three&amp;quot; ;;
+&amp;quot;4&amp;quot;) spell=&amp;quot;${spell}, four&amp;quot; ;;
+&amp;quot;5&amp;quot;) spell=&amp;quot;${spell}, five&amp;quot; ;;
+&amp;quot;6&amp;quot;) spell=&amp;quot;${spell}, six&amp;quot; ;;
+&amp;quot;7&amp;quot;) spell=&amp;quot;${spell}, seven&amp;quot; ;;
+&amp;quot;8&amp;quot;) spell=&amp;quot;${spell}, eight&amp;quot; ;;
+&amp;quot;9&amp;quot;) spell=&amp;quot;${spell}, nine&amp;quot; ;;
+&amp;quot;.&amp;quot;) spell=&amp;quot;${spell}. period&amp;quot; ;;
+&amp;quot;,&amp;quot;) spell=&amp;quot;${spell}. comma&amp;quot; ;;
+&amp;quot;=&amp;quot;) spell=&amp;quot;${spell}, equals&amp;quot; ;;
+&amp;quot;/&amp;quot;) spell=&amp;quot;${spell}, slash&amp;quot; ;;
+&amp;quot;?&amp;quot;) spell=&amp;quot;${spell}. questionmark&amp;quot; ;;
+*) if [ -n &amp;quot;$spell&amp;quot; ]; then
+echo &amp;quot;${spell:2}.&amp;quot; &amp;gt;&amp;gt; &amp;quot;${tempfile}&amp;quot;;
+spell=&amp;quot;&amp;quot;;
+fi
+;;
+esac
+done &amp;lt; &amp;quot;${lowercase}&amp;quot;&lt;/p>
+&lt;h1 id="take-the-tempfile-convert-it-to-spoken-text">Take the tempfile, convert it to spoken text.&lt;/h1>
+&lt;p>say -r 250 -v Alex -f ${tempfile} -o ${outputfile}&lt;/p>
+&lt;h1 id="files-left-for-further-processing-if-you-like">Files left for further processing if you like.&lt;/h1>
+&lt;p>ls -l ${inputfile}*
+[/sourcecode]&lt;/p></description></item></channel></rss>

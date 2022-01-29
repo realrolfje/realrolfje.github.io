@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ibatis on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/ibatis/</link><description>Recent content in ibatis on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 16 Feb 2010 15:19:16 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/ibatis/index.xml" rel="self" type="application/rss+xml"/><item><title>Ibatis Inline Parameter Maps</title><link>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</link><pubDate>Tue, 16 Feb 2010 15:19:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</guid><description>
+&lt;p>&lt;img src="box.jpg" alt="">
+Today I (re)discovered a feature in the Ibatis data mapper framework which was clearly documented, but for some reason was not being used in our project. The feature is called &amp;quot;inline parameter maps&amp;quot; and combined with a wrapper bean it can clean up a lot of clutter in the code and in the SqlMaps. Please feel free to share this example with your fellow Ibatis Data Mapper 2 framework users.&lt;/p>
+&lt;!-- more -->**The Case.**
+&lt;p>Suppose you are building software to interface with an old Oracle backoffice for a big parcel delivery company. One of the Classes you are using is the &amp;quot;Box&amp;quot; class, which is a basic Java Bean:&lt;/p>
+&lt;pre>&lt;code>public class Box {
+private int height;
+private int width;
+private int depth;
+private int weight;
+private String color;
+private String origin;
+private String destination;
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>You need to store a Box object using a stored procedure in the backoffice. The stored procedure, called &amp;quot;store_box&amp;quot;, returns the location code of the Box, but you do not want to store this location code in the Box object.&lt;/p>
+&lt;p>&lt;strong>The Parameter Class.&lt;/strong>
+To solve this problem in Ibatis, you can use an aggregating parameter object called &amp;quot;StoreBoxParameters&amp;quot; (or any name you like). This is a simple bean which aggregates the Box object you want to store, and has extra fields for the data returned by the &amp;quot;store_box&amp;quot; stored procedure:&lt;/p>
+&lt;pre>&lt;code>public class StoreBoxParameters {
+private Box box;
+private String locationCode;
+public StoreBoxParameters(Box aBox){
+this.box = aBox;
+}
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>To store the Box object, you write an SqlMap which calls the stored procedure with a parameter map:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;parameterMap id=&amp;quot;storeBoxParameterMap&amp;quot; class=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.height&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.width&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.depth&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.weight&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.color&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.origin&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.destination&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;locationCode&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;OUT&amp;quot; /&amp;gt;
+&amp;lt;/parameterMap&amp;gt;
+&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterMap=&amp;quot;storeBoxParameterMap&amp;quot;&amp;gt;
+{call store_box (?,?,?,?,?,?,?,?)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>And in the DAO, you can now fetch the locationcode seperate from the Box object:&lt;/p>
+&lt;pre>&lt;code>public String storeBox (Box aBox) {
+StoreBoxParameters boxParameters = new StoreBoxParameters(aBox);
+getSqlMapClientTemplate().update(&amp;quot;store_box&amp;quot;, boxParameters);
+return boxParameters.getLocationCode();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this solution becomes even nicer when you have to call a stored procedure with multiple IN and OUT parameters and you want to separate these your business objects.&lt;/p>
+&lt;p>In the solution for the first problem, you may have noticed the stored procedure call in the Ibatis SQL map being written as &lt;em>&amp;quot;{call store_box (?,?,?,?,?,?,?,?)}&amp;quot;&lt;/em>. This is not exactly elegant, particularly when you have a long list of parameters. When bug fixing, it is hard to see which value gets passed into which parameter.&lt;/p>
+&lt;p>&lt;strong>The Inline Parameter Map.&lt;/strong>
+In the Ibatis data mapper documentation, I found a beautiful solution for this, called inline parameter maps. First, you delete the parameter map from the SqlMap. Then, you replace the question marks with an inline version of these fields. You should get something like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterClass=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+{call store_box (
+#box.height,jdbcType=NUMERIC,mode=IN#,
+#box.width,jdbcType=NUMERIC,mode=IN#,
+#box.depth,jdbcType=NUMERIC,mode=IN#,
+#box.weight,jdbcType=NUMERIC,mode=IN#,
+#box.color,jdbcType=VARCHAR,mode=IN#,
+#box.origin,jdbcType=VARCHAR,mode=IN#,
+#box.destination,jdbcType=VARCHAR,mode=IN#,
+#locationCode,jdbcType=VARCHAR,mode=OUT#
+)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>This cleans up your SqlMaps and improves their readability. Note that for OUT parameters to work, the fields you map them to may not be primitives.&lt;/p>
+&lt;p>Happy coding.&lt;/p>
+&lt;pre>&lt;code>StoreBoxParameters
+&lt;/code>&lt;/pre></description></item><item><title>Ibatis 2.2 Ignores XML encoding</title><link>https://realrolfje.github.io/rolfje.com/2008/07/20/ibatis-22-ignores-xml-encoding/</link><pubDate>Sat, 19 Jul 2008 22:37:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/20/ibatis-22-ignores-xml-encoding/</guid><description>
+&lt;p>At my company, we're using Ibatis to do operations on Oracle databases. As most of our software is designed to be international, we keep our XML files in UTF-8 encoding. Recently we discovered that Ibatis had some trouble parsing the XML files when we were using diacritics in them. As it turns out, Ibatis 2.2 actually ignores the &amp;quot;UTF-8&amp;quot; setting in the XML file header altogether.&lt;/p>
+&lt;p>This was actually reported as an &lt;a href="http://issues.apache.org/jira/browse/IBATIS-349?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12454071">issue&lt;/a> at apache's issue tracker, and fixed in Ibatis release 2.3 and upward. In the meantime, if you can not swich to a new release because of tight deadlines and no time for regression tests, you can set the file.encoding property to UTF-8, because then Ibatis will parse the XML in the correct encoding.&lt;/p></description></item><item><title>Ibatis Nullpointer calling stored procedure</title><link>https://realrolfje.github.io/rolfje.com/2006/11/07/ibatis-nullpointer-calling-stored-procedure/</link><pubDate>Tue, 07 Nov 2006 19:53:14 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/11/07/ibatis-nullpointer-calling-stored-procedure/</guid><description>
+&lt;p>Today, a collegue of mine had a really strange nullpointer problem trying to call a stored procedure in an Oracle 10 database using &lt;a href="http://ibatis.apache.org/javadownloads.html">iBATIS Java 2.2.0&lt;/a>. What she had was a normal JavaBean, like so: &lt;/p>
+&lt;pre>&lt;code>package com.rolfje.foo
+public class BarBean {
+private String barName;
+private Long barId;
+... setters/getters here ...
+}
+&lt;/code>&lt;/pre>
+&lt;p>A straightforward parametermap:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;parameterMap class=&amp;quot;com.rolfje.foo.BarBean&amp;quot;
+id=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+&amp;lt;parameter property=&amp;quot;barName&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;barId&amp;quot; /&amp;gt;
+&amp;lt;/parameterMap&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>and a straightforward procedure mapping:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;insertBar&amp;quot; parameterMap=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+{ call store_bar (
+?,?)
+}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>When trying to call the stored procedure, she got the following stacktrace:&lt;/p>
+&lt;pre>&lt;code>org.springframework.jdbc.UncategorizedSQLException: SqlMapClient operation;
+uncategorized SQLException for SQL [];
+SQL state [null]; error code [0];
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException; nested exception is
+com.ibatis.common.jdbc.exception.NestedSQLException:
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException
+Caused by: java.lang.NullPointerException
+Caused by: com.ibatis.common.jdbc.exception.NestedSQLException:
+--- The error occurred in com/rolfje/foo/sqlmaps/ParameterMap.xml.
+--- The error occurred while applying a parameter map.
+--- Check the barBeanMap.
+--- Check the statement (update procedure failed).
+--- Cause: java.lang.NullPointerException
+Caused by: java.lang.NullPointerException
+at ...executeQueryWithCallback(GeneralStatement.java:188)
+at ...executeQueryForObject(GeneralStatement.java:104)
+at ...queryForObject(SqlMapExecutorDelegate.java:565)
+...
+&lt;/code>&lt;/pre>
+&lt;p>After hours of staring at the problem, and comparing code with similar constructions from other projects, we decided to switch to the Oracle 9i thin driver to see if that would solve the problem. It didn't, but there was an interesting development: The Oracle 9i driver actually gave us a decent error about not being able to parse the SQL statement. Which brings us to...&lt;/p>
+&lt;p>&lt;strong>The solution:&lt;/strong>
+We removed all layout from the procedure mapping, which resulted in:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;insertBar&amp;quot; parameterMap=&amp;quot;barbeanMap&amp;quot;&amp;gt;
+{call store_bar (?,?)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>This solved the problem. Then we switched back to the Oracle 10i thin driver, and the problem was still gone. The problem lies in the TAB between the left curly bracket and the word &amp;quot;call&amp;quot;. Oracle can not handle this.To investigate this problem, we then also tried to insert &lt;![CDATA[ ]]> around the procedure call, but as soon as there is a TAB between the { and the word &amp;quot;call&amp;quot; iBATIS will throw a NullPointer. The strange thing is that you can have spaces, newlines and tabs &lt;em>anywhere&lt;/em> in the procedure mapping, as long as there is no TAB between the left curly and the word &amp;quot;call&amp;quot;.&lt;/p></description></item></channel></rss>

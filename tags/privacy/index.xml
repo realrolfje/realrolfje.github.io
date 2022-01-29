@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>privacy on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/privacy/</link><description>Recent content in privacy on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 02 Mar 2014 19:30:22 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/privacy/index.xml" rel="self" type="application/rss+xml"/><item><title>Replace Evernote with Spidernote</title><link>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</link><pubDate>Sun, 02 Mar 2014 19:30:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</guid><description>
+&lt;p>&lt;a href="http://www.washingtonpost.com/wp-dyn/content/article/2010/07/28/AR2010072806141.html">&lt;img src="evernotensa.png" alt="Resistance is futile">
+&lt;/a>&lt;/p>
+&lt;p>In the past I have used Evernote extensively, it really helped me in my research for this blog and keeping track of meeting notes, todo lists and even making pictures of whiteboards at work searchable. As a product, there is no note taking app that can beat Evernote. But there is a little problem that has become a deal breaker for me, and that is basically the NSA and the way Americans, and particularly the American government seems to think about people's privacy and online security.&lt;/p>
+&lt;p>Evernote is an American company, which sadly has to comply with whatever ridiculous request by the U.S. government to turn over data of innocent people all over the world (yes, even outside the U.S. border, I know, it’s amazing). This, combined with the fact that Evernote clearly can not use zero-knowledge encryption because of the services it provides, makes that all the data you and I put into Evernote are at NSA’s fingertips at all times. If you find that as scary as I do, and you have a Mac, there is a way to solve this.&lt;!-- more -->&lt;/p>
+&lt;p>If you use Evernote to sync notes between multiple Macs, you have to solve the syncing problem first. Ofcourse Dropbox is a no-go, because that is an American company storing unencrypted data too. I’m &lt;a href="https://rolfje.wordpress.com/2011/07/03/1355/">using SpiderOak  since 2011&lt;/a>, and it is much better than Dropbox in many ways. Check it out.&lt;/p>
+&lt;p>If you’re using Evernote on your iPhone I do not have a solution for you yet. But as for me, that is not a big deal, I thought the iPhone is not the ideal note taking platform anyway as this old man is not very fast on the touch keyboard.&lt;/p>
+&lt;p>&lt;a href="spidy_5407spx_02.jpg">&lt;img src="spidy_5407spx_02.jpg" alt="Spidernote Icon">
+&lt;/a>With all that out of the way, let’s migrate away from Evernote and replace it with a smart script and some synced Spideroak folders. I like to call it ”SpiderNote”.&lt;/p>
+&lt;p>&lt;strong>1. Create a folder structure&lt;/strong>
+Inside your Spideroak shared folder or Hive, create a ”Spidernote” folder, and in that folder, create a ”notes” folder.&lt;/p>
+&lt;p>&lt;strong>2: Export all Evernote Notes&lt;/strong>
+Start up your trusty Evernote client and select all your notes. From the ”File” menu, select ”Export Notes…” and store them in a folder called ”Evernote”, inside the ”notes” folder you just created. You should now have a folder called Spidernote/notes/Evernote somewhere inside your Spideroak folder, or somewhere locally on your Mac.&lt;/p>
+&lt;p>&lt;strong>3: Getting Spotlight and Finder to work for you&lt;/strong>
+Open the Finder and press Cmd-, or select ”Preferences…” On the ”Advanced” tab, under ”When performing a Search” select ”Search the current Folder”. After you do this, you will find that when you open the notes folder in Finder, you can type some text and your old Evernote notes will popup. Look ma, no hands! And no Evernote!&lt;/p>
+&lt;p>&lt;a href="finder-search-settings.png">&lt;img src="finder-search-settings.png?w=450" alt="Finder Search Settings">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>4: Create a new template note&lt;/strong>
+OSX comes with a decent richtext editor, named ”TextEdit” which we are going to use for our note taking.Open TextEdit and save an empty file inside the notes folder which is called ”empty.rtf”. This will be your note template, the start of every new note. Remember you can set preferences that are stored with this file, like the default font and colors and tabs if you like.&lt;/p>
+&lt;p>&lt;strong>5: Script to create a new note&lt;/strong>
+Create a file called ”newnote.command” in the Spidernote folder and copy/paste the following contents into it:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot;]
+#!/bin/bash
+date=&lt;code>date +%Y%m%d-%H%M%S&lt;/code>
+BASEDIR=$(dirname $0)
+cd $BASEDIR&lt;/p>
+&lt;p>notesdirectory=&amp;quot;notes/${date}&amp;quot;&lt;/p>
+&lt;p>clear
+echo &amp;quot;Note will be stored in ${BASEDIR}/${notesdirectory}.&amp;quot;
+echo &amp;quot;Type title/filename for note (without extension):&amp;quot;
+read filename&lt;/p>
+&lt;p>if [[ X&amp;quot;&amp;quot; = X&amp;quot;$filename&amp;quot; ]]; then
+filename=&amp;quot;note.rtf&amp;quot;;
+fi&lt;/p>
+&lt;p>mkdir &amp;quot;${notesdirectory}&amp;quot;
+cp notes/empty.rtf &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+rm -f lastnote.rtf
+ln -s &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot; latestnote.rtf
+open -a TextEdit &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+[/sourcecode]&lt;/p>
+&lt;p>You should now have a folder structure which looks something like this:&lt;/p>
+&lt;p>&lt;a href="folder-structure-1.png">&lt;img src="folder-structure-1.png" alt="Spidernote Folder Structure">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>6: Add Spidernote to your Dock&lt;/strong>
+Drag the Spidernote folder next to your Trashcan in the doc (not IN your Trashcan, of course). Change the settings to have it’s icon show as a folder, and it’s context as a list. All set!&lt;/p>
+&lt;p>&lt;strong>7: Create your first note&lt;/strong>
+From the Dock, click on the Spidernote folder and click on ”newnote.command”. A Terminal window will pop up, asking you for the (optional) title of your note (this will be the filename of the *.rtf file, so that it is easier to scan your search results later). After you press ”enter”, TextEdit will come up and you can type away.&lt;/p>
+&lt;p>When you are done and close the editor, you can easily find your note by searching, or by the ”latest note” link which the script creates for you in the Spidernote folder, so that you always can return to what you were doing when you accidentally close that note.&lt;/p>
+&lt;p>That’s it for now. I know it does not OCR scan your images, and it is really a poor-man’s Evernote, but these days your private has become a valuable asset to scrupules people and it has to be protected.&lt;/p>
+&lt;p>I know that there are a lot of note taking apps out there but frankly none of them work for me. If you have any tips on how to solve the OCR and tagging/organizing stuff please let me know.&lt;/p>
+&lt;p>Oh and don't forget to &lt;a href="https://evernote.com/contact/support/kb/#!/article/23403793">deactivate your Evernote account and remove all its data&lt;/a>. After all, that's what started all this sad stuff.&lt;/p></description></item></channel></rss>

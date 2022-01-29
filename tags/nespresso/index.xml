@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nespresso on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/nespresso/</link><description>Recent content in nespresso on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 27 Aug 2011 12:57:33 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/nespresso/index.xml" rel="self" type="application/rss+xml"/><item><title>How to fix a Krups XN2001 Nespresso machine</title><link>https://realrolfje.github.io/rolfje.com/2011/08/27/how-to-fix-a-krups-xn2001-nespresso-machine/</link><pubDate>Sat, 27 Aug 2011 12:57:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/27/how-to-fix-a-krups-xn2001-nespresso-machine/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=FpHwCmobz88">&lt;img src="krups_xn20011.jpeg" alt="Click here to see some amazing Latte Art">
+&lt;/a>Maybe the title of this post should read &amp;quot;how to open a Krups XN2001 Nespresso machine&amp;quot;. The Krups XN2001 is almost identical to the newer XN2002 and XN2003. While the XN2003 has normal Torx screws, Krups was a bit more &amp;quot;protective&amp;quot; when they built the XN2001. It has screws that can not be gripped by any screwdriver. Still, there is an easy trick you can use to get headless screws out of any machine.&lt;/p>
+&lt;!-- more -->My Krups XN2001 Nespresso maker has been working fine for the past few years. I descale it almost monthly with very cheap vinegar, but otherwise it needs no maintenance. Just after I repaired my [free Aeroccino](http://rolfje.com/2011/08/16/aeroccino-motor-replaced/), the power button of the Krups XN2001 started to fail. It was hard to turn the machine on, like there was a bad contact.
+&lt;p>When I tried to open the Krups XN2001, I noticed these funny looking screws, which looked more like nails. After I discovered that these were actually normal screws, I needed to figure out how to get to the ones at the bottom.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Yes, it's a screw, not a nail!](img_2180.jpg)
+](img_2180.jpg)
+&lt;/td>
+&lt;td >[![No Dremel in the world could reach those...](img_2181.jpg?w=112)
+](img_2181.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+I took the Nespresso machine to a hardware store I frequently visit, and talked to a new hire there. I showed him the machine and he took off on a rant about how I should not open it, that it was dangerous, and it would void the warranty. I told him it was a five year old machine and it was for fun. Just when he got irritated and told me "doesn't matter, you can't open it", a colleague of him overheard our conversation. He looked at the new hire, smiled, and while pointing at me said "but he can".
+&lt;p>A few laughs and a short discussion later, it turned out that they did not have tools that would fit or grip the headless screws. I went into &lt;a href="http://www.youtube.com/watch?v=09UlB17cgKw">&amp;quot;MacGyver mode&amp;quot;&lt;/a> and got an aluminum rod that fit nicely on top of the screw head without touching the plastics of the case, and grabbed a tube of industrial strength superglue.&lt;/p>
+&lt;p>At home, I cut the rod into a few shorter bushings, and used the lathe to make them nice and flat. I carved a slot on the other end of each bushing with a dremel tool. Then, I carefully superglued the bushings onto the screws without touching the plastic, and let them settle for a few minutes.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![Super Glue and a bushing. Note the slot for the screwdriver.](img_2183.jpg)
+](img_2183.jpg)
+&lt;/td>
+&lt;td >[![Removed screw with the bushing glued to it.](img_2187.jpg?w=200)
+](img_2187.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+After the glue set, it was very easy to use a normal screwdriver to get the screws out. I took the screws with the glued bushings back to the hardware store to show them what I did and got me some new philips head screws with matching size.
+&lt;p>Once you open it, you can see how simple this machine is. There's not much that can break, and parts look like they can be easily replaced. Instead of just cleaning the contacts in the button, I decided to go a little further and replaced the existing ones. I had to cut away some placeholders for the old pushbuttons, and drill a hole to hold the green led which tells you what the machine is doing.&lt;/p>
+&lt;table width="100%" >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![All the electronics. Not much to it, really.](img_2191.jpg)
+](img_2191.jpg)
+&lt;/td>
+&lt;td >[![I also replaced the "dispense" button](img_2195.jpg?w=112)
+](img_2195.jpg)
+&lt;/td>
+&lt;td >[![The repaired Aeroccino and the repaired Nespresso happily together.](img_2205.jpg)
+](img_2205.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+As you can see my Krups XN2001 now looks a bit "steampunked" but it works like a charm!</description></item><item><title>Aeroccino Motor Replaced</title><link>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</link><pubDate>Tue, 16 Aug 2011 18:56:51 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/16/aeroccino-motor-replaced/</guid><description>
+&lt;p>Months ago, I got this broken Aeroccino milk frother for free. This week I fiddled with it for a few hours, and got it to work:&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=kNEqWH3ILDc]&lt;/p>
+&lt;!-- more -->... and this is how you get it apart. First carefully pull out the button on the front:
+&lt;p>&lt;a href="aeroccino-button-remove-1.png">&lt;img src="aeroccino-button-remove-1.png" alt="Removing the front button">
+&lt;/a>&lt;/p>
+&lt;p>And then remove the rubber plugs to get to the screws at the bottom.&lt;/p>
+&lt;p>&lt;a href="aeroccino-bottom-screws.png">&lt;img src="aeroccino-bottom-screws.png?w=300" alt="Remove rubber plugs to get to the screws">
+&lt;/a>&lt;/p>
+&lt;p>You're on your own from here. Be careful not to break any wires when you pull it apart, and take pictures along the way so you know how to put it back together.&lt;/p></description></item></channel></rss>

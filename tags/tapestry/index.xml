@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tapestry on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/tapestry/</link><description>Recent content in Tapestry on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 06 Feb 2006 20:47:21 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/tapestry/index.xml" rel="self" type="application/rss+xml"/><item><title>Tapestry/OGNL: Could not find an adaptor for class XYZ</title><link>https://realrolfje.github.io/rolfje.com/2006/02/07/tapestryognl-could-not-find-an-adaptor-for-class-xyz/</link><pubDate>Mon, 06 Feb 2006 20:47:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/07/tapestryognl-could-not-find-an-adaptor-for-class-xyz/</guid><description>
+&lt;p>Getting the &amp;quot;Could not find an adaptor for class Foo&amp;quot; Mesage in Tapestry? You probably forgot to make your class Serializable. A simple description of a possible problematic situation follows: &lt;/p>
+&lt;!-- more -->Suppose you have some simple class, like so:
+&lt;pre>&lt;code>public class MyItem {
+private String itemname;
+public String getItemname() {
+return itemname;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>And somewhere in your Tapestry page or component, you iterate a list of these items to produce directlinks for each of them:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;span jwcid=&amp;quot;@Foreach&amp;quot; source=&amp;quot;ognl:myItems&amp;quot; value=&amp;quot;ognl:loopItem&amp;quot;&amp;gt;
+&amp;lt;a jwcid=&amp;quot;@DirectLink&amp;quot; listener=&amp;quot;ognl:listeners.myItemListener&amp;quot;
+parameters=&amp;quot;ognl:new java.lang.Object[] {loopItem}&amp;quot;&amp;gt;
+&amp;lt;span jwcid=&amp;quot;@Insert&amp;quot; value=&amp;quot;ognl:loopItem.itemname&amp;quot;/&amp;gt;
+&amp;lt;/a&amp;gt;
+&amp;lt;/span&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>In your page definition, you have created a nice listener method which you expect to be called:&lt;/p>
+&lt;pre>&lt;code>public void myItemListener(IRequestCycle cycle){
+MyItem item = (MyItem)cycle.getServiceParameters()[0];
+System.out.println(
+&amp;quot;Hi, you have pressed the link for &amp;quot;
++ item.getItemname());
+}
+&lt;/code>&lt;/pre>
+&lt;p>You start everything up, but when loading the page, Tapestry complains:&lt;/p>
+&lt;pre>&lt;code>org.apache.tapestry.ApplicationRuntimeException:
+Could not find an adaptor for class MyItem.
+&lt;/code>&lt;/pre>
+&lt;p>... and a horrific stacktrace follows, which you can't read or understand because it is all about AbstractComponent.renderbody and other internals of Tapestry and your webserver. Although the error is terrible, and does not point you anywhere, the fix is rather simple. You forgot to make your class Serializable! Changing it to :&lt;/p>
+&lt;pre>&lt;code>public class MyItem implement Serializable {
+private String itemname;
+public String getItemname() {
+return itemname;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;p>fixes the problem, because now Tapestry can serialize your object into the session, and pass it as a parameter to the listener.&lt;/p></description></item></channel></rss>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kenwood TS50 on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/kenwood-ts50/</link><description>Recent content in Kenwood TS50 on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 15 May 2014 20:24:18 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/kenwood-ts50/index.xml" rel="self" type="application/rss+xml"/><item><title>Print posters on a regular printer with Excel.</title><link>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</link><pubDate>Thu, 15 May 2014 20:24:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=_wwVRJ4_Ayk">&lt;img src="ts-50-rx-tx-board-banner.jpg" alt="TS-50-RX-TX-board-banner">
+&lt;/a>&lt;/p>
+&lt;p>I recently needed to print out a big schematic diagram of the RX/TX board of a Kenwood TS50 Transceiver. This did not fit on a single piece of paper. Instead of downloading all kinds of crappy tools or uploading the image to some &amp;quot;free&amp;quot; site which is going to use it for whatever they think justifies their definition of &amp;quot;free&amp;quot;, I found out you can do this in Excel. Here's how:&lt;/p>
+&lt;pre>&lt;code> 1. Make sure the image you want to print out as a poster has a decent resolution
+2. Open Excel (maybe this will work in LibreOffice too, I haven't tested, let me know)
+3. Drag the image into a new worksheet so that it is top-left of the sheet.
+4. Open the &amp;quot;Print preview&amp;quot; (the little icon in the bottom left of the window)
+5. Resize the image so that it covers more than one page, up to the number of pages you'd like the poster to be. Your screen should now look somewhat like this:
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="screen-shot-2014-05-15-at-21-58-23.png">&lt;img src="screen-shot-2014-05-15-at-21-58-23.png" alt="Screen Shot 2014-05-15 at 21.58.23">
+&lt;/a>
+6. Optional: Adjust the page margins.
+7. Print.&lt;/p>
+&lt;p>After this, you'll be gluing the pages together, but I think you already figured that out beforehand.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item></channel></rss>

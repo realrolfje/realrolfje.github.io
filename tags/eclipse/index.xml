@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>eclipse on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/eclipse/</link><description>Recent content in eclipse on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 30 Jul 2011 18:40:24 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/eclipse/index.xml" rel="self" type="application/rss+xml"/><item><title>Add some magic to Eclipse</title><link>https://realrolfje.github.io/rolfje.com/2011/07/30/add-some-magic-to-eclipse/</link><pubDate>Sat, 30 Jul 2011 18:40:24 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/07/30/add-some-magic-to-eclipse/</guid><description>
+&lt;p>&lt;a href="http://nl.toonpool.com/gallery.php?user=406">&lt;img src="harry_potter_31795.jpg" alt="Templatus Expandum!">
+&lt;/a>The top feature of the eclipse IDE is the very impressive refactoring possibilities. It makes code feel like play-doh, allowing you to knead it in any shape way or form you think fits the current situation. A close second to that is the impressive templates and code assist. Yes, Java is verbose, but I think 80% of the characters which make up a Java program was never actually typed. All the readability without the labour, brought to you by eclipse's powerful templates.&lt;/p>
+&lt;p>What many people don't realize is that you can easily add to this magic by creating your own templates. One of the first templates I always add to the environment is the one which adds a private static final log4j logger. I thought it would be great example to share with you.&lt;/p>
+&lt;!-- more -->
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; gutter=&amp;quot;false&amp;quot;]
+${imp:import(org.apache.log4j.Logger)}
+private static final Logger LOG = Logger.getLogger(${enclosing_type}.class);
+[/sourcecode]&lt;/p>
+&lt;p>You can add and change existing templates in Eclipse -&amp;gt; Preferences -&amp;gt; Java -&amp;gt; Editor -&amp;gt; Templates. There are other great examples when you scroll through the list, and you can export the templates to a file in your &lt;a href="http://www.rolfje.com/2011/07/03/1355/">shared SpiderOak folder&lt;/a> to have them available on all your machines.&lt;/p>
+&lt;p>&lt;a href="screen-shot-2011-07-30-at-20-18-00.png">&lt;img src="screen-shot-2011-07-30-at-20-18-00.png?w=300" alt="Templates configuration in Eclipse">
+&lt;/a>Remember to give your templates an easy name so you can quickly invoke them by code completion. Great examples are the existing &amp;quot;sysout&amp;quot; and &amp;quot;foreach&amp;quot; templates. I called mine &amp;quot;llog&amp;quot; with a double-l because &amp;quot;log&amp;quot; collides with too many other code completion possibilities.&lt;/p>
+&lt;p>Experiment and enjoy your increased productivity.&lt;/p></description></item><item><title>^H(eaven) key binding in Eclipse</title><link>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</link><pubDate>Sun, 19 Jun 2011 19:21:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/06/19/heaven-key-binding-in-eclipse/</guid><description>
+&lt;p>&lt;a href="search-window.png">&lt;img src="search-window.png?w=150" alt="Eclipse File Search Window">
+&lt;/a>As a long time user of Eclipse, I have never understood the any of the tabs of the Search panel in Eclipse. JavaScript search, Java Search, Remote Search, they all make no sense to a modern man who is used to a single search box which searches everything. So I always use the &amp;quot;File Search&amp;quot; Tab, which does exactly what I want 99% of the time.&lt;/p>
+&lt;p>File Search always requires mouseclicks. To open the Search window and select the correct tab. It was not until recently that I realized that I could actually reassign the ^H (Control - H) key combination to pop up the File Search tab. If you are an avid Eclipse user you've probably already done this, or know how to do this. If you are new to eclipse, or lazy like me, read on to see how you can re-map this key binding.&lt;/p>
+&lt;!-- more -->
+&lt;p>To remap ^H to &amp;quot;File Search&amp;quot;, do the following:&lt;/p>
+&lt;p>Open Eclipse preferences and go to &amp;quot;General -&amp;gt; keys&amp;quot;. You should see the following settings screen:&lt;/p>
+&lt;p>&lt;a href="eclipse-settings-key-binding.png">&lt;img src="eclipse-settings-key-binding.png?w=300" alt="Eclipse Key Bindings Preference page">
+&lt;/a>&lt;/p>
+&lt;pre>&lt;code> * In the filter text, type &amp;quot;file search&amp;quot;. The command list should now contain only one entry, &amp;quot;File Search&amp;quot;.
+* Highlight the &amp;quot;File Search&amp;quot; command
+* Click in the &amp;quot;Binding&amp;quot; field and press ^H. You should now see that you've created a conflict with the &amp;quot;Open Search Dialog&amp;quot; in the &amp;quot;conflicts&amp;quot; list on the right.
+* Select the conflict you want to remove, and empty the key binding field.
+* Press the &amp;quot;Ok&amp;quot; button to close the preferences screen.
+&lt;/code>&lt;/pre>
+&lt;p>Now you're all done. When you're in an editor and want to see if selected text is present in other parts of your project&lt;/p>
+&lt;p>Let's say you are looking at Java source of an Ibatis SqlMapClient and want to find the matching statement in any of the the SqlMap.xml files. You can now simply select the text in the Java file, hit ^H, Enter, and voila, you get a list of all files with that same text in it, anywhere in your enclosing project or workspace, without copy-pasting or even touching the mouse.&lt;/p>
+&lt;p>Now go play with your new found piece of heaven.&lt;/p></description></item><item><title>Changing the Order of your UnitTests</title><link>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</link><pubDate>Fri, 01 Apr 2011 21:17:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</guid><description>
+&lt;p>&lt;img src="toddler-shape-colour-sorting-puzzle.jpg" alt="">
+A few months ago we had a problem where Eclipse could not automatically run all jUnit unit tests in a package if that package references a class called &amp;quot;enum&amp;quot;, which is a reserved word in Java 1.6. I'll spare you the details, but we were forced to create a TestSuite. Normally we avoid this construction because it's easy to create a new unit test and forget to add it to the correct TestSuit. So as a workaround we wrote some code which could build and return a TestSuite dynamically. Right-click in eclipse, select &amp;quot;Run as Unittest&amp;quot;, sit back and enjoy.&lt;/p>
+&lt;p>Lately this piece of code came in handy while testing another application, which required the removal of data from a database. Yes I know, Unittests should maybe not depend on databases because it leans towards integration testing, but here we are, and I need to solve it. I used the old TestSuite code and changed it so that the TestCase I needed to run first was singled out, while still maintaining the functionality of auto-detecting testcases in the source folder.&lt;/p>
+&lt;!-- more -->I've cleaned up the code and made an example implementation which sorts the test cases in alpabetical order. It's a simple starting point and definetely not the prettiest code I've ever written but it works, it helped me and it might help you. Copy/paste, and adjust to your own needs.
+&lt;p>Have fun!&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; gutter=&amp;quot;false&amp;quot; autolinks=&amp;quot;false&amp;quot;]
+package com.rolfje.example;&lt;/p>
+&lt;p>import java.io.File;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;&lt;/p>
+&lt;p>import junit.framework.Test;
+import junit.framework.TestSuite;&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Constructs a testsuite by dynamically scanning for&lt;/li>
+&lt;li>classes ending in &amp;quot;*Test&amp;quot;, and allows for re-ordering of&lt;/li>
+&lt;li>the Classes in the Suite.
+*/
+public class OrderedTestSuite {&lt;/li>
+&lt;/ul>
+&lt;p>public static Test suite() throws Exception {&lt;/p>
+&lt;pre>&lt;code>// Find all test classes
+List testClasses = findTestClasses();
+// Custom test ordering example: Sort test classes in
+// natural alphabetic order based on simple classname
+Collections.sort(testClasses, new Comparator() {
+@Override
+public int compare(Class o1, Class o2) {
+return o1.getSimpleName().compareTo(
+o2.getSimpleName());
+}
+});
+// Convert the Set to a TestSuite
+TestSuite suite = new TestSuite(
+&amp;quot;Custom ordered TestSuite&amp;quot;);
+for (Class testClass : testClasses) {
+suite.addTestSuite(testClass);
+}
+return suite;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>private static List findTestClasses()
+throws Exception {
+List testClasses = new ArrayList();&lt;/p>
+&lt;pre>&lt;code>File testDir = getRootOfTestTree();
+List files = new ArrayList();
+getTestFiles(files, testDir);
+int nameIdx = testDir.getAbsolutePath().length() + 1;
+for (Iterator iterator = files.iterator(); iterator
+.hasNext();) {
+File file = (File) iterator.next();
+String className = file.getAbsolutePath().substring(
+nameIdx);
+className = className
+.replace(File.separatorChar, '.');
+className = className.replaceAll(&amp;quot;.class&amp;quot;, &amp;quot;&amp;quot;);
+Class testClass = Class.forName(className);
+// Prevent recursion
+if (OrderedTestSuite.class.equals(testClass)) {
+continue;
+}
+if (isTestClass(testClass)) {
+testClasses.add(testClass);
+}
+}
+return testClasses;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**
+*&lt;/p>
+&lt;ul>
+&lt;li>@param clazz Class to check&lt;/li>
+&lt;li>@return &lt;code>true&lt;/code> if the given Class is a&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> usable implementation of {@link Test}
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static boolean isTestClass(Class clazz)
+throws Exception {
+int modifiers = clazz.getModifiers();
+if (Modifier.isAbstract(modifiers)
+|| Modifier.isInterface(modifiers)
+|| Modifier.isPrivate(modifiers)) {
+return false;
+}&lt;/p>
+&lt;pre>&lt;code>return Test.class.isInstance(clazz.newInstance());
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>@return The root directory of the Java Test sources.
+*/
+private static File getRootOfTestTree() {
+String meAsClasspathResource = OrderedTestSuite.class
+.getResource(
+OrderedTestSuite.class.getSimpleName()
++ &amp;quot;.class&amp;quot;).getFile()
+.replace('/', File.separatorChar);
+String myLocation = OrderedTestSuite.class
+.getCanonicalName();
+myLocation = myLocation
+.replace('.', File.separatorChar);&lt;/li>
+&lt;/ul>
+&lt;pre>&lt;code>if (meAsClasspathResource == null
+|| !meAsClasspathResource.contains(myLocation)) {
+throw new RuntimeException(
+&amp;quot;Can not find the class resource for &amp;quot;
++ OrderedTestSuite.class.getCanonicalName());
+}
+meAsClasspathResource = meAsClasspathResource
+.substring(0,
+meAsClasspathResource.indexOf(myLocation));
+File dir = new File(meAsClasspathResource);
+if (!dir.exists()) {
+throw new RuntimeException(&amp;quot;The directory &amp;quot;
++ dir.getAbsolutePath() + &amp;quot; does not exist.&amp;quot;);
+}
+if (!dir.isDirectory()) {
+throw new RuntimeException(dir.getAbsolutePath()
++ &amp;quot; is not a directory.&amp;quot;);
+}
+return dir;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Recursively iterates through the nextFiles array to&lt;/li>
+&lt;li>find all test files. which it subsequently returns.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>@param allTestFilesSoFar&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> new Files will be added to this List
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;li>@param nextDir&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> The directory to scan for java Test files
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static void getTestFiles(
+List allTestFilesSoFar, File nextDir) {
+File[] files = nextDir.listFiles();
+for (int t = 0; t &amp;lt; files.length; t++) {
+File nextFile = files[t];
+if (nextFile.isDirectory()) {
+getTestFiles(allTestFilesSoFar, nextFile);
+} else if (nextFile.getName().endsWith(&amp;quot;Test.class&amp;quot;)
+|| nextFile.getName().endsWith(&amp;quot;Suite.class&amp;quot;)) {
+allTestFilesSoFar.add(nextFile);
+}
+}
+}
+}
+[/sourcecode]&lt;/p></description></item><item><title>Your Maven Java WEB project in Eclipse WTP</title><link>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</link><pubDate>Fri, 28 Jan 2011 22:51:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</guid><description>
+&lt;p>&lt;a href="http://www.eclipse.org/webtools/">&lt;img src="wtp_logo_2010.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>In our company, all Java projects are setup with Maven configuration so that after a &amp;quot;mvn eclipse:eclipse&amp;quot; any developer is generally good to go. One of these projects was a web project but would not transform into a WTP project. By running &amp;quot;mvn eclispe:eclipse&amp;quot; it became a Java project, but could not be added to a Server in Eclipse. It was not a WTP project.&lt;/p>
+&lt;p>I learned that the author of the project tried but never got the WTP plugin to work properly. Using the Google, I found more people who are having the same problem converting their existing Maven Java Web projects in Eclipse into a WTP project. There are even a few desperate articles describing how to edit your .project and .classpath files. Oh dear. This calls for an article on &lt;a href="http://www.rolfje.com">www.rolfje.com&lt;/a>.&lt;/p>
+&lt;!-- more -->It all came down to the maven-eclipse-plugin which would just not configure my project properly. I soon learned that in their infinite wisdom, the development team decided that the maven-eclipse-plugin no longer uses a default value for the _&lt;wtpversion>_ setting. Even if you have the _&lt;wtpapplicationxml>true&lt;/wtpapplicationxml>_ element in your _pom.xml_, without the _&lt;wtpversion>_ tag the maven-eclipse-plugin will ignore all wtp project settings silently. So the solution was rather simple:
+&lt;p>**Short answer
+**The short answer to this fun evening full of Googling and reading is: Add the &lt;em>&lt;wtpversion>&lt;/em> tag to your maven-eclipse-plugin configuration, run &lt;em>&amp;quot;mvn clean eclipse:eclipse&amp;quot;&lt;/em> and refresh your project. That's it.&lt;/p>
+&lt;p>**The long version
+**For people who like to copy-paste (like me): Change your &lt;em>pom.xml&lt;/em> file in the root of your project to include the &lt;em>&lt;wtpapplicationxml>&lt;/em> and &lt;em>&lt;wtpversion>&lt;/em> tags as shown at the bottom of this example pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;46,47&amp;quot;]
+&lt;project>
+&lt;packaging>war&lt;/packaging>&lt;/p>
+&lt;dependencies>
+[...]
+&lt;/dependencies>
+&lt;build>
+&lt;resources>
+&lt;resource>
+&lt;directory>src/main/java&lt;/directory>
+&lt;includes>
+&lt;include>**/*.xml&lt;/include>
+&lt;include>**/*.xsd&lt;/include>
+&lt;include>**/*.wsdl&lt;/include>
+&lt;/includes>
+&lt;/resource>
+&lt;/resources>
+&lt;pre>&lt;code>&amp;lt;testResources&amp;gt;
+&amp;lt;testResource&amp;gt;
+&amp;lt;directory&amp;gt;src/test/java&amp;lt;/directory&amp;gt;
+&amp;lt;includes&amp;gt;
+&amp;lt;include&amp;gt;**/*.xml&amp;lt;/include&amp;gt;
+&amp;lt;/includes&amp;gt;
+&amp;lt;/testResource&amp;gt;
+&amp;lt;/testResources&amp;gt;
+&amp;lt;plugins&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;source&amp;gt;1.6&amp;lt;/source&amp;gt;
+&amp;lt;target&amp;gt;1.6&amp;lt;/target&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-war-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;2.1.1&amp;lt;/version&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-eclipse-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;wtpapplicationxml&amp;gt;true&amp;lt;/wtpapplicationxml&amp;gt;
+&amp;lt;wtpversion&amp;gt;2.0&amp;lt;/wtpversion&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;/plugins&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;/build>
+&lt;/project>
+[/sourcecode]
+&lt;p>Open a command prompt at the root of your project (where the_ pom.xml_ file is) and have maven re-fresh the project, like this:&lt;/p>
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+mvn clean eclipse:eclipse
+[/sourcecode]&lt;/p>
+&lt;p>Open eclipse, right click on the root of your project and select &amp;quot;refresh&amp;quot; (or press F5).&lt;/p>
+&lt;p>After you've done this, you should have &amp;quot;Web Project Settings&amp;quot; in the properties of the eclipse project. If you right-click on your defined servers in Eclipse, the project should show up in the &amp;quot;Add and Remove&amp;quot; dialog.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Eclipse 3.4.1, OSX and Java 1.6</title><link>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</link><pubDate>Sun, 28 Dec 2008 14:05:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/28/eclipse-341-osx-and-java-16/</guid><description>
+&lt;p>&lt;img src="afbeelding-22.png" alt="Eclipse application icon">&lt;/p>
+&lt;p>I recently downloaded &lt;a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/ganymede/SR1/eclipse-java-ganymede-SR1-macosx-carbon.tar.gz">Eclipse 3.4.1 for Mac OSX&lt;/a>, and tried starting it using the eclipse.app icon. It did not work, and I noticed a message in /var/log/system.log telling me that the JVM could not be loaded.&lt;/p>
+&lt;!-- more -->After some Googling, I found out that Eclipse is not compatible with the new 64bit version of JDK 1.6 for the Mac. After switching back to 1.5 (luckaly Apple ships all JVM's with it's OS) it all worked. Here's how you switch back to JDK 1.5 on a Mac:
+&lt;pre>&lt;code>cd /System/Library/Frameworks/JavaVM.framework/Versions
+sudo ln -fhsv 1.5 CurrentJDK
+&lt;/code>&lt;/pre>
+&lt;p>This makes the CurrentJDK link to point to the 1.5 installation of the Java JDK.&lt;/p>
+&lt;p>Bonus tip for today: While you're at it, increase the memory used by eclipse by opening the eclipse.app bundle (right click -&amp;gt; show package contents) and edit Contents/MacOS/eclipse.ini. Change the &amp;quot;-Xmx256m&amp;quot; line to read &amp;quot;-Xmx512m&amp;quot;, and eclipse should be much happier with you.&lt;/p>
+&lt;p>Ofcourse there's &lt;a href="http://help.eclipse.org/stable/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/running_eclipse.htm">lots more you can do there&lt;/a>, but I always say &amp;quot;keep it simple&amp;quot;.&lt;/p></description></item><item><title>Eclipse on Intel Macs</title><link>https://realrolfje.github.io/rolfje.com/2006/05/03/eclipse-on-intel-macs/</link><pubDate>Wed, 03 May 2006 15:47:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/05/03/eclipse-on-intel-macs/</guid><description>
+&lt;p>&lt;a href="http://www.eclipse.org/">Eclipse&lt;/a> looks really nice on OS X. I can tell, I have it running on my mac Mini duo core. If you have problems getting it to start, and the logfile complains about linker errors, chances are you have the PPC version of the eclipse app file. To check this, Ctrl-click on the eclipse.app file. If it doesn't say &amp;quot;(Universal)&amp;quot; somewhere next to &amp;quot;Type:&amp;quot;, then you need to download a newer version. Get the &lt;a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.2RC2-200604281315/index.php">Eclipse 3.2 RC2&lt;/a> or higher, and make sure you download the &amp;quot;Mac OSX (Mac/Carbon)&amp;quot; version.&lt;/p>
+&lt;!-- more -->I have milestone 5 running here, because I didn't pay attention when downloading. I will upgrade to RC2 tommorow I guess...
+&lt;p>&lt;strong>Update:&lt;/strong> I was worried about not being able to develop older java versions. Particularly installing an older version of Java on my Mac worried me. But Eclipse gave me a nice surprise: OS X has all Java versions installed by default (1.3 up to 1.5), and eclipse auto-detects them! Brilliant! Next up: Installing Maven.&lt;/p>
+&lt;p>&lt;img src="o_afbeelding-1.jpg" alt="Eclipse showing the Java VM’s">&lt;/p></description></item></channel></rss>

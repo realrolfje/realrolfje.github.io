@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>iphoto on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/iphoto/</link><description>Recent content in iphoto on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 14 Aug 2011 22:34:22 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/iphoto/index.xml" rel="self" type="application/rss+xml"/><item><title>Fixing Photo Creation Dates</title><link>https://realrolfje.github.io/rolfje.com/2011/08/15/fixing-photo-creation-dates/</link><pubDate>Sun, 14 Aug 2011 22:34:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/08/15/fixing-photo-creation-dates/</guid><description>
+&lt;p>&lt;a href="http://www.perpetualkid.com/beach-vacation-countdown-timer.aspx">&lt;img src="timr-1003.jpeg" alt="Count down to your vacation">
+&lt;/a>You know how it is on vacation. You take your camera, shoot pictures, and when you get home you see that you forgot to set the date/time on your camera. Even worse: your wife also took a camera with her, and she actually read the manual and set the time correctly. So now you have two sets of photos with mismatching date/times. Now what?&lt;/p>
+&lt;p>It turns out that there is actually a pretty simple trick to solve this, and you don't even haven to install &lt;a href="http://www.sno.phy.queensu.ca/~phil/exiftool/index.html">exiftool&lt;/a> or do funny command line voodo. If you have iPhoto and a mouse, here's what you do:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. [![The Apple Clock](schermafbeelding-2011-08-14-om-23-13-28.png)
+&lt;/code>&lt;/pre>
+&lt;p>](schermafbeelding-2011-08-14-om-23-13-28.png)Open &amp;quot;Date &amp;amp; Time Preferences&amp;quot; on your Mac and click on the &amp;quot;Date &amp;amp; Time&amp;quot; tab. You should see a clock like the one on the right. With each camera you took on your trip, take a picture of this clock. You don't have to press the shutters all at once, just do this one camera at a time. It also doesn't have to be your Mac's clock, as long as you shoot the same clock with all the cameras.
+2. Import the images of all the cameras in iPhoto.
+3. Make smart albums (File, New, Smart album…)per Camera type. So if you have a Canon and an Olympus, make one smart album called &amp;quot;Canon&amp;quot; with only the Canon's photos in it, and one &amp;quot;Olympus&amp;quot; smart album with only the Olympus photo's in it:[&lt;img src="screen-shot-2011-08-15-at-00-01-57.png?w=300" alt="iPhoto Smart Album for Canon">&lt;/p>
+&lt;p>](screen-shot-2011-08-15-at-00-01-57.png)
+4. For each smart album, reverse the sort order so that the photo of the clock you just took is the first in the album. (View, Sort order, Descending).
+5. Select all the photo's in the &amp;quot;Canon&amp;quot; smart album, open the &amp;quot;Photos&amp;quot; menu, and select &amp;quot;Adjust date and time&amp;quot;. You'll see the clock you shot with this camera in the thumbnail. Copy the time of the clock in the &amp;quot;Adjusted:&amp;quot;field. All other photo's for that camera will be adjusted, because you selected all photo's in the album:[&lt;img src="screen-shot-2011-08-14-at-23-47-15.png" alt="iPhoto set date and time">&lt;/p>
+&lt;p>](screen-shot-2011-08-14-at-23-47-15.png)
+6. Repeat step 5 for the &amp;quot;Olympus&amp;quot; smart album.
+7. Click on the iPhoto &amp;quot;Photos&amp;quot; library where all your photos are. Your photos should now sync up perfectly.&lt;/p>
+&lt;p>There are some caveats with this procedure you should remember:&lt;/p>
+&lt;pre>&lt;code> * This only works if nobody changed the date/time settings in the camera between the time they took the photo's and the time you are importing them in iPhoto.
+* When cameras are in different time zones, the times will still be off. You'll have to compensate this yourself by adding/subtracting the timezone difference between the camera and the clock of your Mac.
+* Remember to select all photos of a specific camera before adjusting the time, or the trick won't work.
+&lt;/code>&lt;/pre>
+&lt;p>Happy editting!&lt;/p></description></item></channel></rss>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>maven on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/maven/</link><description>Recent content in maven on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 08 Jun 2015 21:43:22 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/maven/index.xml" rel="self" type="application/rss+xml"/><item><title>Solving the JAXB "unexpected element" problem</title><link>https://realrolfje.github.io/rolfje.com/2015/06/08/solving-the-jaxb-unexpected-element-problem/</link><pubDate>Mon, 08 Jun 2015 21:43:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/06/08/solving-the-jaxb-unexpected-element-problem/</guid><description>
+&lt;p>&lt;a href="1.jpg">&lt;img src="1.jpg?w=135" alt="-1">
+&lt;/a>If you are using &lt;a href="https://en.wikipedia.org/wiki/Java_Architecture_for_XML_Binding">JAXB&lt;/a> in a maven/java project to unmarshal an XML document and you get:&lt;/p>
+&lt;blockquote>javax.xml.bind.UnmarshalException: unexpected element (uri:"urn:iso:std:somestuff:xsd:somestuff", local:"Document"). Expected elements are (none)&lt;/blockquote>
+&lt;p>Or if you are using JAXB to marshal an XML document and you get:&lt;/p>
+&lt;blockquote>com.sun.istack.internal.SAXException2: unable to marshal type "generated.somestuff.Document" as an element because it is missing an @XmlRootElement annotation&lt;/blockquote>
+&lt;p>You have probably fallen victim of the fact that JAXB does not do &amp;quot;Simple Binding&amp;quot; by default. If your project is a maven project and you generated classes based on an xsd file, this is how you fix it (without changing the xsd file):&lt;/p>
+&lt;!-- more -->Tell JAXB to do "simple binding". To do so, create a binding file called src/main/resources/jaxb/simple-binding.xml with the following contents:
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot;]
+&amp;lt;jaxb:bindings jaxb:extensionBindingPrefixes=&amp;quot;xjc&amp;quot; version=&amp;quot;2.1&amp;quot;
+xmlns:jaxb=&amp;quot;http://java.sun.com/xml/ns/jaxb&amp;quot;
+xmlns:xjc=&amp;quot;http://java.sun.com/xml/ns/jaxb/xjc&amp;quot;&amp;gt;
+&lt;a href="jaxb:globalBindings">jaxb:globalBindings&lt;/a>
+&lt;a href="xjc:simple/">xjc:simple/&lt;/a>
+&amp;lt;/jaxb:globalBindings&amp;gt;
+&amp;lt;/jaxb:bindings&amp;gt;
+[/sourcecode]&lt;/p>
+&lt;p>Then, add the following options to the execution of your jaxb2-maven-plugin (highlighted):&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; highlight=&amp;quot;13,14,15&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.codehaus.mojo&lt;/groupId>
+&lt;artifactId>jaxb2-maven-plugin&lt;/artifactId>
+&lt;version>1.5&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>somestuff&lt;/id>
+&lt;goals>
+&lt;goal>xjc&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;clearOutputDir>false&lt;/clearOutputDir>
+&lt;extension>true&lt;/extension>
+&lt;bindingDirectory>${basedir}/src/main/resources/jaxb&lt;/bindingDirectory>
+&lt;bindingFiles>simple-binding.xjb&lt;/bindingFiles>
+&lt;staleFile>${project.build.directory}/jaxb2/.somestuff.StaleFlag&lt;/staleFile>
+&lt;packageName>generated.somestuff&lt;/packageName>
+&lt;schemaDirectory>${basedir}/src/main/resources/schemas&lt;/schemaDirectory>
+&lt;schemaFiles>somestuff.xsd&lt;/schemaFiles>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>You should be able to re-generate the jaxb code now, and parsing should work. In order to test if you have this problem, and to ensure that it does not come back after somebody changes your build file, create a unittest which marshals a java object into xml, and then unmarshalls the generated xml back into an object:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot;]
+// Create document objects (JAXB Generated classes)
+Document sourceDocument = new Document();
+sourcedocument.setSomeElement(new SomeElement());&lt;/p>
+&lt;p>JAXBContext jaxbContext = JAXBContext.newInstance(Document.class);&lt;/p>
+&lt;p>// Write Document
+File file = File.createTempFile(&amp;quot;sometempstuff&amp;quot;, &amp;quot;.xml&amp;quot;);
+FileWriter fileWr = new FileWriter(file);
+XMLOutputFactory xml = XMLOutputFactory.newFactory();
+XMLStreamWriter xmlStrWr = xml.createXMLStreamWriter(fileWr);
+xmlStrWr.writeStartDocument(&amp;quot;UTF-8&amp;quot;, &amp;quot;1.0&amp;quot;);
+Marshaller marshaller = jaxbContext.createMarshaller();
+marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+marshaller.marshal(sourceDocument, xmlStrWr);
+xmlStrWr.writeEndDocument();
+fileWr.close();&lt;/p>
+&lt;p>// Read Document
+FileInputStream fileInpStr = new FileInputStream(file);
+Unmarshaller unm = jaxbContext.createUnmarshaller();
+Document result = (Document) unm.unmarshal(fileInpStr);&lt;/p>
+&lt;p>// Test the parsedDocument here if you like.
+...&lt;/p>
+&lt;p>// Cleanup
+file.delete();
+[/sourcecode]&lt;/p>
+&lt;p>The reason for this blog is of course the fact that I expected this &amp;quot;Simple Binding&amp;quot; to be the default, as 80% of the people will want to do exactly this. I've found a lot of people suffering from this problem, and I found the documentation to be not very helpful.&lt;/p>
+&lt;p>I hope this blog post helps you get on with more important stuff.&lt;/p>
+&lt;p>Have fun!
+Rolf&lt;/p></description></item><item><title>Non-Java Binary Dependencies in Maven</title><link>https://realrolfje.github.io/rolfje.com/2013/07/18/non-java-binary-dependencies-in-maven/</link><pubDate>Thu, 18 Jul 2013 20:48:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/07/18/non-java-binary-dependencies-in-maven/</guid><description>
+&lt;p>&lt;a href="http://http://www.thinkgeek.com/">&lt;img src="binary-pillow.jpg" alt="binary-pillow">
+&lt;/a>Suppose you have a Java Server application, and some of the runtime binaries in that application are external to your application. Generated image files, compiled Silverlight components in your pages, or resource files which are managed by an external team.&lt;/p>
+&lt;p>Much like the jar files used by your application, these external binaries can be seen as dependencies, with versions. This blogpost assumes your project is built with Maven 2, because the real world &lt;a href="http://rolfje.wordpress.com/2012/12/02/the-world-is-not-a-green-field/">isn't always a greenfield project&lt;/a>.&lt;/p>
+&lt;p>Because Maven is designed around jar file dependencies, and a lot of it's internal decisions are based on file extensions, it looks like this problem can not be tackled with Maven. But there is a way to do this. It will decouple your sub-projects and make version and dependency management much better.&lt;/p>
+&lt;!-- more -->**Uploading the binaries files in a remote repository**
+&lt;p>The hardest part of this problem is getting the binary uploaded to your maven repository. It seems that there is no other way than disquising it as a jar file, which only leads to confusion. But it turns out that you can, actually upload a .exe file to the repository. To do so, place a pom.xml file in the root of the project from which you want to upload the binary file. You do not have to mavenize the whole project, we only use Maven to do the upload to the repository.&lt;/p>
+&lt;p>Find the file you want to deploy. It can be placed anywhere but I prefer to use the target directory so it looks maven-esque. Make sure you choose the &amp;quot;pom&amp;quot; packaging type so maven does not generate a jar for you.&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;11,16,23,24&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]&lt;project>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;packaging>pom&lt;/packaging>
+&lt;version>1.0-SNAPSHOT&lt;/version>
+&lt;name>Some executable component&lt;/name>
+&lt;build>
+&lt;plugins>
+&lt;plugin>
+&lt;groupId>org.codehaus.mojo&lt;/groupId>
+&lt;artifactId>build-helper-maven-plugin&lt;/artifactId>
+&lt;version>1.8&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>attach-artifacts&lt;/id>
+&lt;phase>package&lt;/phase>
+&lt;goals>
+&lt;goal>attach-artifact&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifacts>
+&lt;artifact>
+&lt;file>${basedir}/target/myexecutable.exe&lt;/file>
+&lt;type>exe&lt;/type>
+&lt;/artifact>
+&lt;/artifacts>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+&lt;/plugins>
+&lt;/build>
+&lt;/project>
+[/sourcecode]&lt;/p>
+&lt;p>When you run &amp;quot;maven install&amp;quot;, your exe file will be pushed to your local repository (more on using a remote repository further down).&lt;/p>
+&lt;p>&lt;strong>Downloading the binaries files from the remote repository&lt;/strong>
+In the project that will depend on your binary file, you want to copy it from your repository into your target directory at the compile stage. You can do this by adding the following plugin configuration to your pom:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;14,15,16,17,18&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+&lt;artifactId>maven-dependency-plugin&lt;/artifactId>
+&lt;executions>
+&lt;execution>
+&lt;id>copy-dependency&lt;/id>
+&lt;phase>compile&lt;/phase>
+&lt;goals>
+&lt;goal>copy&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifactItems>
+&lt;artifactItem>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;type>exe&lt;/type>
+&lt;overWrite>true&lt;/overWrite>
+&lt;outputDirectory>target&lt;/outputDirectory>
+&lt;/artifactItem>
+&lt;/artifactItems>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Multiple artifacts in a single dependency&lt;/strong>
+When the non-java project produces multiple files with the same extension, you will notice that the trick I just described will not work because you can only specify one file with one extension. This is because maven uses the extension to locate the exact file.&lt;/p>
+&lt;p>In order to deploy multiple files, it is best you bundle them in a zip and unpack them at the other end. In the non-java project, add the assembly plugin:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;2,15,17&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;artifactId>maven-assembly-plugin&lt;/artifactId>
+&lt;version>2.2-beta-2&lt;/version>
+&lt;executions>
+&lt;execution>
+&lt;id>generate-assembly&lt;/id>
+&lt;phase>package&lt;/phase>
+&lt;goals>
+&lt;goal>single&lt;/goal>
+&lt;/goals>
+&lt;/execution>
+&lt;/executions>
+&lt;configuration>
+&lt;descriptors>
+&lt;descriptor>src/maven/descriptor.xml&lt;/descriptor>
+&lt;/descriptors>
+&lt;finalName>${artifactId}&lt;/finalName>
+&lt;outputDirectory>target&lt;/outputDirectory>
+&lt;/configuration>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>We use so the zipfile will always have the same name in the target directory, which will make build-helper-maven-plugin configuration easier. It also makes it easier for non-maven scripts to find the file. Upon deploying to the repository, maven will fix the filename so don't worry about that too much.&lt;/p>
+&lt;p>The contents of src/maven/descriptor.xml can look like this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;21,22&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;assembly xmlns="http://maven.apache.org/POM/4.0.0"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+http://maven.apache.org/xsd/assembly-1.0.0.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">&lt;/p>
+&lt;formats>
+&lt;format>zip&lt;/format>
+&lt;/formats>
+&lt;p>&lt;includeBaseDirectory>false&lt;/includeBaseDirectory>&lt;/p>
+&lt;fileSets>
+&lt;fileSet>
+&lt;directory>target/binaries&lt;/directory>
+&lt;outputDirectory>&lt;/outputDirectory>
+&lt;includes>
+&lt;include>*.exe&lt;/include>
+&lt;include>*.dll&lt;/include>
+&lt;/includes>
+&lt;/fileSet>
+&lt;/fileSets>
+&lt;/assembly>
+[/sourcecode]
+&lt;p>In the java project, you don't need to change much. Instead of &amp;quot;copy&amp;quot;, you tell the dependency plugin to unzip the file into a directory:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;3,9,16,18&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;plugin>
+&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+&lt;artifactId>maven-dependency-plugin&lt;/artifactId>
+&lt;executions>
+&lt;execution>
+&lt;id>copy-dependency&lt;/id>
+&lt;phase>compile&lt;/phase>
+&lt;goals>
+&lt;goal>unpack&lt;/goal>
+&lt;/goals>
+&lt;configuration>
+&lt;artifactItems>
+&lt;artifactItem>
+&lt;groupId>com.rolfje.example&lt;/groupId>
+&lt;artifactId>executablestuff&lt;/artifactId>
+&lt;type>zip&lt;/type>
+&lt;overWrite>true&lt;/overWrite>
+&lt;outputDirectory>target/unpacked&lt;/outputDirectory>
+&lt;/artifactItem>
+&lt;/artifactItems>
+&lt;/configuration>
+&lt;/execution>
+&lt;/executions>
+&lt;/plugin>
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Deploying to a remote repository&lt;/strong>
+If the two builds run on two different machines, you may need an external repository. For larger projects, I'd recommend an external, locally managed repository not just for disctribution, but also for speed. Your team will have almost instant access to libraries, speeding up your (initial) builds. Installing a local &lt;a href="http://www.jfrog.com/home/v_artifactory_opensource_overview">jFrog Artifactory&lt;/a> is a good choice.&lt;/p>
+&lt;p>To make deployment to this external repository work, you need to add the following to your non-java pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;distributionManagement>&lt;/p>
+&lt;!-- final releases will be deployed to this repository -->
+&lt;repository>
+&lt;id>artifactory.releases&lt;/id>
+&lt;name>Artifactory releases&lt;/name>
+&lt;url>http://myartifactory.example.com/artifactory/libs-release-local&lt;/url>
+&lt;/repository>
+&lt;!-- snapshot releases will be deployed to this repository -->
+&lt;snapshotRepository>
+&lt;id>artifactory.snapshots&lt;/id>
+&lt;name>Artifactory snapshots&lt;/name>
+&lt;url>http://myartifactory.example.com/artifactory/libs-snapshots-local&lt;/url>
+&lt;/snapshotRepository>
+&lt;/distributionManagement>
+[/sourcecode]
+&lt;p>If you get an error like:&lt;/p>
+&lt;blockquote>Error deploying artifact: Failed to transfer file: ://myartifactory.example.com/artifactory/libs-snapshots-local/com.rolfje.example/1.0-SNAPSHOT/executablestuff-1.0-20130604.103146-1.pom. Return code is: 401&lt;/blockquote>
+&lt;p>Your artifactory is probably not configured to do anonymous deployments. Make sure you can access the artifactory with a userid and password, and add those to the ~/.m2/settings.xml of the machine which will deploy the binary artifacts.&lt;/p>
+&lt;p>I advise to use a special &amp;quot;deployment user&amp;quot; to do this, so you can share this configuration between builds and not depend on a user changig his password. The correct way to store a password for the Artifactory is &lt;a href="http://wiki.jfrog.org/confluence/display/RTF20/Using+Secured+Passwords+in+Settings.xml">explained here&lt;/a>.  Using the DESede encrypted password on your Artifactory profile page, the maven settings.xml file of the buildserver user can look like this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;settings>
+&lt;server>
+&lt;id>artifactory.releases&lt;/id>
+&lt;username>your-repository-username&lt;/username>
+&lt;password>{DESede}kIniw826kaluA1OPa865A==&lt;/password>
+&lt;/server>
+&lt;server>
+&lt;id>artifactory.snapshots&lt;/id>
+&lt;username>your-repository-username&lt;/username>
+&lt;password>{DESede}kIniw826kaluA1OPa865A==&lt;/password>
+&lt;/server>
+&lt;/settings>
+[/sourcecode]&lt;/p>
+&lt;p>And then, of course, you need your java project to know where to download the dependencies so add this to the pom.xml file in your binary project:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; autolinks=&amp;quot;false&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+&lt;repositories>
+&lt;repository>
+&lt;id>central&lt;/id>
+&lt;url>&lt;a href="http://myartifactory.example.com/repo">http://myartifactory.example.com/repo&lt;/a>&lt;/url>
+&lt;releases>
+&lt;enabled>true&lt;/enabled>
+&lt;checksumPolicy>fail&lt;/checksumPolicy>
+&lt;/releases>
+&lt;snapshots>
+&lt;enabled>true&lt;/enabled>
+&lt;checksumPolicy>fail&lt;/checksumPolicy>
+&lt;/snapshots>
+&lt;/repository>
+&lt;/repositories>
+[/sourcecode]&lt;/p>
+&lt;p>If you've reached the end of this blogpost without problems, you should now be able to build your binaries, have them uploaded with correct versions to your external repository, and your Maven/Java build server will download the correct versions of these dependencies at build time. Switching back and forth between tags on your Java project will automatically fetch the correct versions of the binaries, the same way as it does for your jar dependencies.&lt;/p>
+&lt;p>Happy coding!&lt;/p></description></item><item><title>Your Maven Java WEB project in Eclipse WTP</title><link>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</link><pubDate>Fri, 28 Jan 2011 22:51:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/01/29/your-maven-java-web-project-in-eclipse-wtp/</guid><description>
+&lt;p>&lt;a href="http://www.eclipse.org/webtools/">&lt;img src="wtp_logo_2010.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>In our company, all Java projects are setup with Maven configuration so that after a &amp;quot;mvn eclipse:eclipse&amp;quot; any developer is generally good to go. One of these projects was a web project but would not transform into a WTP project. By running &amp;quot;mvn eclispe:eclipse&amp;quot; it became a Java project, but could not be added to a Server in Eclipse. It was not a WTP project.&lt;/p>
+&lt;p>I learned that the author of the project tried but never got the WTP plugin to work properly. Using the Google, I found more people who are having the same problem converting their existing Maven Java Web projects in Eclipse into a WTP project. There are even a few desperate articles describing how to edit your .project and .classpath files. Oh dear. This calls for an article on &lt;a href="http://www.rolfje.com">www.rolfje.com&lt;/a>.&lt;/p>
+&lt;!-- more -->It all came down to the maven-eclipse-plugin which would just not configure my project properly. I soon learned that in their infinite wisdom, the development team decided that the maven-eclipse-plugin no longer uses a default value for the _&lt;wtpversion>_ setting. Even if you have the _&lt;wtpapplicationxml>true&lt;/wtpapplicationxml>_ element in your _pom.xml_, without the _&lt;wtpversion>_ tag the maven-eclipse-plugin will ignore all wtp project settings silently. So the solution was rather simple:
+&lt;p>**Short answer
+**The short answer to this fun evening full of Googling and reading is: Add the &lt;em>&lt;wtpversion>&lt;/em> tag to your maven-eclipse-plugin configuration, run &lt;em>&amp;quot;mvn clean eclipse:eclipse&amp;quot;&lt;/em> and refresh your project. That's it.&lt;/p>
+&lt;p>**The long version
+**For people who like to copy-paste (like me): Change your &lt;em>pom.xml&lt;/em> file in the root of your project to include the &lt;em>&lt;wtpapplicationxml>&lt;/em> and &lt;em>&lt;wtpversion>&lt;/em> tags as shown at the bottom of this example pom file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;xml&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; autolinks=&amp;quot;false&amp;quot; highlight=&amp;quot;46,47&amp;quot;]
+&lt;project>
+&lt;packaging>war&lt;/packaging>&lt;/p>
+&lt;dependencies>
+[...]
+&lt;/dependencies>
+&lt;build>
+&lt;resources>
+&lt;resource>
+&lt;directory>src/main/java&lt;/directory>
+&lt;includes>
+&lt;include>**/*.xml&lt;/include>
+&lt;include>**/*.xsd&lt;/include>
+&lt;include>**/*.wsdl&lt;/include>
+&lt;/includes>
+&lt;/resource>
+&lt;/resources>
+&lt;pre>&lt;code>&amp;lt;testResources&amp;gt;
+&amp;lt;testResource&amp;gt;
+&amp;lt;directory&amp;gt;src/test/java&amp;lt;/directory&amp;gt;
+&amp;lt;includes&amp;gt;
+&amp;lt;include&amp;gt;**/*.xml&amp;lt;/include&amp;gt;
+&amp;lt;/includes&amp;gt;
+&amp;lt;/testResource&amp;gt;
+&amp;lt;/testResources&amp;gt;
+&amp;lt;plugins&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;source&amp;gt;1.6&amp;lt;/source&amp;gt;
+&amp;lt;target&amp;gt;1.6&amp;lt;/target&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-war-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;version&amp;gt;2.1.1&amp;lt;/version&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;plugin&amp;gt;
+&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+&amp;lt;artifactId&amp;gt;maven-eclipse-plugin&amp;lt;/artifactId&amp;gt;
+&amp;lt;configuration&amp;gt;
+&amp;lt;wtpapplicationxml&amp;gt;true&amp;lt;/wtpapplicationxml&amp;gt;
+&amp;lt;wtpversion&amp;gt;2.0&amp;lt;/wtpversion&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&amp;lt;/plugins&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;/build>
+&lt;/project>
+[/sourcecode]
+&lt;p>Open a command prompt at the root of your project (where the_ pom.xml_ file is) and have maven re-fresh the project, like this:&lt;/p>
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+mvn clean eclipse:eclipse
+[/sourcecode]&lt;/p>
+&lt;p>Open eclipse, right click on the root of your project and select &amp;quot;refresh&amp;quot; (or press F5).&lt;/p>
+&lt;p>After you've done this, you should have &amp;quot;Web Project Settings&amp;quot; in the properties of the eclipse project. If you right-click on your defined servers in Eclipse, the project should show up in the &amp;quot;Add and Remove&amp;quot; dialog.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item></channel></rss>

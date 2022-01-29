@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>linux on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/linux/</link><description>Recent content in linux on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 09 Jun 2017 20:02:28 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Installing GPG keys for Debian Backports</title><link>https://realrolfje.github.io/rolfje.com/2017/06/09/installing-gpg-keys-for-debian-backports/</link><pubDate>Fri, 09 Jun 2017 20:02:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/06/09/installing-gpg-keys-for-debian-backports/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=agcRwGDKulw">&lt;img src="debian_logo.jpg" alt="">
+&lt;/a>For &lt;a href="https://letsencrypt.org/getting-started/">Let's Encrypt&lt;/a> to automatically renew certificates on your Raspberry Pi, you probably want to install &lt;a href="https://certbot.eff.org/">certbot&lt;/a>. The installation instructions of certbot tell you to make use of the &lt;a href="https://backports.debian.org/">Debian Backports&lt;/a> packages. Following the instructions to install backports packages into apt-get on raspbian (which is a &lt;a href="https://www.debian.org/releases/jessie/">Debian Jessie&lt;/a>), you will probably run into the following error:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1&amp;quot;]
+$ sudo apt-get update
+...
+W: GPG error: &lt;a href="http://ftp.debian.org">http://ftp.debian.org&lt;/a> jessie-backports InRelease:
+The following signatures couldn't be verified because the public
+key is not available: NO_PUBKEY 8B48AD6246925553 NO_PUBKEY
+7638D0442B90D010
+[/sourcecode]&lt;/p>
+&lt;!-- more -->For some reason the GPG keys (there are two listed above) of Debian Backports are not automatically fetched from the GPG keyservers. Using [this stackoverflow answer](https://stackoverflow.com/questions/1139127/how-to-trust-a-apt-repository-debian-apt-get-update-error-public-key-is-not-av#1139148), I fixed the GPG key problem as follows:
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,3,4,15,18&amp;quot;]
+$ sudo su -&lt;/p>
+&lt;p>$ gpg --keyserver pgp.mit.edu --recv-keys &lt;br>
+7638D0442B90D010 8B48AD6246925553
+gpg: requesting key 2B90D010 from hkp server pgp.mit.edu
+gpg: requesting key 46925553 from hkp server pgp.mit.edu
+gpg: key 2B90D010: public key &amp;quot;Debian Archive Automatic Signing Key (8/jessie) &lt;a href="mailto:ftpmaster@debian.org">ftpmaster@debian.org&lt;/a>&amp;quot; imported
+gpg: key 46925553: public key &amp;quot;Debian Archive Automatic Signing Key (7.0/wheezy) &lt;a href="mailto:ftpmaster@debian.org">ftpmaster@debian.org&lt;/a>&amp;quot; imported
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0 valid: 1 signed: 0 trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2018-08-19
+gpg: Total number processed: 2
+gpg: imported: 2 (RSA: 2)&lt;/p>
+&lt;p>$ gpg --armor --export 7638D0442B90D010 | apt-key add -
+OK&lt;/p>
+&lt;p>$ gpg --armor --export 8B48AD6246925553 | apt-key add -
+OK
+[/sourcecode]&lt;/p>
+&lt;p>After importing the keys, exit from the root and try the usual update:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,2&amp;quot;]
+$ exit
+$ sudo apt-get update
+Hit &lt;a href="http://ftp.debian.org">http://ftp.debian.org&lt;/a> jessie-backports InRelease
+...
+Reading package lists... Done
+[/sourcecode]&lt;/p>
+&lt;p>Presto! You can now proceeed with installing certbot, or any other package requiring debian backports.&lt;/p></description></item><item><title>Strange fix for SMB problems in Linux</title><link>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</link><pubDate>Mon, 28 Nov 2011 21:09:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/11/28/strange-fix-for-smb-problems-in-linux/</guid><description>
+&lt;p>&lt;a href="http://lunduke.com/?p=429">&lt;img src="images.jpeg" alt="Linux Sucks.">
+&lt;/a>Last week, the upgrade to Ubuntu 11 severely broke all carefully selected menu colors, graphics settings and icon sets. I gave up the fight after a few hours of effortless restoration work and switched to Linux Mint 11.&lt;/p>
+&lt;p>While setting up my machine and restoring the links to the company Windows file servers I could not connect. The password window would re-appear without any feedback. The fix was even stranger than the problem.&lt;/p>
+&lt;!-- more -->To analyze this strange problem, [@sastuvel](http://twitter.com/#!/sastuvel) took the keys and tried the following on the command prompt:
+&lt;p>[sourcecode light=&amp;quot;true&amp;quot;]
+$ smbclient //server/Share$ -U DOMAIN\rolf -d 2
+rlimit_max: increasing rlimit_max (1024) to minimum Windows
+ limit (16384)
+added interface eth0 ip=fe80::5e26:aff:fe12:5a23%eth0
+bcast=fe80::ffff:ffff:ffff:ffff%eth0
+netmask=ffff:ffff:ffff:ffff::
+added interface eth0 ip=172.17.100.74 bcast=172.17.255.255
+netmask=255.255.0.0
+Enter DOMAIN\rolf's password:
+tdb(unnamed): tdb_open_ex: could not open file
+/var/run/samba/gencache.tdb:
+Permission denied
+session setup failed: NT_STATUS_MORE_PROCESSING_REQUIRED
+did you forget to run kinit?
+[/sourcecode]&lt;/p>
+&lt;p>Of course we did run kinit and everything was up and running. No level of debug logging came up with something useful. After staring at this problem of a while I noticed that my hostname was &lt;em>&amp;quot;rolf-Latitude-E6510&amp;quot;&lt;/em>, which seemed a bit long. In a strange last resort voodo-chicken action I edited &lt;em>/etc/hostname&lt;/em> to change it to &lt;em>&amp;quot;dellmint&amp;quot;&lt;/em> and rebooted the machine.&lt;/p>
+&lt;p>Strangely, this solved the problem. So if you're running Linux (Mint) and have strange problems mounting SMB shares, check your hostname and change it to something simple and short. It might help.&lt;/p>
+&lt;p>And while you're at it, you can also install &lt;a href="http://www.webupd8.org/2011/02/touchpad-indicator-now-automatically.html">touchpad indicator&lt;/a> to disable your touchpad when you plug in your mouse. Why this isn't standard in every Linux distribution baffles me just as much as the blinking wifi indicator.&lt;/p></description></item><item><title>Installing Wubi 9.10</title><link>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</link><pubDate>Fri, 23 Apr 2010 20:40:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/04/23/installing-wubi-9-10/</guid><description>
+&lt;p>&lt;a href="schermafbeelding-2010-04-23-om-22-20-17.png">&lt;img src="schermafbeelding-2010-04-23-om-22-20-17.png?w=150" alt="Why I HATE Linux">
+&lt;/a>Ok, fist of all: DO NOT DOWNLOAD WUBI 9.10 as it contains a serious GRUB2 problem which will give you some headaches if you're new to Linux. Why I'm saying this? I just ran into this GRUB2 problem while installing the new Wubi 9.10. Here's what I did:&lt;/p>
+&lt;pre>&lt;code> 1. Downloaded Wubi 9.10 windows installer and ran it.
+2. Installer downloads stuff, and boots into Ubuntu installer
+3. After reboot, GRUB screen comes up with a loud beep and a prompt. Great.
+&lt;/code>&lt;/pre>
+&lt;p>Some googling finds a lot of Linux voodoo talking l33tspe4king nerds, but it did contain some info with which I managed to get things working:&lt;/p>
+&lt;!-- more -->At the GRUB2 screen,  issue the following _(italic)_ commands (things in red you have to figure out yourself, sorry. _&lt;tab>_ means press the tab key for autocompletion.):
+&lt;p>X=0 and Y=1 in most cases (Wubi install on C:)
+grub&amp;gt;&lt;em>ls (hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_&lt;/p>
+&lt;p>The long HEX string at the end of the line you get back is the UUID, you'll need that later.&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>insmod ntfs&lt;/em>
+grub&amp;gt;&lt;em>set root=(hd__X&lt;/em>_,&lt;strong>Y&lt;/strong>)_
+grub&amp;gt;_search --no-floppy --fs-uuid --set _&lt;em>UUID&lt;/em>
+grub&amp;gt;&lt;em>loopback loop0 /ubuntu/disks/root.disk&lt;/em>
+grub&amp;gt;&lt;em>set root=(loop0)&lt;/em>&lt;/p>
+&lt;p>if X was 0:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sda__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>if X was 1:
+grub&amp;gt;&lt;em>linux /boot/vmlinuz&lt;/em>_&lt;tab>__ root=/dev/sdb__Y__ loop=/ubuntu/disks/root.disk ro_&lt;/p>
+&lt;p>grub&amp;gt;&lt;em>initrd /boot/initrd.img&lt;/em>_&lt;tab>_
+grub&amp;gt;&lt;em>boot&lt;/em>&lt;/p>
+&lt;p>You should now see the normal Ubuntu. Log in with the user information you entered in the windows wubi installer, and start the update manager. This will get your GRUB2 installation updated (partly). When the update manager asks you to reboot, say &amp;quot;restart later&amp;quot;. Open a terminal and type in &amp;quot;&lt;strong>&lt;em>sudo update-grub2&lt;/em>&lt;/strong>” (don't forget, or you'll have to do the whole typing exercise, above,  again.&lt;/p>
+&lt;p>I hope this helps. The grub commands in this blogpost are originally posted by felixcorrales, &lt;a href="https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/477104/comments/76">here&lt;/a>, and the installer/reboot information is my own doing.&lt;/p></description></item></channel></rss>

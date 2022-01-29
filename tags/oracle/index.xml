@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>oracle on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/oracle/</link><description>Recent content in oracle on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 02 Jan 2015 09:51:16 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/oracle/index.xml" rel="self" type="application/rss+xml"/><item><title>Import/export an Oracle Schema using JDBC</title><link>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</link><pubDate>Fri, 02 Jan 2015 09:51:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/01/02/importexport-an-oracle-schema-using-jdbc/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=3j3tj1kV1hs">&lt;img src="61c1ee2ce9d31c894d188b7b17cacee90ffdece8bc4c4798d10100b7515820de.jpg" alt="Everybody gets a database!">
+&lt;/a>When doing integration testing or fixing a bug in a piece of Java code that uses Oracle as a database, being able to do quick exports and imports of your schema can be a big help. Sometimes just calling Oracle's imp/exp commandline tools from your code can be of help, but I was looking for something a bit more portable and less demanding on my local development machine. I found that Oracle's datapump functionality can be called from stored procedures, which in turn can be called from a normal JDBC statement.&lt;/p>
+&lt;!-- more -->Combining Oracle's information and questions like this one on StackOverflow, I've come up with a solution that allows me to call Java methods to import and export a database schema to a dumpfile, like so:
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; light=&amp;quot;true&amp;quot;]
+import(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+export(&amp;quot;myschema&amp;quot;, &amp;quot;myschema.dmp&amp;quot;);
+[/sourcecode]&lt;/p>
+&lt;p>These methods make use of regular JDBC calls, are implemented as follows:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot;]
+public static final String EXPORT_DIR = &amp;quot;/tmp&amp;quot;;&lt;/p>
+&lt;p>public void export(String schema, String fileName)
+throws SQLException, IOException {
+String sql = getFileContents(&amp;quot;export.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schema.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>public void import(String schema, String fileName)
+throws IOException, SQLException {
+String sql = getFileContents(&amp;quot;import.sql&amp;quot;);
+pStmt pStmt = dataSource
+.getConnection()
+.prepareStatement(sql);
+pStmt.setString(1, schemaName.toUpperCase());
+pStmt.setString(2, EXPORT_DIR);
+pStmt.setString(3, fileName);
+pStmt.execute();
+}&lt;/p>
+&lt;p>private String getFileContents(String fileName)
+throws IOException {
+InputStream in = this.getClass()
+.getResourceAsStream(fileName);
+return IOUtils.toString(in, &amp;quot;UTF-8&amp;quot;);
+}
+[/sourcecode]&lt;/p>
+&lt;p>As you can see in the code, I create prepared statements from two sql files which are located in the same Java package. The &amp;quot;export.sql&amp;quot; contains the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100)
+:= 'EXPORT_DIR_' || schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'EXPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump export schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.export.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>The &amp;quot;import.sql&amp;quot; looks very similar, containing the following code:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;sql&amp;quot;]
+DECLARE
+schemaname VARCHAR2(200) := ?;
+directoryname VARCHAR2(200) := ?;
+dumpfilename VARCHAR2(200) := ?;&lt;/p>
+&lt;p>directoryvariable VARCHAR(100) := 'EXPORT_DIR_'
+|| schemaname;&lt;/p>
+&lt;p>handle NUMBER;
+status VARCHAR2(20);
+BEGIN&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'CREATE OR REPLACE DIRECTORY '
+|| directoryvariable || ' AS '''
+|| directoryname || '''';&lt;/p>
+&lt;p>handle := DBMS_DATAPUMP.OPEN(
+operation =&amp;gt; 'IMPORT',
+job_mode =&amp;gt; 'SCHEMA',
+job_name =&amp;gt; 'datapump import schema '
+|| schemaname);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename,
+directory =&amp;gt; directoryvariable);&lt;/p>
+&lt;p>DBMS_DATAPUMP.ADD_FILE(
+handle =&amp;gt; handle,
+filename =&amp;gt; dumpfilename || '.import.log',
+directory =&amp;gt; directoryvariable,
+filetype =&amp;gt; DBMS_DATAPUMP.KU$_FILE_TYPE_LOG_FILE,
+reusefile =&amp;gt; 1);&lt;/p>
+&lt;p>DBMS_DATAPUMP.SET_PARAMETER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'table_exists_action',
+value =&amp;gt; 'REPLACE');&lt;/p>
+&lt;p>DBMS_DATAPUMP.METADATA_FILTER(
+handle =&amp;gt; handle,
+name =&amp;gt; 'SCHEMA_EXPR',
+value =&amp;gt; 'IN (''' || schemaname || ''')');&lt;/p>
+&lt;p>DBMS_DATAPUMP.START_JOB(handle);
+DBMS_DATAPUMP.WAIT_FOR_JOB(handle, status);&lt;/p>
+&lt;p>EXECUTE IMMEDIATE 'DROP DIRECTORY '
+|| directoryvariable;
+END;
+[/sourcecode]&lt;/p>
+&lt;p>I recommend reading the Oracle Datapump documentation (albeit dangerously enterprisey) to see what exactly happens when these scripts run. For instance, dumpfiles are reused (overwritten) without notice, and logfiles are created next to the dumpfile.&lt;/p>
+&lt;p>In this example, I write the dumpfiles to the &amp;quot;/tmp&amp;quot; directory on the database server. You can change this to any directory you like, but please make sure that the directory exists, and that the oracle user or orainst group has write access in that directory. A good way to start is first make it work with the /tmp directory, as in this example. If Oracle can not (over)write a file for any reason, you will get incomprehensible error messages about incorrect parameters in the dbms.datapump.add_file() calls.&lt;/p>
+&lt;p>Enjoy your Oracle-free development environment!&lt;/p></description></item><item><title>Anonimatron: Quick Start</title><link>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</link><pubDate>Sun, 03 Nov 2013 14:33:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=opk4x7jzRS4">&lt;img src="homer.png" alt="Anonymous customer">
+&lt;/a>After reading my last blogpost on Anonimatron, you must have asked yourself &amp;quot;Great, but how do I actually use Anonimatron to de-personalize my database&amp;quot;? I tried my best to make basic Anonimatron configuration as self-explanatory as possible, just start it without any command line arguments and it will tell you.&lt;/p>
+&lt;p>Less adventurous or in a big hurry? This blogpost will show how simple it is to install and configure Anonimatron on an example MySQL database.&lt;/p>
+&lt;!-- more -->**Setting up a test database**
+&lt;p>To demonstrate what Anonimatron can do to your data, we will create a little test database to play with. Anonimatron connects to all kinds of databases, including MySQL, Postgress and Oracle. In this example, we use MySQL. Here are all the statements you need to create a little database with 2 tables, a user, and some &amp;quot;private&amp;quot; data:&lt;/p>
+&lt;p>[code lang=&amp;quot;sql&amp;quot; gutter=&amp;quot;false&amp;quot;]
+create database mydb;
+create user myuser identified by 'mypassword';
+grant all privileges on &lt;em>.&lt;/em> to 'myuser'@'localhost'
+identified by 'mypassword' with grant option;&lt;/p>
+&lt;p>create table mydb.userdata (
+id int not null auto_increment primary key,
+firstname varchar(20),
+lastname varchar(20),
+creditcardnr varchar(20)
+);&lt;/p>
+&lt;p>create table mydb.lastnames (
+id int not null auto_increment primary key,
+lastname varchar(20)
+);&lt;/p>
+&lt;p>insert into mydb.userdata
+(firstname,lastname, creditcardnr)
+values ('Homer', 'Simpson','1234'),
+('Marge', 'Simpson','5678'),
+('Ned', 'Flanders','3456'),
+('Charles', 'Burns','3456');&lt;/p>
+&lt;p>insert into mydb.lastnames (lastname)
+values ('Simpson'), ('Flanders'), ('Burns');
+[/code]&lt;/p>
+&lt;p>After all the hard work, you should be able to connect to the database with 'myuser' and see the &amp;quot;private&amp;quot; data in there:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Homer
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >1234
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Marge
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >5678
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ned
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Charles
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+[code language="sql" light="true"]
+select * from mydb.lastnames;
+[/code]
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Let's pretend that this is a copy of a production database, and you want to de-personalize or anonymize it.
+&lt;p>&lt;strong>Installing Anonimatron&lt;/strong>
+To anonymize your data,  &lt;a href="http://http://anonimatron.sourceforge.net">download Anonimatron&lt;/a> and unzip it in a directory of your choice. You should find an &amp;quot;anonimatron.sh&amp;quot; and &amp;quot;anonimatron.bat&amp;quot; file there. Depending on your system, run it without arguments. If you have java installed on your system you should see something like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh&lt;/p>
+&lt;p>This is Anonimatron 1.7, a command line tool to consistently
+replace live data in your database with data data which
+can not be traced back to the original data.
+You can use this tool to transform a dump from a production
+database into a large representative dataset you can
+share with your development and test team.
+Use the -configexample command line option to get an idea of
+what your configuration file needs to look like.&lt;/p>
+&lt;p>usage: java -jar anonimatron.jar
+-config The XML Configuration file describing what to
+anonymize.
+-configexample Prints out a demo/template configuration file.
+-dryrun Do not make changes to the database.
+-synonyms The XML file to read/write synonyms to. If the file
+does not exist it will be created.
+[/code]&lt;/p>
+&lt;p>Victory! You've installed Anonimatron. Yes, life can really be that easy.&lt;/p>
+&lt;p>&lt;strong>Configuring Anonimatron&lt;/strong>
+Next, we need to tell Anonimatron how to connect to our database, and which tables and columns to process and how. The hardest part of this is probably figuring out how to create a jdbc connect string. Anonimatron can help you with that. If you start anonimatron with the &amp;quot;-configexample&amp;quot; parameter, it will scan the jdbcdrivers directory for available and supported drivers, and will show you how a jdbc URL for any of these should look:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -configexample&lt;/p>
+&lt;p>Supported Database URL formats:
+Jdbc URL format By Driver
+jdbc:oracle:oci8:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@[HOST]:[PORT]:[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:oci:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:postgresql://[HOST]:[PORT]/[DB] org.postgresql.Driver
+jdbc:mysql://[HOST]:[PORT]/[DB] org.gjt.mm.mysql.Driver&lt;/p>
+&lt;p>Anonimatron will try to autodetect drivers which are
+stored in the lib directory. Add you driver there.&lt;/p>
+&lt;p>...
+[/code]&lt;/p>
+&lt;p>In this example, we have just created a MySQL database, so we'll use that URL and fill in the blanks. We use the rest of the configuration example and with some copy-pasting we come up with the following configuration:&lt;/p>
+&lt;p>[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;configuration jdbcurl="jdbc:mysql://localhost:3306/mydb"
+userid="mydata" password="mypassword">&lt;/p>
+&lt;table name="userdata">
+&lt;column name="firstname" type="ROMAN_NAME" />
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;column name="creditcardnr" type="RANDOMDIGITS"/>
+&lt;/table>
+&lt;table name="lastnames">
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;/table>
+&lt;/configuration>
+[/code]
+&lt;p>This simple configuration file will tell Anonimatron the following things:&lt;/p>
+&lt;pre>&lt;code> * How to connect to the mydb database
+* The values in username.firstname should be processed with the ROMAN_NAME Anonymizer. Anonymizers are little plugins which are able to generate data with certain properties, sometimes based on the original data. This particular Anonymizer generates Roman Names by picking syllables from a builtin list.
+* The values in username.lastname should be replaced by Elven names. This is almost identical to Roman names but with a different Syllable file.
+* The userdata.creditcardnr should be replaced by a set of random digits of the same length. In our case, 4 digits will be replaced by 4 differnt digits. Should you really need numbers which are semantically correct credit card numbers, you could write your own Anonymizer plugin. We'll cover that in a later blogpost.
+* The lastnames.lastname column is also an Elven name. Because of the way Anonimatron handles data, strings in this column will be processed exactly the same way as the userdata.lastname column, as we will see below.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Anonymize!&lt;/strong>
+Now that we have configured Anonimatron, it's time to start it up and tell it to use our configuration file and store synonyms. It will be finished in the blink of an eye, and your output should look somewhat like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -config config.xml -synonyms synonyms.xml&lt;/p>
+&lt;p>Anonymization process started&lt;/p>
+&lt;p>Jdbc url : jdbc:mysql://localhost:3306/mydb
+Database user : mydata
+To do : 2 tables.&lt;/p>
+&lt;p>Anonymizing table 'lastnames', total progress [100%, ETA 11:36:56 PM]
+Anonymization process completed.&lt;/p>
+&lt;p>Writing Synonyms to synonyms.xml ...[done].
+[/code]&lt;/p>
+&lt;p>If Anonimatron complains or does not run, you might want to check out the &lt;em>anonimatron.log&lt;/em> file for clues. Most log entries will be pretty self-explanatory. If not, please register an issue and we'll see what we can do to fix that.&lt;/p>
+&lt;p>Let's check the results. First, we can check what synonyms were generated by looking into the synonyms.xml file we told it to create:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ cat synonyms.xml
+[/code]
+[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;synonyms>
+&lt;string type="ELVEN_NAME" from="QnVybnM=" to="RGhvZWxsaWFu"/>
+&lt;string type="ELVEN_NAME" from="RmxhbmRlcnM=" to="QWhlbGhhbGRldGhlc3M="/>
+&lt;string type="ELVEN_NAME" from="U2ltcHNvbg==" to="QWhkdWxlbGhhbGVs"/>
+&lt;string type="ROMAN_NAME" from="SG9tZXI=" to="QmVudWxhdWJlbGl1cw=="/>
+&lt;string type="ROMAN_NAME" from="TmVk" to="RWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="TWFyZ2U=" to="QWxudWxhdWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="Q2hhcmxlcw==" to="QWxudXM="/>
+&lt;string type="RANDOMDIGITS" from="NTY3OA==" to="ODY5OA=="/>
+&lt;string type="RANDOMDIGITS" from="MTIzNA==" to="NDM0Mw=="/>
+&lt;string type="RANDOMDIGITS" from="MzQ1Ng==" to="NjEyNQ=="/>
+&lt;/synonyms>
+[/code]
+&lt;p>You'll note that the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; values look a bit garbled. This is because Anonimatron used Base64 encoding to store values of synonyms. This is so that we can store the values bit for bit, without worying about encodings. If you wanted to, you could easily decode these strings by writing a little program.&lt;/p>
+&lt;p>Even without decoding we can see some interesting things about this file. Remember we had lastnames configured as Elven names? Although we have 4 entries in the username table, we see only 3 Elven names. That is because Homer and Marge have the same lastname. These same synonyms are also used by the lastnames.lastname column. The same goes for the creditcard numbers. As might have noticed that Ned Flanders and Charles Burns used the same credit card number in this system.&lt;/p>
+&lt;p>Enough staring at XML. Let's get to what matters most: our database. First, let's see if the names and numbers have changed:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Benulaubelius
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >4343
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Alnulaucus
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >8698
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ecus
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Alnus
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+That looks much better. The first and lastnames are (almost) pronounceable names which probably would look realistic in a screenshot or testcase, yet there is no trace left of the original data that was there. When we check the lastnames table we see that lastnames are being translated consistently with the userdata table:
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.lastnames;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+This consistent behavior makes sure that queries where the userdata table and the lastnames table are joined based on lastname will still work.
+&lt;p>If you want to play some more with Anonimatron, recreate the original tables, add additional (overlapping) data and re-run anonimatron against it with the synonym file you just created. You'll notice that any &amp;quot;Simpson&amp;quot; lastname will be translated to &amp;quot;Ahdulelhalel&amp;quot; constently on each run. If you don't want that to happen, simply throw away the synonym file or don't tell Anonimatron to use it. You can also generate the synonym file first without doing anything to the database by using the -dryrun option, and later do the same run based on the synonyms generated earlier.&lt;/p>
+&lt;p>Remember: The private data &amp;quot;moved&amp;quot; from the database into the synonyms.xml file we created. So that becomes the new data to watch. Store it in a safe place where nobody can access it.&lt;/p>
+&lt;p>Have fun experimenting!&lt;/p></description></item><item><title>Having fun at J-Fall 2011</title><link>https://realrolfje.github.io/rolfje.com/2011/11/03/having-fun-at-j-fall-2011/</link><pubDate>Wed, 02 Nov 2011 22:09:14 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/11/03/having-fun-at-j-fall-2011/</guid><description>
+&lt;p>&lt;a href="img_2973-small.jpg">&lt;img src="img_2973-small.jpg?w=150" alt="J-Fall 2011">
+&lt;/a>This year's Dutch Java Nerd event called &lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/">J-Fall&lt;/a> was held in Nijkerk, in a beautiful location called &lt;a href="http://www.regardz.nl/locaties/event-centers/regardz-hart-van-holland-nijkerk.aspx?gclid=CK7bg8zwmKwCFUMm3godUFpdPQ">&amp;quot;Hart van Holland&amp;quot;&lt;/a> . With plenty of sessions by speakers from all over the world it promised to be a great day for Java enthusiasts, at a great location for meeting friends and colleagues. I took a day off from work and it was well worth it.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00024/">&lt;!-- more -->Opening by Bert Ertman&lt;/a>&lt;/strong>
+Bert starts the day by welcoming the 1000+ attendees in the main presentation room in &amp;quot;Hart van Holland&amp;quot;. After explaining what the day is going to bring and where to find rooms, food, drinks, and company booths, he goes on to tell how they tried to get better network coverage. All these nerds with their smartphones in one single place is asking for trouble. It turns out it's too expensive to get good data network so they didn't do that. Network connections proved to be spotty at best in the main building, but I had good 3G coverage outside the main building.&lt;/p>
+&lt;p>The organizer of &lt;a href="http://www.devoxx.com/display/DV11/Home">Devoxx&lt;/a> came by to say hi, and also told us that the J-Fall presentations are being professionally captured and the most popular ones are going to be online soon at &lt;a href="http://www.parleys.com/">parleys.com&lt;/a>. He closed off with the hilarious &lt;a href="http://www.youtube.com/watch?v=b-Cr0EWwaTk">&amp;quot;Java Life&amp;quot; Rap Music Video&lt;/a> . By the way if you liked that, you certainly will like the &lt;a href="http://www.youtube.com/watch?v=2UFc1pr2yUU">&amp;quot;Whole foods Parking Lot&amp;quot; video&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00025/">Java 7 Directors Cut&lt;/a>&lt;/strong>
+After the cool opening and videos the whole room was ready for some kick-ass sessions. Tomas Nilsson said that he would have a hard time topping the Java Life music video. And he did. Opening with a laughable slide containing a full page mandatory disclaimer text, the presentation was a terrible erratic drive through his very personal memory lane, and after 15 minutes he lost about 80% of the audience. I had absolutely no idea what point he was trying to make, and why nobody advised him to revise his presentation after he gave the same talk at JavaOne. The good thing was that because of the spotty network coverage, not all tweets during this presentation reached the twitter servers, and &lt;a href="http://twitter.com/#!/search/%23jfall">#jfall&lt;/a> was not trending.&lt;/p>
+&lt;p>During the small coffee break we gather around to see what sessions each of us want to join. Scanning the company booths in the main lobby learns that the world didn't change: Booths luring you with pens, mints, stickers, iPads and nice ladies in the booth who are almost always never representing the companies' people or culture. I did score some nice ball pens though :-)&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00071/">Building Highly Scalable Java Applications on Windows Azure&lt;/a>&lt;/strong>
+Microsoft being a big sponsor of this year's J-Fall, they have to have a keynote. And so they did. And it was a good one. Certainly after the below par presentation skills of Oracle, Microsoft has a nicely polished slides and a demo of Azure, a good story and good pace. During the demo the DNS switching is a bit slow and prevents some things to be shown. At the end of the talk, the speaker confidently retries and it now works. This results in a well-deserved warm applause from the audience. &lt;a href="http://twitter.com/#!/doortje123/status/131721454352998400">Well done Microsoft&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00050/">The Java EE7 Platform: Developing for the Cloud&lt;/a>&lt;/strong>
+With &amp;quot;Cloud&amp;quot; being the new buzzword nowadays, &lt;a href="http://www.java.net/blogs/arungupta/">Arun Gupta&lt;/a> did a keynote on where Java 7 is going, and how applications would fit in this cloud structure. I never heard the term &amp;quot;tenants&amp;quot; being used in this respect, which was interesting. The whole talk was a bit erratic, and after Java EE 6 fixing all the EJB gripes of EJB 3, I couldn't help but feeling that all these &amp;quot;enterprisey&amp;quot; terms are re-introduced in Java 7. The whole idea that you build an application but other people configure the actual building blocks that your application will be instantiated with, is a proven failure to me. Administrators don't have developer knowledge. Changing configuration of key components in your application will severely break it.&lt;/p>
+&lt;p>I came out of this session not feeling to hot about Java 7 and the whole components-in-the cloud and people renting instances idea. Too many roles, academic, over engineered, very Sun Enterprise EJB 2 feeling.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00066/">Don't call us - we'll push&lt;/a>&lt;/strong>
+A colleague advised be to go see &lt;a href="http://technology.amis.nl/blog/author/lucas">Lucas Jellema&lt;/a>. Lucas was the first speaker of the day who actually seemed to know what he was doing on stage. Although his slides were a bit crowded, he had a good story with many demos. It was a welcome change after Tomas and Arun, although Lucas didn't have any real new stuff. Polling, long-polls, asynchronus AJAX calls and the old request/response problem in http, and database triggers firing Java programs. Except for &lt;a href="http://en.wikipedia.org/wiki/WebSocket">Web Sockets&lt;/a> there was nothing new but nice to be reminded how these things actually work.&lt;/p>
+&lt;p>After Lucas' talk we went to get our complimentary lunch. Because we were relatively early, we had no problems getting the lunch package, and enjoyed our tasty sandwiches, milk, apples and Mars. Another free coffee and we're recharged and ready for the afternoon sessions.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00053/">Migrating Spring to Java EE 6&lt;/a>&lt;/strong>
+&lt;a href="http://www.linkedin.com/in/paulb01">Paul Bakker&lt;/a> &lt;a href="img_2974-small.jpg">&lt;img src="img_2974-small.jpg?w=150" alt="">
+&lt;/a>had clearly prepared his slides well, and insisted in giving his talk in English because it would be recorded. I thought this was a nice touch (in case you haven't noticed, I have this idea that everything you want to share with technical people should be in English). Paul explained the tactics to use when converting a Spring application to Java EE 6. Where to start, and how to keep your code compiling while doing the conversion.&lt;/p>
+&lt;p>I have worked on some large projects and although Paul mentions that some parts of the conversion will take a bit more time than others, I am not looking forward to convert my current 250+ thousand lines of code to Java EE 6 just yet. A plain Spring application may be easy, but as soon as you have Spring AOP, interesting Proxy beans and Custom Factory beans, you'd have to rewrite that code in Java EE6, which could take quite some time.&lt;/p>
+&lt;p>I predict converting to Java EE 6 will be much more expensive than upgrading to the next version of Spring for most serious enterprise level applications. I have a home project I'd try to convert first, maybe more on that later on this blog, who knows.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00056/">Extreme performance with the Disruptor&lt;/a>&lt;/strong>
+Although the title and the talk description in the schedule didn't hint too much about it, this talk was 100% about Queues. After some high level talk about Producers, Consumers and Queues, &lt;a href="http://blog.dutchworks.nl/author/allard/">Allard Buijze&lt;/a> drops a bomb and introduces some circle and the name &amp;quot;Disruptor&amp;quot;, without introduction. After a few slides everybody understands that this is some kind of &amp;quot;Circular Queue&amp;quot;.&lt;/p>
+&lt;p>We had a bit of a laugh when Allard uses 4 slides to explain about dirty cache line reads at CPU level and how the &lt;a href="http://code.google.com/p/disruptor/">Disruptor&lt;/a> prevents all that, which he then dismisses with &amp;quot;but that doesn't help much&amp;quot;.&lt;/p>
+&lt;p>The talk was entertaining and what I got from it is that the main reason why the &amp;quot;Disruptor&amp;quot; works faster than regular Queues, is that Producers and Consumers can inform each other about their position in the queue, which prevents Queue polling. I can't help but think that this can be done with regular Queue implementations as well, so maybe I missed something here.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.nljug.org/pages/events/content/jfall_2011/sessions/00058/">Java Tuning Puzzlers&lt;/a>&lt;/strong>
+For the final session for today most of us decided to go to &amp;quot;Java Tuning Puzzlers&amp;quot;, because it looked like fun. And it was. The presentation by &lt;a href="http://twitter.com/#!/kjkoster">Kees Jan Koster&lt;/a> and &lt;a href="http://twitter.com/#!/jpinpointcom">Jeroen Borgers&lt;/a> was fast, funny, interactive, hands-on and very refreshing. They showed some real-life performance problems they encountered in their work, and asked the audience to solve them. All Java nerds lit up and started shouting answers and funny remarks. Jeroen and particularly Kees Jan were very good in answering questions and snarky comments from the audience.&lt;/p>
+&lt;p>As the talk went into overtime and the organization was trying to cut it short, Jeroen and Kees Jan asked the audience &amp;quot;are we going to get beer, or are we going to finish this?&amp;quot;. The whole audience shouted &amp;quot;Finish it!&amp;quot; and we finished the last Puzzler.&lt;/p>
+&lt;p>No fancy new frameworks, no buzzword bingo, just plain old dry-coding and a plug for one of my favorite tools, findbugs &lt;a href="http://findbugs.sourceforge.net/">http://findbugs.sourceforge.net/&lt;/a> . It was the best session I had all day, and I actually went back to Kees Jan and Jeroen to compliment them with their awesome talk.&lt;/p>
+&lt;p>&lt;strong>Conclusion&lt;/strong>
+I might sound a bit critical here and there, but I had a great day. Being amongst fellow-nerds, talking tech talk, sharing funny stories, listening to interesting new developments and hearing other people's views on things was really refreshing. Next thing on my list: Try to get Kees Jan Koster to do at least one big main-track keynote at J-Spring or J-Fall next year, about any subject. Because he will at least keep the audience awake.&lt;/p>
+&lt;p>Thanks Bert and all of the NLJug people and sponsors who made this possible. See you all at J-Spring!&lt;/p>
+&lt;p>&lt;a href="img_2978-small.jpg">&lt;img src="img_2978-small.jpg" alt="Oracle J-Fall flowers">
+&lt;/a>&lt;/p></description></item><item><title>Transactions and Isolation levels</title><link>https://realrolfje.github.io/rolfje.com/2009/08/29/transactions-and-isolation-levels/</link><pubDate>Sat, 29 Aug 2009 21:16:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/08/29/transactions-and-isolation-levels/</guid><description>
+&lt;p>&lt;a href="http://www.ahajokes.com/cartoon/bagjoke.jpg">&lt;img src="safety_goggles.gif" alt="Safety googles">
+&lt;/a>At work, we have two applications which connect to the same database. For all kinds of business reasons, we need to make sure that only one of the applications accesses certain data at the same time. To do this, we use a row in a table as a &lt;a href="http://en.wikipedia.org/wiki/Semaphore_(programming)">semaphore&lt;/a>.&lt;/p>
+&lt;p>While working on the locking mechanism, we had a closer look at the Transaction Management and the Isolation Levels we were using. There is a lot of good documentation on Transaction and Isolation, but it tends to be over complete, elaborate and therefore hard to read. I'll try to share our insights with you in a slightly more digestable form (I hope).&lt;/p>
+&lt;p>&lt;strong>&lt;!-- more -->What is a Transaction&lt;/strong>
+Every (proper) database uses Transactions. A Transaction is a unit of work which you can undo (roll back) or save (commit) to the database. Generally, database clients tend to &amp;quot;Auto Commit&amp;quot; which effectively means that each of your actions on the database are executed immediately and can not be rolled back.&lt;/p>
+&lt;p>When you click through your client's settings, you can probably find an option to turn Auto Commit off. Now, at your first database write action (insert or update), a Transaction is started. The database will keep track of each of your write actions, and once you're finished, you can decide to keep the changes by &amp;quot;committing&amp;quot; the Transaction. You can also decide to revert all the changes you made and do a &amp;quot;rollback&amp;quot;, as long as the Transaction is not closed. Both Commit and Rollback close a transaction, so choose wisely.&lt;/p>
+&lt;p>&lt;strong>What is an Isolation Level&lt;/strong>
+Most databases allow more than one user to connect to the database. In order for you to do your work, you may require a stable database without changes. To protect yourself from seeing other peoples updates, you can set an &lt;a href="http://en.wikipedia.org/wiki/Isolation_(database_systems)">&amp;quot;Isolation Level&amp;quot;&lt;/a>. Generally, you set the isolation level at the time of starting a Transaction.&lt;/p>
+&lt;p>Isolation levels come in many different flavours, from &amp;quot;liberal&amp;quot; to &amp;quot;strict&amp;quot;:&lt;/p>
+&lt;pre>&lt;code> * _READ UNCOMMITTED_ - Allows you to see the database as it is right now. Doing he same query on a table twice is likely to produce different results as other people are updating the table, even if they haven't committed their transactions yet.
+* _READ COMMITTED_ - The database will only show you changes to the table which are commited. Doing the same query twice can still produce different results, but you're sure that those changes will not be olled back by the authors.
+* _REPEATABLE READ_ - The database will make sure that when you execute the same query twice, you will see the same data twice. It may have to lock the rows in the table to do this, which will prevent other people from updating them until you complete your transaction.
+* _SERIALIZABLE_ - The database will not only make sure you see the same data, but it will also make sure that all updates in the system are done in such a way that it seems as if there was only 1 user connected to the database at a time. This is the most &amp;quot;expensive&amp;quot; isolation level, and tends to be relatively slow.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Transaction is not Isolation.&lt;/strong>
+Although a Transaction may suggest that your changes are not written to the database until after your commit, it will write all changes directly to the tables. That means that anybody can see what you are doing to the database, depending on their Isolation levels. Mind you: &lt;em>their&lt;/em> isolation levels, not yours.&lt;/p>
+&lt;p>You can see a Transaction as your &amp;quot;undo buffer&amp;quot; if you will, and the &amp;quot;Isolation Level&amp;quot; as the filter through which you are looking at other people's actions to the database.&lt;/p>
+&lt;p>&lt;strong>How about our semaphores?&lt;/strong>
+Back to our semaphore problem. Reading about Transactions and Isolation Levels, we knew that both systems must do the &amp;quot;fetch&amp;quot; (a read and an update) of the semaphore within a single transaction, and both systems must use the &amp;quot;serializable&amp;quot; isolation level to make sure that it reads the correct, current value without having a chance of incorrectly fetching the smaphore.&lt;/p>
+&lt;p>What's funny about the serializable isolation level however, is that it does not prevent you from overwriting other people's values without knowing. Our example:&lt;/p>
+&lt;pre>&lt;code> 1. Application 1 reads the semaphore to be 0 and decides it can set it to 1.
+2. Application 2 reads the semaphore to be 0 and also decides it can set it to 1.
+3. Application 1 sets the semaphore to 1 and thinks it has the lock.
+4. Application 2 also sets the semaphore to 1 and thinks is has the lock.
+&lt;/code>&lt;/pre>
+&lt;p>This is clearly a problem. We learned that:&lt;/p>
+&lt;p>&lt;strong>Regardless of your isolation level or transaction usage, the last commit always wins.&lt;/strong>&lt;/p>
+&lt;p>There is, however one database on the market which at least fails in this situation. It's Oracle. When you use the &amp;quot;Serializable&amp;quot; isolation level, Oracle will prevent you from overwriting a row which was changed without your knowing about it. This changes our scenario as follows:&lt;/p>
+&lt;pre>&lt;code> 1. Application 1 reads the semaphore to be 0 and decides it can set it to 1.
+2. Application 2 reads the semaphore to be 0 and also decides it can set it to 1.
+3. Application 1 sets the semaphore to 1 and thinks it has the lock.
+4. Application 2 tries to set the semaphore to 1, but Oracle notices that the row has changed since the last read, and will fail to do the update. An error (ORA-08177) is thrown at the application, allowing you to re-read the lock and discover it has been taken.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Conclusion&lt;/strong>
+Generally, you will have 1 application connecting to 1 database. The application will use the same Transaction granularity and Isolation levels throughout, and you will not notive these interesting behaviours. As soon as you have multiple applications with different isolation levels connecting to the same databases, you are likely to run into interesting, sporadic irreproducable problems. Try to think about your Isolation strategies.&lt;/p>
+&lt;p>If I got you interested, I recommend reading &lt;a href="http://blog.xebia.com/2007/11/28/oracle-and-ora-08177/">this blogpost by Peter Veentjer&lt;/a> about this very same thing. Peter is a bit more technically correct than I am in this post.&lt;/p></description></item><item><title>How to add drivers to SQuirreLSQL.app</title><link>https://realrolfje.github.io/rolfje.com/2008/12/30/how-to-add-drivers-to-squirrelsqlapp/</link><pubDate>Mon, 29 Dec 2008 23:00:38 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/30/how-to-add-drivers-to-squirrelsqlapp/</guid><description>
+&lt;p>&lt;img src="afbeelding-2-copy.png" alt="SQuireL SQL on OSX with Oracle drivers">
+If you're a SQuirreL SQL fan like me, and you use a Mac, you probably also want to know how to add a driver to the OSX version of the application. Most people just point to an external jar file, but you can also add drivers to the application bundle.  There's not much to it, but it took me some time to discover that I actually had to edit the plist file in the bundle after adding the driver.&lt;/p>
+&lt;p>As you can see on the left, my SQuireLSQL.app now comes with the Oracle OCI and Thin driver built in, and because they are part of the application bundle, I can't wreck my installation by misplacing jarfiles or reconfiguring classpaths. Nice.&lt;/p>
+&lt;p>If you want to drivers to your SQuireLSQL.app yourself, here's what you need to do:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Download  and unpack SQuirreL SQL for OSX.
+2. Verify that is starts up, and that your drivers are missing. Close SQuirreL again.
+3. Right-click on SQuireLSQL.app and select &amp;quot;show package contents&amp;quot;.
+4. Browse to the **Contents/Resources/Java/lib** folder. Copy the jar file of your driver into this folder (I used ojdbc14.jar in this example)
+5. Double-click the **Contents/Info.plist** file. The default plist editor will show up.
+6. In the plist editor, find the **&amp;quot;Information Property List&amp;quot;/ Java/ClassPath** property.
+7. At the end of the value in this property, add a colon, and a reference to your copied library. In our example (see step 4) I had to add **&amp;quot;:$JAVAROOT/lib/ojdbc14.jar&amp;quot;**, excluding quotes, but including the colon (see other libraries in the path and use them as examples.
+8. Save the plist file, and double-click SQuireLSQL.app. Your driver should now have a blue checkmark next to it.
+&lt;/code>&lt;/pre>
+&lt;p>Please note that now you've added proprietary drivers to the bundle, you can no longer freely distribute it. Usage and distribution of your version of SQuireLSQL.app is now &amp;quot;contaminated&amp;quot; by the licences of the driver(s) you installed.&lt;/p>
+&lt;p>Happy SQL-ing!&lt;/p></description></item><item><title>Transporting Oracle CHARs over a dblink</title><link>https://realrolfje.github.io/rolfje.com/2008/11/04/transporting-oracle-chars-over-a-dblink/</link><pubDate>Tue, 04 Nov 2008 20:56:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/11/04/transporting-oracle-chars-over-a-dblink/</guid><description>
+&lt;p>&lt;img src="oracle_logo_small.gif" alt="Oracle Logo">
+At work, we've got two Oracle databases and a Java web application. One of the tasks of the web application is to copy tables over from one database to the other. Last week we ran into a funny problem which turns out to be an Oracle bug.&lt;/p>
+&lt;p>I've posted a question about this last week on &lt;a href="http://stackoverflow.com/questions/253971/why-does-char1-change-to-char3-when-copying-over-an-oracle-dblink">stackoverflow.com&lt;/a> but it seems that not many people are affected by this particular problem, or at least not many people know the answer to this particular little problem. We set out to tackle this and we did.&lt;/p>
+&lt;p>**&lt;!-- more -->The Setup
+** We have two databases, and want to transfer a complete table from the remote database to the local database, using a database link and a &amp;quot;create table as select&amp;quot;. For both databases, we can find the version and used character set with a few simple queries:&lt;/p>
+&lt;p>select * from v$version where banner like 'Oracle%';&lt;/p>
+&lt;p>select value from NLS_DATABASE_PARAMETERS
+where parameter='NLS_CHARACTERSET';&lt;/p>
+&lt;p>The results in our setup are:&lt;/p>
+&lt;table border="0" >
+&lt;tbody >
+&lt;tr >
+&lt;td > 
+&lt;/td>
+&lt;td >**Version**
+&lt;/td>
+&lt;td >**Character set**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**Remote:**
+&lt;/td>
+&lt;td >Oracle 10g Release 10.2.0.3.0
+&lt;/td>
+&lt;td >WE8ISO8859P1
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**Local:**
+&lt;/td>
+&lt;td >Oracle 9i Release 9.2.0.6.0
+&lt;/td>
+&lt;td >AL32UTF8
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+As you see, we transfer data between different versions of Oracle, and different character sets. Add the CHAR datatype into the mix, and an annoying little bug pops up.
+&lt;p>**The Test Data
+** On the remote database, we create a table and fill it with some fake data, like so:&lt;/p>
+&lt;p>create table foo
+   (vcharbyte varchar2(1 byte),
+    vcharchar varchar2(1 char),
+    charbyte  char(1 byte),
+    charchar  char(1 char));&lt;/p>
+&lt;p>insert into foo
+    values ('A', 'B', 'C', 'D');&lt;/p>
+&lt;p>Let's check how the datatypes of our new table look:&lt;/p>
+&lt;p>select column_name, data_type,
+data_length as bytes,
+char_length as chars
+from user_tab_columns
+where table_name like 'FOO';&lt;/p>
+&lt;table cellpadding="1" cellspacing="0" border="1" >
+&lt;tbody >
+&lt;tr bgcolor="#dddddd" >
+COLUMN_NAME
+DATA_TYPE
+BYTES
+CHARS
+&lt;/tr>
+&lt;tr >
+&lt;td >VCHARBYTE
+&lt;/td>
+&lt;td >VARCHAR2
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >VCHARCHAR
+&lt;/td>
+&lt;td >VARCHAR2
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >CHARBYTE
+&lt;/td>
+&lt;td >CHAR
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >CHARCHAR
+&lt;/td>
+&lt;td >CHAR
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+Everything looks fine. In the remote database, the data types are 1 byte in size, and 1 character in length, as expected.
+&lt;p>**Copying the table over
+** Log on to the local database. Setup a link to the remote database and create a local table with a &amp;quot;create table as select&amp;quot; statement:&lt;/p>
+&lt;p>create database link foo_link
+connect to foodb
+identified by foodb
+using 'foo_tns_entry';&lt;/p>
+&lt;p>create table bar as
+select * from foo@foo_link;&lt;/p>
+&lt;p>Everthing seems to be ok, and selecting the new data on the &amp;quot;bar&amp;quot; table seems to work. But there's a snag. When using JDBC to connect to the database, you might notice that the CHARBYTE column is padded with 2 spaces. Why? First we look at what happened to our data types:&lt;/p>
+&lt;p>select column_name, data_type,
+data_length as bytes,
+char_length as chars
+from user_tab_columns
+where table_name like 'BAR'&lt;/p>
+&lt;table cellpadding="1" cellspacing="0" border="1" >
+&lt;tbody >
+&lt;tr bgcolor="#dddddd" >
+COLUMN_NAME
+DATA_TYPE
+BYTES
+CHARS
+&lt;/tr>
+&lt;tr >
+&lt;td >CHARBYTE
+&lt;/td>
+&lt;td >CHAR
+&lt;/td>
+&lt;td >**3**
+&lt;/td>
+&lt;td >**3**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >CHARCHAR
+&lt;/td>
+&lt;td >CHAR
+&lt;/td>
+&lt;td >4
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >VCHARBYTE
+&lt;/td>
+&lt;td >VARCHAR2
+&lt;/td>
+&lt;td >**3**
+&lt;/td>
+&lt;td >**3**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >VCHARCHAR
+&lt;/td>
+&lt;td >VARCHAR2
+&lt;/td>
+&lt;td >4
+&lt;/td>
+&lt;td >1
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+You may notice something funny going on here. As mentioned earlier, the remote database uses the WE8ISO8859P1 character set, which uses 1 byte to store a character. The local database uses the AL32UTF8 character set, which uses 3 to 4 bytes to store a character. So in order to copy characters over Oracle reserves 4 bytes per character (see CHARCHAR and VCHARCHAR columns).
+&lt;p>For the data types we defined the size in bytes in, Oracle reserves 3 bytes for some reason. This is strange, because the AL32UTF8 character set has some 4 byte characters in it which never can be stored in those columns. Suppose Oracle says &amp;quot;but you defined length in bytes&amp;quot;, it still doesn't make sense. Why would I not choose to do conversion, but still reserve 3 times as much space for each byte? But wait, that's not all.&lt;/p>
+&lt;p>Lets look at the length of the datatypes in characters (which makes much more sense). When we define the length of the original column in characters, oracle converts the data properly, as you see for the &amp;quot;CHARCHAR&amp;quot; and &amp;quot;VCHARCHAR&amp;quot; columns. But, for the columns we defined size in bytes, Oracle screws up. Not only the the number of bytes gets scaled up, but the &lt;strong>number of characters also gets scaled up, and your content is padded with spaces&lt;/strong>. It seems as if Oracle has given us a 3 character column with the WE8ISO8859P1 character set in a AL32UTF8 database, but I did not do tests to prove this.&lt;/p>
+&lt;p>Oracle decided to handle the datatypes differently depending on how you defined it's length. Although I find that very obscure, the only difference in behaviour I would expect is that if I define size in bytes, it should stay that size in bytes in the new character set, because I was &amp;quot;planning to store bytes&amp;quot;.&lt;/p>
+&lt;p>So defining the size of character-based types in characters results in predictable behaviour. Defining the size of character-based types in bytes makes Oracle go &lt;a href="http://www.merriam-webster.com/dictionary/loopy">loopy&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Conclusion:&lt;/strong>
+Stay clear of the CHAR datatype, unless you really have to. If you want to use the CHAR type, make sure you always specify the size in characters, not in bytes. Not only will it prevent you from having this problem, it will also make your database scripts more concise and readable.&lt;/p>
+&lt;p>_P.S.
+Make sure you clean up both databases and the link:
+_&lt;em>drop table bar;
+drop database link foo_link;&lt;/em>&lt;/p>
+&lt;p>&lt;em>And on the remote database
+__ drop table foo;&lt;/em>&lt;/p></description></item><item><title>Killing oracle sessions, the easy (JDBC) way.</title><link>https://realrolfje.github.io/rolfje.com/2006/02/23/killing-oracle-sessions-the-easy-jdbc-way/</link><pubDate>Wed, 22 Feb 2006 20:27:40 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/23/killing-oracle-sessions-the-easy-jdbc-way/</guid><description>
+&lt;p>Does Oracle complain about not being able to drop a table for a currently connected user, but you are sure you disconnected? Do the sessions &amp;quot;hang&amp;quot; in &amp;quot;inactive&amp;quot; state? Just log on as system, and execute the following query: &lt;/p>
+&lt;pre>&lt;code>SELECT
+'ALTER SYSTEM KILL SESSION ''' || sid || ',' || serial# || '''; --',
+s.sid,
+s.serial#,
+s.osuser,
+s.username,
+s.program,
+status
+FROM v$session s
+WHERE status = 'INACTIVE';
+&lt;/code>&lt;/pre>
+&lt;p>You will get a list of statements you need to execute (just copy-pase) to kill the inactive sessions. Don't listen to the guys telling you to do intricate System Administrator stuff on a command prompt, just use any JDBC tool.&lt;/p>
+&lt;p>&lt;strong>EDIT:&lt;/strong> Single query which also lists the kill command if the &amp;quot;alter system kill session&amp;quot; trick did not work:&lt;/p>
+&lt;pre>&lt;code>SELECT
+'ALTER SYSTEM KILL SESSION ''' || s.sid || ',' || s.serial# ||
+'''; -- kill -9 ' || p.spid,
+s.sid,
+s.serial#,
+p.spid,
+s.username,
+s.program,
+s.status
+FROM v$session s, v$process p
+WHERE s.paddr = p.addr
+and (s.state='INACTIVE' or s.state='KILLED');
+&lt;/code>&lt;/pre>
+&lt;p>Thanks Bas en Jeroen!&lt;/p></description></item></channel></rss>

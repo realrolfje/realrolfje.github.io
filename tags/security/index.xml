@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>security on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/security/</link><description>Recent content in security on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 26 Apr 2018 20:38:12 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/security/index.xml" rel="self" type="application/rss+xml"/><item><title>Travis CI and Dependabot added to Anonimatron</title><link>https://realrolfje.github.io/rolfje.com/2018/04/26/travis-ci-and-dependabot-added-to-anonimatron/</link><pubDate>Thu, 26 Apr 2018 20:38:12 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/04/26/travis-ci-and-dependabot-added-to-anonimatron/</guid><description>
+&lt;p>&lt;figure class="float_left">&lt;a href="https://www.youtube.com/watch?v=wEhu57pih5w">&lt;img src="travis-ci-anonimyzed.png" width="80"/>&lt;/a>
+&lt;/figure>
+With new &lt;a href="https://www.eugdpr.org/">European rules like the GDPR&lt;/a> and local variations like the &lt;a href="https://autoriteitpersoonsgegevens.nl/nl/onderwerpen/avg-nieuwe-europese-privacywetgeving">Dutch AVG&lt;/a>, interest in &lt;a href="https://realrolfje.github.io/anonimatron/">Anonimatron&lt;/a> is increasing. Although I do not keep track of who is using it and where, sometimes new requirements do pop up. Recently a feature was added to &lt;a href="https://github.com/realrolfje/anonimatron/releases">Anonimatron 1.9.2&lt;/a> to also anonymize files.&lt;/p>
+&lt;p>In the wake of those additions, I planned to give &lt;a href="https://travis-ci.org/">Travis CI&lt;/a> a try to automate the builds. It turns out that Travis CI integrates beautifully with GitHub, and automatically builds branches and pull requests right out of the box.&lt;/p>
+&lt;p>At the office, we had a discussion about keeping libraries up to date with the maven dependency plugin for our client projects. We came up with a system to use the maven dependency plugin on a separate branch to automatically do that on our buildserver. It turns out that there is a service called &lt;a href="https://dependabot.com/">Dependabot&lt;/a> which does nearly the same thing. Dependabot looks at your GitHub project, and creates &lt;a href="https://github.com/realrolfje/anonimatron/pull/10">pull requests for each library it upgrades&lt;/a>.&lt;/p>
+&lt;p>All these services are free for Open Source projects, so Anonimatron would be a great candidate for testing them. I am pretty happy with the way it currently works, and getting this up and running was really simple:&lt;/p>
+&lt;ol>
+&lt;li>Make sure your Open Source project builds with any of the main stream build tools supported by Travis CI
+like Maven or Gradle. Try to keep the build as simple as possible.&lt;/li>
+&lt;li>Create an account with &lt;a href="https://travis-ci.org/">Travis CI&lt;/a> with your GitHub account. After registration,
+Travis CI shows you a list of your projects. Select one and follow the steps. After a few mouse clicks
+Travis CI should be building your project.&lt;/li>
+&lt;li>Create an account with &lt;a href="https://dependabot.com/">Dependabot&lt;/a>. As in step 2, select your project and
+follow the Dependabot guide to setting it up.&lt;/li>
+&lt;li>After a while you should see pull request arriving in your GitHub project, one for each upgraded library.
+Travis CI immediately builds those Pull Requests and a
+&lt;a href="https://github.com/realrolfje/anonimatron/branches">green tickmark or red cross&lt;/a> shows next to the branch.&lt;/li>
+&lt;/ol>
+&lt;p>There you go, your project now has automatic builds and automatic version upgrades, like a pro. Please note that in order to confidently upgrade libraries, you need to have proper tests! Look at the
+&lt;a href="https://github.com/realrolfje/anonimatron/tree/master/src/test/java/com/rolfje/anonimatron">Anonimatron Test Suite&lt;/a> to get an idea.&lt;/p>
+&lt;p>Happy coding!&lt;/p></description></item><item><title>Mattermost Delete Channel "fixed"</title><link>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</link><pubDate>Thu, 26 Oct 2017 15:58:01 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/10/26/mattermost-delete-channel-fixed/</guid><description>
+&lt;p>&lt;a href="delete-or-leave.jpg">&lt;img src="delete-or-leave.jpg" alt="">
+&lt;/a>Users of Mattermost have probably noticed the less-than-optimal interface design where de Delete option is right above the Leave option in the Channel menu. On a busy server, you can imagine having quite a few incidents where people accidentally completely delete a channel.&lt;/p>
+&lt;p>In the Open Source version of Mattermost, everybody van do anything, because there is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320">no sensible security model with roles&lt;/a>. Mattermost Inc. seems to think that the Open Source community is &lt;a href="https://github.com/mattermost/mattermost-server/issues/6320#issuecomment-302996954">not entitled to roles&lt;/a>, which I (and others with me) strongly disagree with.&lt;/p>
+&lt;p>&lt;a href="https://github.com/realrolfje/mattermost-platform">Forking Mattermost&lt;/a>, learning Golang and enabeling security, improving &lt;a href="https://github.com/mattermost/mattermost-server/issues/6321">a few other issues&lt;/a> for the open source community along the way is a plan. But there is a simpler workaround for people running Mattermost inside &lt;a href="https://en.wikipedia.org/wiki/Nginx">Nginx&lt;/a>.&lt;/p>
+&lt;!-- more -->Open _/etc/nginx/sites-enabled/mattermost_ and find the _"location"_ sections. Add the highlighted lines (this modifies one location, and adds a new one):
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; highlight=&amp;quot;15-18, 20-50&amp;quot; padlinenumbers=&amp;quot;false&amp;quot; gutter=&amp;quot;false&amp;quot;]
+location ~ /api/v[0-9]+/(users/)?websocket$ {
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection &amp;quot;upgrade&amp;quot;;
+client_max_body_size 50M;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code>if ($request_method = DELETE) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location ~ /api/v[0-9]+/channels/[\d\w]*$ {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;&lt;/p>
+&lt;pre>&lt;code># See https://stackoverflow.com/questions/4833238/nginx-conf-redirect-multiple-conditions#4939522
+if ($request_method = DELETE) {
+set $block_delete 1;
+}
+# Allow deletes originatig from this ip address.
+if ($remote_addr = 44.137.37.17) {
+set $block_delete 0;
+}
+if ($block_delete = 1) {
+return 403;
+break;
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+location / {
+client_max_body_size 50M;
+proxy_set_header Connection &amp;quot;&amp;quot;;
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Frame-Options SAMEORIGIN;
+proxy_buffers 256 16k;
+proxy_buffer_size 16k;
+proxy_read_timeout 600s;
+proxy_cache mattermost_cache;
+proxy_cache_revalidate on;
+proxy_cache_min_uses 2;
+proxy_cache_use_stale timeout;
+proxy_cache_lock on;
+proxy_pass http://127.0.0.1:8065;
+}
+[/sourcecode]&lt;/p>
+&lt;p>Restart nginx with the command &lt;em>&amp;quot;service nginx restart&amp;quot;&lt;/em>. After this modification, nobody can delete a channel. Crude but effective. If you have tips on how to parse the headers with nginx to allow certain users to access the DELETE methods, please let me know.&lt;/p>
+&lt;p>&lt;strong>Background:&lt;/strong>
+We run a chat server for (mostly Dutch) licensed HAM radio operators on our own &lt;a href="https://en.wikipedia.org/wiki/AMPRNet">44.x.x.x network segment&lt;/a> of the internet also known in the Netherlands as &lt;a href="https://www.hamnet.nl/">&amp;quot;hamnet&amp;quot;&lt;/a>. We wanted a modern chat service with mobile applications to spice up the HAM radio world, ping eachother on field days, share thoughts and links to information, and enable colaboration for the growing number &lt;a href="https://github.com/travisgoodspeed/md380tools">HAM radio programmers&lt;/a> working on &lt;a href="https://freedv.org/">open source&lt;/a> software.&lt;/p>
+&lt;p>The server is paid for and run by people who care about sharing. Although Mattermost is not our focus area, we do try to contribute to Mattermost with bug reports, &lt;a href="https://github.com/42wim/matterbridge/pull/176">fixes&lt;/a> and running the beta chat clients. Our usergroup is almost 500 people, and growing. Depending on events or contests roughly 20% of our users are actively reading and contributing to one or more channels:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td >[![](mattermost_users_hobbyscoop-month.png?w=150)
+](mattermost_users_hobbyscoop-month.png)
+&lt;/td>
+&lt;td >[![](mattermost_sessions_hobbyscoop-week.png)
+](mattermost_sessions_hobbyscoop-week.png)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Mattermost did mention their ["monday license program"](https://about.mattermost.com/mattermost-mondays/) in their responses, but as you can see we are already halfway their 1000 user limit and growing. We have no intention of sending any legal documents or statutes to a company which then decides if we can access our own existing content.
+&lt;p>From where we are standing, with the open source tools we use, Mattermost looks like an odd duck. Most of the open source tools we use and contribute to have common-sense safety and security built in, Linux, nginx, &lt;a href="http://www.haproxy.org/">haproxy&lt;/a> and &lt;a href="https://letsencrypt.org/">letsencrypt&lt;/a>  being a few strong examples. In contrast, the Mattermost team cripples the Open Source version with &lt;a href="https://github.com/mattermost/mattermost-server/issues/5935">weak passwords&lt;/a> and no implementation of even the most basic security roles. For a tool which pretends to be mature and safe enough to be exposed to the Internet, the workaround as described in this blogpost should not be needed.&lt;/p>
+&lt;p>Please help us convince the Mattermost Team of the importance of security in all versions of their products. Making money with support and features is okay, but basic common sense security should be the default for any open source project. We even think that improving security and speed makes Mattermost a more viable competitor against Slack and Telegram, to name two.&lt;/p>
+&lt;p>Open Source is about sharing, not about farting in the general direction of the very people contributing to it.&lt;/p></description></item><item><title>Installing GPG keys for Debian Backports</title><link>https://realrolfje.github.io/rolfje.com/2017/06/09/installing-gpg-keys-for-debian-backports/</link><pubDate>Fri, 09 Jun 2017 20:02:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2017/06/09/installing-gpg-keys-for-debian-backports/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=agcRwGDKulw">&lt;img src="debian_logo.jpg" alt="">
+&lt;/a>For &lt;a href="https://letsencrypt.org/getting-started/">Let's Encrypt&lt;/a> to automatically renew certificates on your Raspberry Pi, you probably want to install &lt;a href="https://certbot.eff.org/">certbot&lt;/a>. The installation instructions of certbot tell you to make use of the &lt;a href="https://backports.debian.org/">Debian Backports&lt;/a> packages. Following the instructions to install backports packages into apt-get on raspbian (which is a &lt;a href="https://www.debian.org/releases/jessie/">Debian Jessie&lt;/a>), you will probably run into the following error:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1&amp;quot;]
+$ sudo apt-get update
+...
+W: GPG error: &lt;a href="http://ftp.debian.org">http://ftp.debian.org&lt;/a> jessie-backports InRelease:
+The following signatures couldn't be verified because the public
+key is not available: NO_PUBKEY 8B48AD6246925553 NO_PUBKEY
+7638D0442B90D010
+[/sourcecode]&lt;/p>
+&lt;!-- more -->For some reason the GPG keys (there are two listed above) of Debian Backports are not automatically fetched from the GPG keyservers. Using [this stackoverflow answer](https://stackoverflow.com/questions/1139127/how-to-trust-a-apt-repository-debian-apt-get-update-error-public-key-is-not-av#1139148), I fixed the GPG key problem as follows:
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,3,4,15,18&amp;quot;]
+$ sudo su -&lt;/p>
+&lt;p>$ gpg --keyserver pgp.mit.edu --recv-keys &lt;br>
+7638D0442B90D010 8B48AD6246925553
+gpg: requesting key 2B90D010 from hkp server pgp.mit.edu
+gpg: requesting key 46925553 from hkp server pgp.mit.edu
+gpg: key 2B90D010: public key &amp;quot;Debian Archive Automatic Signing Key (8/jessie) &lt;a href="mailto:ftpmaster@debian.org">ftpmaster@debian.org&lt;/a>&amp;quot; imported
+gpg: key 46925553: public key &amp;quot;Debian Archive Automatic Signing Key (7.0/wheezy) &lt;a href="mailto:ftpmaster@debian.org">ftpmaster@debian.org&lt;/a>&amp;quot; imported
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0 valid: 1 signed: 0 trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2018-08-19
+gpg: Total number processed: 2
+gpg: imported: 2 (RSA: 2)&lt;/p>
+&lt;p>$ gpg --armor --export 7638D0442B90D010 | apt-key add -
+OK&lt;/p>
+&lt;p>$ gpg --armor --export 8B48AD6246925553 | apt-key add -
+OK
+[/sourcecode]&lt;/p>
+&lt;p>After importing the keys, exit from the root and try the usual update:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; light=&amp;quot;true&amp;quot; highlight=&amp;quot;1,2&amp;quot;]
+$ exit
+$ sudo apt-get update
+Hit &lt;a href="http://ftp.debian.org">http://ftp.debian.org&lt;/a> jessie-backports InRelease
+...
+Reading package lists... Done
+[/sourcecode]&lt;/p>
+&lt;p>Presto! You can now proceeed with installing certbot, or any other package requiring debian backports.&lt;/p></description></item><item><title>macOS Sierra SSH "Permission Denied"</title><link>https://realrolfje.github.io/rolfje.com/2016/11/12/macos-sierra-ssh-permission-denied/</link><pubDate>Sat, 12 Nov 2016 19:47:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2016/11/12/macos-sierra-ssh-permission-denied/</guid><description>
+&lt;p>&lt;a href="https://youtu.be/BweBCNBxJxM">&lt;img src="keychain-mac-tuto.png" alt="keychain-mac-tuto">
+&lt;/a>If you used DSA keys to log in to your SSH server and have upgraded your client machine to macOS Sierra (or OSX Sierra if you like), you probably ran into this problem:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_dsa
+Permission denied (publickey).
+[/sourcecode]&lt;/p>
+&lt;p>The answer to this problem is replacing the DSA key with an RSA key, but how do you do on the server when your only means for connecting is the OSX client machine you just upgraded? Here's how:&lt;/p>
+&lt;!-- more -->First, create a new 4096 bit RSA keypair on the local machine (don't delete your DSA keys yet!). Don't use anything less than 4096 bits, and protect it with a lengthy passphrase. This key will replace the DSA key later on.
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:OA3Vx8qb4kKRWYs8qsq5/EywaLLdwZdlCIITFPnRtt8 &lt;a href="mailto:george@macbook.local">george@macbook.local&lt;/a>
+The key's randomart image is:
++---[RSA 4096]----+
+|ooo . .. . |
+| + . o .. . o |
+|o o +.o= o o |
+| . o oB=. o |
+| . .=oS o |
+|. o.. .&lt;em>.Eo |
+|oo oo.o. . |
+|=o=. o. . |
+|o&lt;/em>+o. . |
++----[SHA256]-----+
+[/sourcecode]&lt;/p>
+&lt;p>Don't worry about that long passphrase, Sierra now &lt;a href="https://personalresearchblog.wordpress.com/2016/09/28/macos-sierra-ssh-key-passphrase-and-the-keychain/">stores that in your Keychain&lt;/a>. Now, log into your server by temporarily enabling ssh-dss public key support on the ssh command line, like so:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_dsa &lt;br>
+-o PubkeyAcceptedKeyTypes=+ssh-dss
+[/sourcecode]&lt;/p>
+&lt;p>If all went well, you should now be connected to your server, but with your old DSA key. The DSA support was disabled in Sierra because it is &lt;a href="https://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys#5100">no longer considered to be a safe option&lt;/a> as it is based on the discrete logarithm problem and the key is required to be just 1024 bits long.&lt;/p>
+&lt;p>What we need to do now is remove the DSA public key from the server and add the newly created RSA key. Start your editor with:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+server$ vim ~/.ssh/authorized_keys
+[/sourcecode]&lt;/p>
+&lt;p>Find the old DSA public key, remove it. Add the contents of the &lt;code>id_rsa.pub&lt;/code> on your client machine to this file on the server. Save the file with &lt;code>&amp;lt;esc&amp;gt;:wq&amp;lt;enter&amp;gt;&lt;/code>.&lt;/p>
+&lt;p>Now exit the server and reconnect with your new RSA key from the client:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+server$ exit
+client$ ssh -p 8123 &lt;a href="mailto:george@10.0.0.10">george@10.0.0.10&lt;/a> -i ~/.ssh/id_rsa
+[/sourcecode]&lt;/p>
+&lt;p>You should now see the welcome message from the server and the command prompt. Please note that the -i option is here for clarity; if your key is in &lt;code>~/.ssh/id_rsa&lt;/code> it will be used as default identity.&lt;/p>
+&lt;p>If everything worked, please delete the id_dsa key to prevent confusion. All operations should now be back to normal (but safer).&lt;/p>
+&lt;p>&lt;strong>Bonus 1: Tab-completion for SSH&lt;/strong>
+If you are tired of typing the long ssh commands and remembering ip addresses and key files, create a file called &lt;code>~/.ssh/config&lt;/code> and give it the following contents:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;h1 id="my-super-secret-server">My Super secret server&lt;/h1>
+&lt;p>Host secret-server
+HostName 10.0.0.1
+Port 8123
+User george
+IdentityFile ~/.ssh/id_rsa
+[/sourcecode]&lt;/p>
+&lt;p>After saving the file, you can use tab completion after the ssh command, and you will notice that the following command will work:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]
+client$ ssh secret-server
+[/sourcecode]&lt;/p>
+&lt;p>&lt;strong>Bonus 2: Per-server identity&lt;/strong>
+With the powers of the config file mentioned earlier, there is no longer a reason to have one key file or one userid per server. Suppose somebody accidentally gets a hold of a key file, or someone figures out a way to find a key for a bunch of packets between two machines. This would mean immediate compromise of all machines. Because there is no extra effort in using multiple keys, I use a new private key for each server. My &lt;code>~/.ssh/config&lt;/code> file looks similar to this:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;text&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;h1 id="my-super-secret-server-1">My Super secret server&lt;/h1>
+&lt;p>Host secret-server
+HostName 10.0.0.1
+Port 8123
+User george
+IdentityFile ~/.ssh/id_george_secret_rsa&lt;/p>
+&lt;h1 id="the-dmz-firewall">The DMZ firewall&lt;/h1>
+&lt;p>Host dmz-firewall
+HostName 10.0.0.21
+Port 8623
+User jack
+IdentityFile ~/.ssh/id_jack_dmz_fw_rsa
+[/sourcecode]&lt;/p>
+&lt;p>Because just like passwords, I never use the same private key twice.&lt;/p></description></item><item><title>Open a port in OSX Mavericks' Firewall</title><link>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</link><pubDate>Sat, 10 May 2014 13:57:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?feature=player_embedded&amp;amp;v=at6HrV5CTo8">&lt;img src="security.png" alt="Firewall">
+&lt;/a>The new firewall in Mavericks is great. For the common user. For a developer, not so much. If you are a Java developer like me, and you just need to open one port (say, 8080) so that the web application you’re working on is accessable from another computer, you can’t. I disabled the Firewall altogether for a few days, but it didn't feel right.&lt;/p>
+&lt;p>I googled around and to make a long story short, here’s how to open port 8080 on any interface to any application on your OSX Mavericks installation in 3 steps:&lt;/p>
+&lt;p>&lt;code>sudo vim /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Then add the following lines at the end of the file:&lt;/p>
+&lt;p>&lt;code># Open port 8080 for TCP on all interfaces pass in proto tcp from any to any port 8080&lt;/code>&lt;/p>
+&lt;p>Test (and, according to the documentation, load) your edits with:&lt;/p>
+&lt;p>&lt;code>sudo pfctl -vnf /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Reboot.&lt;/p>
+&lt;p>(I have found at least 5 pieces of voodoo to make the Firewall restart and reload, but none of them seemed to work reliably, so pardon the reboot)&lt;/p>
+&lt;p>You can close it by commenting out the lines in pf.conf and reboot again. If anybody knows of an easier way to do this, preferably in one terminal command, and without rebooting, let me know.&lt;/p>
+&lt;p>Hope this helps.&lt;/p></description></item><item><title>There's life without Google. Or iCloud. Or Facebook.</title><link>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</link><pubDate>Fri, 07 Mar 2014 22:41:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</guid><description>
+&lt;p>&lt;a href="https://threema.ch/en/">&lt;img src="appicon128.png" alt="Threema, the secure Whatsapp alternative">
+&lt;/a>Regular readers of this blog already know that I am &lt;a href="http://rolfje.wordpress.com/2011/07/03/1355/">not using dropbox&lt;/a>, and I was an Evernote user, but recently decided it became to dangerous and &lt;a href="http://rolfje.wordpress.com/?s=evernote">replaced it with my own scripts&lt;/a>. I had an interesting discussion on Twitter which made me decide to show you how I run my digital life without the help of Google, Facebook, Dropbox, Whatsapp or iCloud, and still be able to have all the functionality these services offer.&lt;/p>
+&lt;p>The search was hard and sometimes I need to reconsider some of the choices, but the last few years the selection of products was very stable and the setup has worked flawlessly. Searching for a secure replacement for Whatsapp or Google? It's in here.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tbody >
+&lt;tr >
+Original
+The Safer Alternative:
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Whatsapp
+&lt;/td>
+&lt;td >[**Threema**](https://threema.ch/en/). Hands-down the best safe messaging service. Easy to use, group chats, image and video transfers. Under the hood it always uses true end-to-end encryption, and does not store any data about you or contacts your addressbook while still being able to find your friends. Threema costs a mere €1,70 for the iPhone and €1,60 for Android, and is very clear about their revenue model. Sending a message is free of charge. No I don't use Telegram.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mail
+&lt;/td>
+&lt;td >**[Hushmail](https://www.hushmail.com/services/hushmail/)**. A Canadian email provider which at least claims it respects your privacy and is not bound to American legislation. I use their [Premium service](https://www.hushmail.com/premium/) which costs $35 a year. A bargain.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Search
+&lt;/td>
+&lt;td >**[DuckDuckGo](https://duckduckgo.com)**. Although there are some sceptics out there who argue that there is no way to verify how duckduckgo is any different than Google's search engine, I still think it is a better alternative. One of the most important ones is that they don't ["bubble"](http://dontbubble.us) you. Image searching is not possible yet. so I do fall back to Google for that every now and than, but only in a separate, private browser session with cleared cookies.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Maps
+&lt;/td>
+&lt;td >The Apple [**Maps**](http://appleinsider.com/articles/13/06/26/new-maps-app-in-os-x-mavericks-extends-tools-for-reporting-fixing-errors) app, or if you don't have a Mac or need to search online: [Mapquest](http://www.mapquest.com) provides a good alternative to Google maps. Not the prettiest interface, but any product other than a Google product gives them less data to harvest on me. Always remember: If you're not paying for the product, you're the product.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Calendar, Contacts
+&lt;/td>
+&lt;td >[**Owncloud**](http://owncloud.org). In my case, I have bought a $40 Raspberry Pi which is beautifully running Owncloud to sync Calendars over SSL between my iPhone and all my Macs. It requires a bit of Linux skills and isn't really safe "out of the box", but can be made pretty airtight. **Remember to close all ports and only access Owncloud over**** SSL** (most tutorials wrongly teach you otherwise), and don't expect high performance from the Raspberry when it comes to rendering browser pages. I've added a little script that sends backups to my file server via SMB.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >File synching (Dropbox)
+&lt;/td>
+&lt;td >[**SpiderOak**](https://spideroak.com/signup/referral/4b01a22f64d398afbd846637080bd2b4/). A true zero-knowledge encrypted file storage. With the new ["Hive" feature](https://spideroak.com/hive/) it behaves exactly like Dropbox, but has additional features like a backup service. Choose a safe password and store it somewhere secure, because Spideroak can not recover your password or your files if you loose it. I started with the 2GB free for life account, but it soon grew to a 50GB account. Great stuff, very reliable, safe.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Evernote
+&lt;/td>
+&lt;td >**[SpiderNote](http://rolfje.wordpress.com/2014/03/02/replace-evernote-with-spidernote/)**. It may be a bit cobbled together, but as an old Evernote fan I needed a good alternative and it should be able to sync between all my Macs. So I save my notes in a SpiderOak folder and search them with Spotlight. Not as fancy as Evernote, but the price (risk) of storing my data unencrypted on an American server became too high. **
+**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Facebook
+&lt;/td>
+&lt;td >[**Twitter**](https://twitter.com/rolfje#). I hate to dissapoint you, but Facebook is free of charge and they store your entire digital life. What do you think is Facebook's product precisely? Also, I see that you have 86.355 "friends" on Facebook. I hate to disappoint you but those are called "random strangers". Even if your account is *cough* private (except for Mark $uckeberg). I like to talk to people too, that's why I have this blog, and for the smaller chit-chat I use Twitter. My real friends are on Threema, or, if need be, I talk to them. It's very old-fashioned. I drive over and meet them in person. And sometimes they even come to my house. I know, crazy right? Old school.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >LinkedIn
+&lt;/td>
+&lt;td >None. I could hold the same rant for Facebook and LinkedIn alike. They're not there for you. You're there for them. I did make the mistake of creating a LinkedIn account a long time ago because people said "you need this". After quite a few mails from LinkedIn requesting me to endorse people, update my profile or water their plants, I realized that I was working for them, not the other way around. I cancelled and deleted my account. Guess what? I'm still alive and well. If you're a developer, you're better off by gaining community based reputation on sites like **[Stackoverflow](https://stackoverflow.com/users/21134/rolf)**.
+&lt;/td>
+&lt;/tr>
+&lt;tr valign="top" >
+&lt;td >Local Backups
+&lt;/td>
+&lt;td >**[Encrypted TimeMachine](http://support.apple.com/kb/PH11102)** and Time Capsule volumes. My local drives are also full-disk encrypted using Apple's built-in [FileVault 2](http://support.apple.com/kb/HT4790?viewlocale=en_US&amp;locale=en_US). There is a Mac Mini file server in the house which holds all familiy photos  so that we can view them on the TV for example. The photos are on a read-only fileshare and are backed up using Time Machine locally.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Remote/Offsite Backups
+&lt;/td>
+&lt;td >[**Crashplan Free**](https://www.code42.com/store/), sending the data on the TimeMachine drive on the fileserver to another fileserver at my parents' house. His fileserver backs up on my machine and vice-versa. One house can completely burn down and we still have all data, without it ever being uploaded to some unencrypted company server.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Why not Telegram?**
+A few words of advice on using Telegram: Whatever they tell you, the data is *not* (properly) encrypted and it is easy to tell: The data is [stored in their "cloud"](http://unhandledexpression.com/2013/12/17/telegram-stand-back-we-know-maths/) and provided to you on all your devices. Even worse: They are [showing your data to "potential friends"](http://mcleaver.blogspot.nl/2014/02/telegram-verses-whatsapp.html?m=1) who [do not have you in their contact](https://twitter.com/GVerbaan/status/436909531625697280) lists or may have never heard of you. They upload your complete address book to their servers. They also know the [geolocation of your phone](http://blog.hackapp.com/2013/12/telegram-secret-chat-geolocation-leak.html). Unencrypted. They have your data, and show it by leaking it. They can fix the leaks and tell you it's safe, but they still have your data. It's also fishy that they clearly [have money to pimp their server farm](https://twitter.com/telegram/status/437745646007631872), even when the app and the messages are free of charge. Who do you think is the product here?
+&lt;p>&lt;a href="https://www.netmess.org/only-threema-rated-uncritical-telegram-rated-critical-for-privacy/">&lt;img src="telegram.png" alt=""Come in to the dark side. We have privacy"">
+&lt;/a>&lt;/p></description></item><item><title>Replace Evernote with Spidernote</title><link>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</link><pubDate>Sun, 02 Mar 2014 19:30:22 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/02/replace-evernote-with-spidernote/</guid><description>
+&lt;p>&lt;a href="http://www.washingtonpost.com/wp-dyn/content/article/2010/07/28/AR2010072806141.html">&lt;img src="evernotensa.png" alt="Resistance is futile">
+&lt;/a>&lt;/p>
+&lt;p>In the past I have used Evernote extensively, it really helped me in my research for this blog and keeping track of meeting notes, todo lists and even making pictures of whiteboards at work searchable. As a product, there is no note taking app that can beat Evernote. But there is a little problem that has become a deal breaker for me, and that is basically the NSA and the way Americans, and particularly the American government seems to think about people's privacy and online security.&lt;/p>
+&lt;p>Evernote is an American company, which sadly has to comply with whatever ridiculous request by the U.S. government to turn over data of innocent people all over the world (yes, even outside the U.S. border, I know, it’s amazing). This, combined with the fact that Evernote clearly can not use zero-knowledge encryption because of the services it provides, makes that all the data you and I put into Evernote are at NSA’s fingertips at all times. If you find that as scary as I do, and you have a Mac, there is a way to solve this.&lt;!-- more -->&lt;/p>
+&lt;p>If you use Evernote to sync notes between multiple Macs, you have to solve the syncing problem first. Ofcourse Dropbox is a no-go, because that is an American company storing unencrypted data too. I’m &lt;a href="https://rolfje.wordpress.com/2011/07/03/1355/">using SpiderOak  since 2011&lt;/a>, and it is much better than Dropbox in many ways. Check it out.&lt;/p>
+&lt;p>If you’re using Evernote on your iPhone I do not have a solution for you yet. But as for me, that is not a big deal, I thought the iPhone is not the ideal note taking platform anyway as this old man is not very fast on the touch keyboard.&lt;/p>
+&lt;p>&lt;a href="spidy_5407spx_02.jpg">&lt;img src="spidy_5407spx_02.jpg" alt="Spidernote Icon">
+&lt;/a>With all that out of the way, let’s migrate away from Evernote and replace it with a smart script and some synced Spideroak folders. I like to call it ”SpiderNote”.&lt;/p>
+&lt;p>&lt;strong>1. Create a folder structure&lt;/strong>
+Inside your Spideroak shared folder or Hive, create a ”Spidernote” folder, and in that folder, create a ”notes” folder.&lt;/p>
+&lt;p>&lt;strong>2: Export all Evernote Notes&lt;/strong>
+Start up your trusty Evernote client and select all your notes. From the ”File” menu, select ”Export Notes…” and store them in a folder called ”Evernote”, inside the ”notes” folder you just created. You should now have a folder called Spidernote/notes/Evernote somewhere inside your Spideroak folder, or somewhere locally on your Mac.&lt;/p>
+&lt;p>&lt;strong>3: Getting Spotlight and Finder to work for you&lt;/strong>
+Open the Finder and press Cmd-, or select ”Preferences…” On the ”Advanced” tab, under ”When performing a Search” select ”Search the current Folder”. After you do this, you will find that when you open the notes folder in Finder, you can type some text and your old Evernote notes will popup. Look ma, no hands! And no Evernote!&lt;/p>
+&lt;p>&lt;a href="finder-search-settings.png">&lt;img src="finder-search-settings.png?w=450" alt="Finder Search Settings">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>4: Create a new template note&lt;/strong>
+OSX comes with a decent richtext editor, named ”TextEdit” which we are going to use for our note taking.Open TextEdit and save an empty file inside the notes folder which is called ”empty.rtf”. This will be your note template, the start of every new note. Remember you can set preferences that are stored with this file, like the default font and colors and tabs if you like.&lt;/p>
+&lt;p>&lt;strong>5: Script to create a new note&lt;/strong>
+Create a file called ”newnote.command” in the Spidernote folder and copy/paste the following contents into it:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot;]
+#!/bin/bash
+date=&lt;code>date +%Y%m%d-%H%M%S&lt;/code>
+BASEDIR=$(dirname $0)
+cd $BASEDIR&lt;/p>
+&lt;p>notesdirectory=&amp;quot;notes/${date}&amp;quot;&lt;/p>
+&lt;p>clear
+echo &amp;quot;Note will be stored in ${BASEDIR}/${notesdirectory}.&amp;quot;
+echo &amp;quot;Type title/filename for note (without extension):&amp;quot;
+read filename&lt;/p>
+&lt;p>if [[ X&amp;quot;&amp;quot; = X&amp;quot;$filename&amp;quot; ]]; then
+filename=&amp;quot;note.rtf&amp;quot;;
+fi&lt;/p>
+&lt;p>mkdir &amp;quot;${notesdirectory}&amp;quot;
+cp notes/empty.rtf &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+rm -f lastnote.rtf
+ln -s &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot; latestnote.rtf
+open -a TextEdit &amp;quot;${notesdirectory}/${filename}.rtf&amp;quot;
+[/sourcecode]&lt;/p>
+&lt;p>You should now have a folder structure which looks something like this:&lt;/p>
+&lt;p>&lt;a href="folder-structure-1.png">&lt;img src="folder-structure-1.png" alt="Spidernote Folder Structure">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>6: Add Spidernote to your Dock&lt;/strong>
+Drag the Spidernote folder next to your Trashcan in the doc (not IN your Trashcan, of course). Change the settings to have it’s icon show as a folder, and it’s context as a list. All set!&lt;/p>
+&lt;p>&lt;strong>7: Create your first note&lt;/strong>
+From the Dock, click on the Spidernote folder and click on ”newnote.command”. A Terminal window will pop up, asking you for the (optional) title of your note (this will be the filename of the *.rtf file, so that it is easier to scan your search results later). After you press ”enter”, TextEdit will come up and you can type away.&lt;/p>
+&lt;p>When you are done and close the editor, you can easily find your note by searching, or by the ”latest note” link which the script creates for you in the Spidernote folder, so that you always can return to what you were doing when you accidentally close that note.&lt;/p>
+&lt;p>That’s it for now. I know it does not OCR scan your images, and it is really a poor-man’s Evernote, but these days your private has become a valuable asset to scrupules people and it has to be protected.&lt;/p>
+&lt;p>I know that there are a lot of note taking apps out there but frankly none of them work for me. If you have any tips on how to solve the OCR and tagging/organizing stuff please let me know.&lt;/p>
+&lt;p>Oh and don't forget to &lt;a href="https://evernote.com/contact/support/kb/#!/article/23403793">deactivate your Evernote account and remove all its data&lt;/a>. After all, that's what started all this sad stuff.&lt;/p></description></item><item><title>Anonimatron: Quick Start</title><link>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</link><pubDate>Sun, 03 Nov 2013 14:33:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/11/03/anonimatron-quick-start/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=opk4x7jzRS4">&lt;img src="homer.png" alt="Anonymous customer">
+&lt;/a>After reading my last blogpost on Anonimatron, you must have asked yourself &amp;quot;Great, but how do I actually use Anonimatron to de-personalize my database&amp;quot;? I tried my best to make basic Anonimatron configuration as self-explanatory as possible, just start it without any command line arguments and it will tell you.&lt;/p>
+&lt;p>Less adventurous or in a big hurry? This blogpost will show how simple it is to install and configure Anonimatron on an example MySQL database.&lt;/p>
+&lt;!-- more -->**Setting up a test database**
+&lt;p>To demonstrate what Anonimatron can do to your data, we will create a little test database to play with. Anonimatron connects to all kinds of databases, including MySQL, Postgress and Oracle. In this example, we use MySQL. Here are all the statements you need to create a little database with 2 tables, a user, and some &amp;quot;private&amp;quot; data:&lt;/p>
+&lt;p>[code lang=&amp;quot;sql&amp;quot; gutter=&amp;quot;false&amp;quot;]
+create database mydb;
+create user myuser identified by 'mypassword';
+grant all privileges on &lt;em>.&lt;/em> to 'myuser'@'localhost'
+identified by 'mypassword' with grant option;&lt;/p>
+&lt;p>create table mydb.userdata (
+id int not null auto_increment primary key,
+firstname varchar(20),
+lastname varchar(20),
+creditcardnr varchar(20)
+);&lt;/p>
+&lt;p>create table mydb.lastnames (
+id int not null auto_increment primary key,
+lastname varchar(20)
+);&lt;/p>
+&lt;p>insert into mydb.userdata
+(firstname,lastname, creditcardnr)
+values ('Homer', 'Simpson','1234'),
+('Marge', 'Simpson','5678'),
+('Ned', 'Flanders','3456'),
+('Charles', 'Burns','3456');&lt;/p>
+&lt;p>insert into mydb.lastnames (lastname)
+values ('Simpson'), ('Flanders'), ('Burns');
+[/code]&lt;/p>
+&lt;p>After all the hard work, you should be able to connect to the database with 'myuser' and see the &amp;quot;private&amp;quot; data in there:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Homer
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >1234
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Marge
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;td >5678
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ned
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Charles
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;td >3456
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+[code language="sql" light="true"]
+select * from mydb.lastnames;
+[/code]
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Simpson
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Flanders
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Burns
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+Let's pretend that this is a copy of a production database, and you want to de-personalize or anonymize it.
+&lt;p>&lt;strong>Installing Anonimatron&lt;/strong>
+To anonymize your data,  &lt;a href="http://http://anonimatron.sourceforge.net">download Anonimatron&lt;/a> and unzip it in a directory of your choice. You should find an &amp;quot;anonimatron.sh&amp;quot; and &amp;quot;anonimatron.bat&amp;quot; file there. Depending on your system, run it without arguments. If you have java installed on your system you should see something like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh&lt;/p>
+&lt;p>This is Anonimatron 1.7, a command line tool to consistently
+replace live data in your database with data data which
+can not be traced back to the original data.
+You can use this tool to transform a dump from a production
+database into a large representative dataset you can
+share with your development and test team.
+Use the -configexample command line option to get an idea of
+what your configuration file needs to look like.&lt;/p>
+&lt;p>usage: java -jar anonimatron.jar
+-config The XML Configuration file describing what to
+anonymize.
+-configexample Prints out a demo/template configuration file.
+-dryrun Do not make changes to the database.
+-synonyms The XML file to read/write synonyms to. If the file
+does not exist it will be created.
+[/code]&lt;/p>
+&lt;p>Victory! You've installed Anonimatron. Yes, life can really be that easy.&lt;/p>
+&lt;p>&lt;strong>Configuring Anonimatron&lt;/strong>
+Next, we need to tell Anonimatron how to connect to our database, and which tables and columns to process and how. The hardest part of this is probably figuring out how to create a jdbc connect string. Anonimatron can help you with that. If you start anonimatron with the &amp;quot;-configexample&amp;quot; parameter, it will scan the jdbcdrivers directory for available and supported drivers, and will show you how a jdbc URL for any of these should look:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -configexample&lt;/p>
+&lt;p>Supported Database URL formats:
+Jdbc URL format By Driver
+jdbc:oracle:oci8:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@[HOST]:[PORT]:[SID] oracle.jdbc.driver.OracleDriver
+jdbc:oracle:oci:@[SID] oracle.jdbc.driver.OracleDriver
+jdbc:postgresql://[HOST]:[PORT]/[DB] org.postgresql.Driver
+jdbc:mysql://[HOST]:[PORT]/[DB] org.gjt.mm.mysql.Driver&lt;/p>
+&lt;p>Anonimatron will try to autodetect drivers which are
+stored in the lib directory. Add you driver there.&lt;/p>
+&lt;p>...
+[/code]&lt;/p>
+&lt;p>In this example, we have just created a MySQL database, so we'll use that URL and fill in the blanks. We use the rest of the configuration example and with some copy-pasting we come up with the following configuration:&lt;/p>
+&lt;p>[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;p>&lt;configuration jdbcurl="jdbc:mysql://localhost:3306/mydb"
+userid="mydata" password="mypassword">&lt;/p>
+&lt;table name="userdata">
+&lt;column name="firstname" type="ROMAN_NAME" />
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;column name="creditcardnr" type="RANDOMDIGITS"/>
+&lt;/table>
+&lt;table name="lastnames">
+&lt;column name="lastname" type="ELVEN_NAME" />
+&lt;/table>
+&lt;/configuration>
+[/code]
+&lt;p>This simple configuration file will tell Anonimatron the following things:&lt;/p>
+&lt;pre>&lt;code> * How to connect to the mydb database
+* The values in username.firstname should be processed with the ROMAN_NAME Anonymizer. Anonymizers are little plugins which are able to generate data with certain properties, sometimes based on the original data. This particular Anonymizer generates Roman Names by picking syllables from a builtin list.
+* The values in username.lastname should be replaced by Elven names. This is almost identical to Roman names but with a different Syllable file.
+* The userdata.creditcardnr should be replaced by a set of random digits of the same length. In our case, 4 digits will be replaced by 4 differnt digits. Should you really need numbers which are semantically correct credit card numbers, you could write your own Anonymizer plugin. We'll cover that in a later blogpost.
+* The lastnames.lastname column is also an Elven name. Because of the way Anonimatron handles data, strings in this column will be processed exactly the same way as the userdata.lastname column, as we will see below.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;strong>Anonymize!&lt;/strong>
+Now that we have configured Anonimatron, it's time to start it up and tell it to use our configuration file and store synonyms. It will be finished in the blink of an eye, and your output should look somewhat like this:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ ./anonimatron.sh -config config.xml -synonyms synonyms.xml&lt;/p>
+&lt;p>Anonymization process started&lt;/p>
+&lt;p>Jdbc url : jdbc:mysql://localhost:3306/mydb
+Database user : mydata
+To do : 2 tables.&lt;/p>
+&lt;p>Anonymizing table 'lastnames', total progress [100%, ETA 11:36:56 PM]
+Anonymization process completed.&lt;/p>
+&lt;p>Writing Synonyms to synonyms.xml ...[done].
+[/code]&lt;/p>
+&lt;p>If Anonimatron complains or does not run, you might want to check out the &lt;em>anonimatron.log&lt;/em> file for clues. Most log entries will be pretty self-explanatory. If not, please register an issue and we'll see what we can do to fix that.&lt;/p>
+&lt;p>Let's check the results. First, we can check what synonyms were generated by looking into the synonyms.xml file we told it to create:&lt;/p>
+&lt;p>[code light=&amp;quot;true&amp;quot;]
+$ cat synonyms.xml
+[/code]
+[code language=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]&lt;/p>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;synonyms>
+&lt;string type="ELVEN_NAME" from="QnVybnM=" to="RGhvZWxsaWFu"/>
+&lt;string type="ELVEN_NAME" from="RmxhbmRlcnM=" to="QWhlbGhhbGRldGhlc3M="/>
+&lt;string type="ELVEN_NAME" from="U2ltcHNvbg==" to="QWhkdWxlbGhhbGVs"/>
+&lt;string type="ROMAN_NAME" from="SG9tZXI=" to="QmVudWxhdWJlbGl1cw=="/>
+&lt;string type="ROMAN_NAME" from="TmVk" to="RWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="TWFyZ2U=" to="QWxudWxhdWN1cw=="/>
+&lt;string type="ROMAN_NAME" from="Q2hhcmxlcw==" to="QWxudXM="/>
+&lt;string type="RANDOMDIGITS" from="NTY3OA==" to="ODY5OA=="/>
+&lt;string type="RANDOMDIGITS" from="MTIzNA==" to="NDM0Mw=="/>
+&lt;string type="RANDOMDIGITS" from="MzQ1Ng==" to="NjEyNQ=="/>
+&lt;/synonyms>
+[/code]
+&lt;p>You'll note that the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; values look a bit garbled. This is because Anonimatron used Base64 encoding to store values of synonyms. This is so that we can store the values bit for bit, without worying about encodings. If you wanted to, you could easily decode these strings by writing a little program.&lt;/p>
+&lt;p>Even without decoding we can see some interesting things about this file. Remember we had lastnames configured as Elven names? Although we have 4 entries in the username table, we see only 3 Elven names. That is because Homer and Marge have the same lastname. These same synonyms are also used by the lastnames.lastname column. The same goes for the creditcard numbers. As might have noticed that Ned Flanders and Charles Burns used the same credit card number in this system.&lt;/p>
+&lt;p>Enough staring at XML. Let's get to what matters most: our database. First, let's see if the names and numbers have changed:&lt;/p>
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.userdata;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+firstname
+lastname
+creditcardnr
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Benulaubelius
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >4343
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Alnulaucus
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;td >8698
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Ecus
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >4
+&lt;/td>
+&lt;td >Alnus
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;td >6125
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+That looks much better. The first and lastnames are (almost) pronounceable names which probably would look realistic in a screenshot or testcase, yet there is no trace left of the original data that was there. When we check the lastnames table we see that lastnames are being translated consistently with the userdata table:
+&lt;p>[code language=&amp;quot;sql&amp;quot; light=&amp;quot;true&amp;quot;]
+select * from mydb.lastnames;
+[/code]&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+id
+lastname
+&lt;/tr>
+&lt;tr >
+&lt;td >1
+&lt;/td>
+&lt;td >Ahdulelhalel
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >2
+&lt;/td>
+&lt;td >Ahelhaldethess
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >3
+&lt;/td>
+&lt;td >Dhoellian
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+This consistent behavior makes sure that queries where the userdata table and the lastnames table are joined based on lastname will still work.
+&lt;p>If you want to play some more with Anonimatron, recreate the original tables, add additional (overlapping) data and re-run anonimatron against it with the synonym file you just created. You'll notice that any &amp;quot;Simpson&amp;quot; lastname will be translated to &amp;quot;Ahdulelhalel&amp;quot; constently on each run. If you don't want that to happen, simply throw away the synonym file or don't tell Anonimatron to use it. You can also generate the synonym file first without doing anything to the database by using the -dryrun option, and later do the same run based on the synonyms generated earlier.&lt;/p>
+&lt;p>Remember: The private data &amp;quot;moved&amp;quot; from the database into the synonyms.xml file we created. So that becomes the new data to watch. Store it in a safe place where nobody can access it.&lt;/p>
+&lt;p>Have fun experimenting!&lt;/p></description></item><item><title>Anonimatron: Overview</title><link>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</link><pubDate>Thu, 31 Oct 2013 20:42:28 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/10/31/anonimatron-overview/</guid><description>
+&lt;p>&lt;a href="http://anonimatron.sf.net/">&lt;img src="itsthelaw.png" alt="It's the Law">
+&lt;/a>In every software project, there comes a time where a bug pops up, nobody knows how to reproduce it, and somebody says &amp;quot;I know, let's test this against a copy of the production database&amp;quot;. Even with the best intentions, once production data leaves the production machine with all its safeguards it becomes really hard to do access control on that data.&lt;/p>
+&lt;p>Most of the time, it's not even needed to have that data. Developers just need a data set which resembles the production scenario close enough. Some brave souls have mixed succes with data generators, but those generators usually are tedious to maintain and die a slow death under the pressure of the daily grind.&lt;/p>
+&lt;p>In some ambitious projects automated integration testcases are built on top of the data which was inserted by the data generators. As the generators die, so die the tests. If you recognize this pattern, &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> might be the answer for you.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;img src="1-dataindb.png" alt="Customer data in the database.">&lt;/p>
+&lt;p>So let's say you're working on release 5 of a big webshop, and because of the succes of the shop, it runs into performance problems. There's no time or budget to build a data generator, and before you can say no, you have a copy of the production data on some development server, containing the creditcard data of your customers. What do you do?&lt;/p>
+&lt;p>This is where Anonimatron comes in. Anonimatron can de-personalize or anonymize your data for you, give you total control over what gets anonymized, and how, and thinks of data types as &amp;quot;color&amp;quot; or &amp;quot;address&amp;quot; instead of &amp;quot;int&amp;quot; and &amp;quot;String&amp;quot;. Here's how that works:&lt;/p>
+&lt;p>&lt;img src="2-anonimatron.png" alt="Anonimatron data flow">&lt;/p>
+&lt;p>For every distinct, unique value A, Anonimatron creates a replacement value X, and writes that back to the database. It stores the A=X relation in a Synonym, and consistently applies those Synonyms throughout all tables in the database.&lt;/p>
+&lt;p>By using synonyms, Anonimatron makes sure that your database is still statistically roughly the same as before anonymization, and also makes sure that if you have two tables with a &amp;quot;lastname&amp;quot; column, matching records will actually still match.&lt;/p>
+&lt;p>Anonimatron (optionally) stores these synonyms for later use, so it can be consistent between different runs. New production data? No problem. Load it, tell Anonimatron to use the old synonyms, and the old data will be Anonymized exactly the same as the last time. Only new records will generate new synonyms, which of course will be added to the synonym file for the next run.&lt;/p>
+&lt;p>This feature also enables you to write testscripts based on anonymized production data. Your scripts will not easily break, because new production copies are anonymized very consistently.&lt;/p>
+&lt;p>&lt;img src="3-datainsynonims.png" alt="Data in Synonyms">&lt;/p>
+&lt;p>After the anonymization process, the private data will be in the synonym file. This file needs to be put in a (very) safe place, and only the people that import production data and run Anonimatron should be able to access this file.&lt;/p>
+&lt;p>After anonymization, developers can access the database without immediately being exposed to private addresses of customers, bank accounts, or whatnot. Of course this all depends on what you tell Anonimatron to do, and what to anonymize.&lt;/p>
+&lt;p>Remember, with great power comes great responsibility. Try to stay away from customer data as much as you can, and handle it with deep respect when you get it, delete it or depersonalize it as soon as you can. Use &lt;a href="http://http://anonimatron.sourceforge.net">Anonimatron&lt;/a> wisely.&lt;/p>
+&lt;h2 id="its-the-law">&lt;strong>It's the Law.&lt;/strong>&lt;/h2></description></item><item><title>How big is 5 Zettabyte?</title><link>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</link><pubDate>Sun, 23 Jun 2013 19:42:47 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/06/23/how-big-is-5-zettabyte/</guid><description>
+&lt;p>&lt;a href="http://www.spyvsspyhq.com/images.html">&lt;img src="3050431703_spyblack_answer_2_xlarge.jpeg" alt="Spy vs Spy">
+&lt;/a>Since the interview of &lt;a href="http://www.guardian.co.uk/world/video/2013/jun/09/nsa-whistleblower-edward-snowden-interview-video">Edward Snowden with the Guardian&lt;/a>, the discussion about privacy and companies storing and sharing unencrypted private data is picking up. Particularly Americans are worried about what it does for their National security and their private data. But that's actually a naive thought, given the NSA stores worldwide data.&lt;/p>
+&lt;p>In a &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">recent coverage on theblaze.com&lt;/a> (a rather tabloid-looking news station in the U.S.), the interviewers are shocked to see that the NSA spies on &amp;quot;every American&amp;quot;.&lt;/p>
+&lt;p>This is a limited view of the world and failing to see the importance of spying on people &lt;em>outside&lt;/em> the U.S., but lets start with technical side of things first. What data are they storing and how big is their hard-disk?&lt;/p>
+&lt;!-- more -->As you may know, the internet is a [packet switching network](https://en.wikipedia.org/wiki/Routing). Although people try to mess with the routing and sometimes even [disconnect whole countries](http://www.bgpmon.net/syria-shuts-down-the-internet/), it is hard to make a packet travel a certain route or prevent it from traveling through a certain country. Much of the internet traffic passes through the U.S. regardless of it's source and destination. But even if it didn't, the NSA has that covered. Many companies, Like Facebook, [Google](http://highscalability.com/google-architecture) has [servers all over the world](http://serverfault.com/questions/370385/location-of-google-servers). Since Google and Facebook are companies registered in the U.S. the [NSA could technically indirectly tap into](http://www.breitbart.com/Big-Government/2013/06/09/NSA-Obtains-Data-From-50-Companies) one of their servers in a foreign country which contains data which never travelled through the US in the first place.
+&lt;p>According to the &lt;a href="http://www.internetworldstats.com/stats.htm">worldwide distribution of internet users&lt;/a>, if the NSA wanted to store data just about Americans, they could have built a much smaller, simpler facility. But they didn't, which make you think. So how big is this facility exactly?&lt;/p>
+&lt;p>**&lt;a href="http://img.pr0gramm.com/2009/04/funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg">&lt;img src="funny-pictures-cat-looks-at-a-huge-stack-of-crepes.jpg" alt="Holy Crepe">
+&lt;/a>5 Zettabyte**
+If you've watched the &lt;a href="https://unspy.wordpress.com/2013/04/14/top-secret-nsa-5-zettabyte-spy-building-perfect-surveillence-state-near-completion/">coverage&lt;/a>, you'll hear James Bamford say that the facility that the NSA is building can hold enough physical machines to store around 5 Zettabyte of data, given current technology standards. It sounds like a lot, but how big is a Zettabyte really?&lt;/p>
+&lt;p>According to &lt;a href="http://en.wikipedia.org/wiki/Zettabyte">wikipedia&lt;/a>, 5 Zettabyte is 5,000,000,000,000,000,000,000 bytes. If, like me, you can not get your head around a number with 21 zeroes in it, I'll give you some of the calculations I made to understand just how big this is.&lt;/p>
+&lt;p>I started with the Internet Archive. Currently, the Internet Archive and it's &lt;a href="http://vimeo.com/59207751">Wayback machine holds 10 Petabytes&lt;/a> of data (10,000,000,000,000,000 bytes). The servers at the Internet Archive crawl the Internet and store all public data they can find in a searchable manner. They provide the public with that data, so you can do cool things like &lt;a href="http://web.archive.org/web/*/http://www.rolfje.com">see how my blog looked 10 years ago&lt;/a>. The Internet Archive is pretty big you might think. With 5ZB, the NSA could store the complete Internet Archive &lt;em>500,000 times&lt;/em>.&lt;/p>
+&lt;p>&lt;strong>Relative to world population&lt;/strong>
+Ok so maybe the size of the internet, or the size of a Petabyte are not very imaginable. Let's take it to the individual level. At the time of this writing, there are &lt;a href="http://www.worldometers.info">roughly 7.124.855.134 people on the world&lt;/a>.&lt;/p>
+&lt;p>If the NSA would wanted to store information on every person in the world, regardless if they were a president or a newborn African child, they would have 701,768,654,374 bytes per person to do so:&lt;/p>
+&lt;p>&lt;img src="5zbperperson.png" alt="5ZB per person">&lt;/p>
+&lt;p>Yes, they can store 701GB for each person in the world. My personal email archive is around 5GB right now, and I have a 1TB hard-disk containing every (digital or digitized) photo I have ever made. If I would be the standard (which I am probably not), the NSA could very easily store everybody's personal data, worldwide.&lt;/p>
+&lt;p>&lt;strong>Relative to the people connected to the internet&lt;/strong>
+Not everybody is connected to the internet (in fact that's not entirely true but we'll come to that later). As you have probably already seen on the &lt;a href="http://worldmeters.info">worldmeters.info&lt;/a> site, there are roughly 2,552,435,328 active internet users (at the time of writing). So let's see what the NSA can store if they &amp;quot;only&amp;quot; target the internet users:&lt;/p>
+&lt;p>&lt;img src="5zbperuser.png" alt="5ZB per Internet User">&lt;/p>
+&lt;p>Ah that's better. Almost &lt;strong>2TB per Internet user&lt;/strong>. The NSA can now not only store my private data, photo's and videos, but now there is room to spare so I can put a couple of blockbuster movies in there, too.&lt;/p>
+&lt;p>Since the NSA probably does some smart data reduction, like storing an email I send to you just once instead of a copy for each of us, I'm guessing the practical space per user will be more like 4TB.&lt;/p>
+&lt;p>**&lt;a href="http://www.youtube.com/watch?v=YozC8yFrZKI">&lt;img src="p.png" alt="Homer">
+&lt;/a>Am I connected to the internet?**
+In short: Yes. We are all connected in some way to the internet. Particularly if you are living in a &lt;a href="https://en.wikipedia.org/wiki/Western_world">&amp;quot;Western Country&amp;quot;&lt;/a> you can be sure that in some way you, or at least data about your existance, is online somewhere. Cities store data about their inhabitants and share them with other departments and services to do their work. By default, this data travels accross the internet and we all know how good governements are at protecting and encrypting their data, right?&lt;/p>
+&lt;p>Let's do an interesting thought experiment to see how far this goes. Suppose I have never connected to the internet, and neither have you. I own an old &lt;a href="https://en.wikipedia.org/wiki/Toyota_Corolla_(E70)">Toyota Corolla E70&lt;/a> and you and I stayed with our trusty &lt;a href="http://nokiamuseum.info/nokia-p-30/">Nokia P-30&lt;/a>'s. Now let's say I lend you my car. The NSA would know about that, instantly. How? My car is registered to me. The roads are covered with cameras to detect traffic violations, but in fact, the most governments like to store data about which car is going where. Our cellphones are connected to cell towers, which reveals &lt;a href="https://en.wikipedia.org/wiki/Mobile_phone_tracking">pretty accurate data&lt;/a> about where they are. So the NSA can map the time and place of my car to the time and place of my cell phone and all cell phones I've called. They would quickly and easily discover that my car is moving with your cellphone in it. The fact that their data shows that my cellphone is at home means that you are probably driving my car. Based on our cellphone data, it would even be pretty easy to see our daily commutes, see where you and I work and when and where we met in person.&lt;/p>
+&lt;p>Conspiracy? &lt;em>Maybe.&lt;/em> Possibility? &lt;em>Yes.&lt;/em> Privacy breach? &lt;em>Absolutely.&lt;/em>&lt;/p>
+&lt;p>Different countries have different meanings of the word &lt;a href="https://en.wikipedia.org/wiki/Privacy">&amp;quot;Privacy&amp;quot;&lt;/a>. By definition, gathering of data which is considered to be private (secret or confidential) in the country of origin, is &lt;a href="https://en.wikipedia.org/wiki/Espionage">Espionage&lt;/a>. This is not surprising, as &lt;a href="https://en.wikipedia.org/wiki/Cold_War">old habbits die hard&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>I don't care, I have nothing to hide.&lt;/strong>
+&lt;a href="http://www.youtube.com/watch?v=N5VAgSdGnSQ">&lt;img src="gollum.jpg" alt="Gollum has something to hide">
+&lt;/a>Not so fast grasshopper. You do. In fact, the NSA just introduced the very need to keep your data private and store it locally, indefinitely. In the example above, suppose you used my car to take pictures as a hobby photographer of a crime scene that was in the news. With the data they gathered, the NSA could frame either you or me at that scene, at their peril. Because you and I have no access to the data they are storing about us, it will be very hard for you or me to prove that we weren't, because the NSA will not provide you or the court with data that will prove otherwise.&lt;/p>
+&lt;p>The same goes for mail and other communications. Tabloid journalists can explain how to use one email, or once sentence from an email out of context to start a nasty gossip. The NSA could do that too. Suppose you are sharing role-playing stories with a friend over email. Those emails could suddenly look very interesting when placed out of context. Don't think they will not do that. &lt;a href="http://www.whereisthemoney.org/1.1trillion.htm">Power corrupts.&lt;/a> They will, and very likely already have done so.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="https://en.wikipedia.org/wiki/Don't_Make_Me_Think">Don't make me think&lt;/a>&lt;/strong>
+I've always said that the failure to make stuff user friendly is the single most important reason for brilliant ideas to &lt;a href="http://www.washingtonpost.com/blogs/wonkblog/wp/2013/06/14/nsa-proof-encryption-exists-why-doesnt-anyone-use-it/">fail miserably&lt;/a>. In the light of current events and the power of modern computers, can we at least try to make strong encryption like &lt;a href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy">PGP&lt;/a> stupid-easy to use, and add &amp;quot;coolness&amp;quot; so people will &lt;em>want&lt;/em> to use it?&lt;/p>
+&lt;p>&lt;strong>Because much like openness, responsibility and privacy is now more important than ever.&lt;/strong>&lt;/p>
+&lt;p>Related material I found while writing this blog post:&lt;/p>
+&lt;pre>&lt;code> * [Surveiller et punir: Naissance de la Prison](https://en.wikipedia.org/wiki/Discipline_and_Punish) is a 1975 book by the French philosopher Michel Foucault. If he was still alive, Foucault would probably see that after a period of individualism and consumer-centric change, the NSA is the re-introduction the [Panopticon](https://en.wikipedia.org/wiki/Panopticon), a prison (or society) where the prisoners can not see the guards.
+* This Dutch program [&amp;quot;Dare to Think&amp;quot;](http://www.uitzendinggemist.nl/afleveringen/1304898) discusses how Foucault thought, and places it in the modern time. It discusses how modern individualism and a market driven society needs new mechanisms to steer the individual. The theory is in essence that people need to learn to steer themselves and check the self-set boundaries with others from time to time.
+* In the source of Windows NT 4 Service Pack 5 a [variable with the name _NSAKEY](https://en.wikipedia.org/wiki/NSAKEY) was discovered which led to speculation that Windows computers could leak private data to the NSA.
+* Because few people do, When you decide to use PGP to encrypt your mail, you are likely to gain some attention, particularly from American &amp;quot;authorities&amp;quot;. Because you stand out. If you decide to stand out and encrypt stuff, you better do it right. Gather some information about [Uncrackable Email](http://www.ncmilitia.org/spycounterspy/fs006.html) (yes it's possible). Please note that all your encrypted mails will be stored, so when somebody does find reason to detain you and get your passphrase, deleting your drive will be useless.
+* Estimations in the linked articles say that the NSA facility cost $2B to build, has it's own 65MW power station, 60,000 tons of cooling equipment, and an electricity bill of $40M per year (unclear if that includes running their own power station). If you looked closely at the WorldMeters link, you could have noticed that there are almost 4 million Cancer related deaths per year and 35 million HIV related deaths, versus [less than 8,000 terrorism related deaths in 2010](http://www.economist.com/blogs/dailychart/2011/09/global-terrorism-deaths). If the NSA is here to pretect us from dying, they'd better use their budget and intelligence to start investigating other stuff.
+&lt;/code>&lt;/pre></description></item><item><title>Linked-In not really Opt-in?</title><link>https://realrolfje.github.io/rolfje.com/2011/09/07/linked-in-not-really-opt-in/</link><pubDate>Wed, 07 Sep 2011 19:14:25 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/09/07/linked-in-not-really-opt-in/</guid><description>
+&lt;p>&lt;a href="http://en.wikipedia.org/wiki/Opt-out">&lt;img src="linked-in-opt-in-1.png" alt="Linked-In, or Opt-out?">
+&lt;/a>Recently there was some &lt;a href="http://www.worldwidewords.org/weirdwords/ww-ker1.htm">kerfuffle&lt;/a> about LinkedIn silently changing privacy settings. In fact, they didn't do that &lt;em>&amp;quot;silently&amp;quot;&lt;/em>, nor was it &lt;em>&amp;quot;recent&amp;quot;&lt;/em>. Remember that large chunk of text nobody reads with the &lt;em>&amp;quot;Agree&amp;quot;&lt;/em> button you clicked on? Those were the new terms, and deeply buried in them was this privacy settings stuff. LinkedIn's Eric Heath &lt;a href="http://blog.linkedin.com/2011/06/10/privacy-policy-changes/">blogged about that&lt;/a>, bringing it as &lt;em>&amp;quot;more control over your LinkedIn information&amp;quot;.&lt;/em> Sadly, the default setting for this new &lt;em>&amp;quot;control&amp;quot;&lt;/em> is &lt;em>&amp;quot;rather open&amp;quot;&lt;/em>. But you can change that.&lt;/p>
+&lt;!-- more -->Just recently, people started to see the effects of the new terms and conditions, as LinkedIn started a new social advertising campaign including profile pictures. Most LinkedIn users felt they did not (knowingly) agree to that. Ryan Roslansky [explains the new ads](http://blog.linkedin.com/2011/08/11/social-ads-update/) on August 11th, and also mentions that LinkedIn is responding to the complaints and will remove the profile pictures from the new ads.
+&lt;p>If you want to be sure that LinkedIn does not use your profile in ads in the future ever again, you could always &lt;a href="http://www.linkedin.com/answers/using-linkedIn/ULI/728753-417696">cancel your account&lt;/a>. For people that don't want to cancel their account, there is a setting you can try to change (given that LinkedIn doesn't change it again). Here's a little screenshot I annotated with &lt;a href="http://skitch.com/">Skitch&lt;/a>:&lt;/p>
+&lt;p>&lt;a href="linked-in-social-advertising-1-2.png">&lt;img src="linked-in-social-advertising-1-2.png" alt="How to Opt-Out of social advertising with Linked-In">
+&lt;/a>&lt;/p>
+&lt;p>You might also want to check out some other settings on those tabs. There's no clear overview, and the settings are hard to click through. That's probably on purpose, because well, Linked-In is now cashing in on it's (or: your) data.&lt;/p>
+&lt;p>Remember: What's not on the internet, is not on the internet.&lt;/p></description></item><item><title>Replacing Dropbox with Spideroak</title><link>https://realrolfje.github.io/rolfje.com/2011/07/03/1355/</link><pubDate>Sun, 03 Jul 2011 14:39:30 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/07/03/1355/</guid><description>
+&lt;p>&lt;a href="https://spideroak.com/">&lt;img src="spideroak-logo.gif" alt="">
+&lt;/a>After lies about Dropbox Employees &lt;a href="http://www.businessinsider.com/dropbox-updates-security-terms-of-service-to-say-it-can-decrpyt-files-if-the-government-asks-it-to-2011-4?op=1">not being able to see your files&lt;/a>, then proving that they do &lt;a href="http://blog.dropbox.com/?p=821">not do regression testing&lt;/a> on their security, the latest &lt;a href="http://hardware.slashdot.org/story/11/07/02/0515218/Dropbox-TOS-Includes-Broad-Copyright-License">change in terms of service&lt;/a> really was the last drop. So I dropped dropbox.&lt;/p>
+&lt;p>I had become dependent on Dropbox to transfer files between my private and work machines, having my notes, configuration files and (encrypted thank god) password databases handy at all times. Searching around, there is really no other service like it. Although lots of products claim to have the same functionality, the &amp;quot;share this folder between all my machines&amp;quot; feature which dropbox proviced is really unsurpassed.&lt;/p>
+&lt;p>I had to find an alternative solution which would meet the following criterea:&lt;/p>
+&lt;pre>&lt;code> 1. has to be a single, native folder, instantly syncing with all other machines
+2. has to be free or *really* cheap, minimum 2GB
+3. has to use an encryption technology where no one else can ever read my files, not even the hosting party, not even at gunpoint
+4. has to have client software for Windows, Mac and Linux
+5. accessing data on my iPhone would be a nice bonus.
+&lt;/code>&lt;/pre>
+&lt;p>After some browsing around, there are two solutions that come close, one is &lt;a href="http://www.wuala.com/">Wuala&lt;/a>, and the other is &lt;a href="https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4">Spideroak&lt;/a>.&lt;/p>
+&lt;blockquote>For **one additonal GB of storage for life, [use my referal link](https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4)** to register at SpiderOak. Read the whole article to add another 5GB to that.&lt;/blockquote>
+&lt;p>&lt;strong>&lt;!-- more -->Why not Wuala?&lt;/strong>
+Wuala looked really cool at first. It looked like they had a native Mac app, and easy syncing between computers. As it turns out, it's nastier than that. The Mac client is effectively a slow Java program in which you need to drag and drop your files to get them uploaded/downloaded. That's not seemless. There is a MacFUSE client that comes with the download, but that affectively makes Wuala into a seperate drive (not a local folder), and the MacFUSE client is low on support, and not compiled as 64bit runtime.&lt;/p>
+&lt;p>Scanning the Wuala forums, there seemed too much confusion and bugs around the whole software product. Being made by a hardware manufacturer, that doesn't really surprise me.&lt;/p>
+&lt;p>Spideroak has native clients for all platforms, and ticks all the boxes in my requirements list, really &lt;a href="https://spideroak.com/engineering_matters#true_privacy">nailing it in the security department&lt;/a>. Spideroak even conforms to my &lt;a href="http://rolfje.com/2007/12/19/if-not-https-then-exit/">&amp;quot;https please&amp;quot;&lt;/a> blogpost. A bit of poking around revealed that it is written in Python, and knowing that you can spot some Qt UI elements.&lt;/p>
+&lt;p>&lt;strong>Enough talk. How do I get my magically synced folder back?&lt;/strong>
+Spideroak is really targeted at backup, and has &amp;quot;sync&amp;quot; as a feature. So in order to get only syncing working, you need to setup a backup for that folder. Don't worry, here are all the steps you need to take to migrate from dropbox to Spideroak:&lt;/p>
+&lt;pre>&lt;code> 1. Cancel your dropbox account as described on the [dropbox help pages](http://www.dropbox.com/help/43).
+2. Uninstall dropbox from all your machines. Please note that this will not remove your dropbox folder. Your data will be safe. We can only hope that dropbox will remove that data from their servers, but I wouldn't bet on it.
+3. Rename your &amp;quot;dropbox&amp;quot; folder into &amp;quot;Spideroak&amp;quot; if you really want to remove all dropbox references.
+4. [Sign up at Spideroak with this referal link](https://spideroak.com/download/referral/4b01a22f64d398afbd846637080bd2b4), and use the promocode &amp;quot;worldbackupday&amp;quot; to increase your storage for free to 5GB for one year, PLUS 1GB of free storage if you used my referal link. That's a total of 6 free GB!
+5. Download the client for your platform(s) and install it on all machines where you had dropbox running (no reboot required).
+6. After installation, click on the &amp;quot;backup&amp;quot; tab, click on the &amp;quot;advanced&amp;quot; button on the right, and select your Spideroak (former dropbox) folder. Click save. Spideroak should now start backing up that folder.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="1-backup-tab.png">&lt;img src="1-backup-tab.png?w=300" alt="Selecting the sync folder for backup">
+&lt;/a>
+7. Syncing this folder with other computers is a bit strange in Spideroak, since you need to &amp;quot;pair&amp;quot; folders. I choose to have one &amp;quot;central&amp;quot; computer, which is my Mac Mini, which is always on and will serve as the &amp;quot;center&amp;quot; of the synchronization setup. It does not have to be always on, it's just administrative convenience. You will not notice the difference later on, don't worry.
+8. Repeat the installation process on any other computer you removed dropbox from.
+9. Now for the crucial part: On one of your computers, click on the &amp;quot;Sync&amp;quot; tab and connect all the Spideroak folders on your machines in one sync job.
+&lt;a href="spideroak-sync.png">&lt;img src="spideroak-sync.png" alt="How to synchronize multiple machines with Spideroak">
+&lt;/a>&lt;a href="2-sync-tab.png">
+&lt;/a> In the screenshot above I have four machines/devices. To add a fifth, I would have to click the little &amp;quot;+&amp;quot; to add a sync folder and select the folder on the fifth machine.
+10. Once the backup is complete, Spideroak will start syncing all your synced folders to all machines.&lt;/p>
+&lt;p>If everything went as planned,  Spideroak will now act as dropbox. You'll have a local folder where you can put stuff in, and it will get magically transferred in the background to all your devices. Please note that this will not be as fast as you were used to with dropbox.&lt;/p>
+&lt;p>I've written a feature request to Spideroak to make a simple client which just syncs a folder to &lt;em>any&lt;/em> machine in the account, without exposing all this setup trickery to the end user. If you want to help promote that feature request, drop them a line and refer to ticket &lt;strong>[SOS #56358]&lt;/strong>. Because in the end, all the world wants is a safe, simple dropbox.&lt;/p>
+&lt;p>From now on, you never have to worry about the brilliant people who invented dropbox, surrounded by the incompitent idiots and lawyers which will ruin the company for good.&lt;/p>
+&lt;p>Goodbye dropbox, sorry to see you go.&lt;/p></description></item><item><title>Want Security?</title><link>https://realrolfje.github.io/rolfje.com/2006/07/05/want-security/</link><pubDate>Wed, 05 Jul 2006 15:31:08 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/07/05/want-security/</guid><description>
+&lt;p>According to Sophos security, the whole world should &lt;a href="http://news.bbc.co.uk/1/hi/technology/5150508.stm">switch to macs to get rid of the security problems&lt;/a>. This would be great for business! Currently I do not order with companies who put up Word or Excel formatted price lists, simply because I can't (and to some extent refuse) open them.&lt;/p>
+&lt;p>In the long run however, this would shift the security problem to the Mac side of the world. Why do Microsoft machines get attacked so often? Simple: because their user base is large, which means there are more Microsoft (black hat) hackers out there. Additionally, the targeted audience is large in numbers. When the whole world uses Macs, the black hat hackers will turn to OSX as target.&lt;/p>
+&lt;p>But then again, the security model of OSX is (luckaly) a lot better than that of a Windows machine so the damage done largely depends on how the system is secured by the user. At least on a Mac you have the means of securing stuff properly.&lt;/p></description></item></channel></rss>

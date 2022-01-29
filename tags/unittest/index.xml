@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>unittest on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/unittest/</link><description>Recent content in unittest on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 01 Apr 2011 21:17:17 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/unittest/index.xml" rel="self" type="application/rss+xml"/><item><title>Changing the Order of your UnitTests</title><link>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</link><pubDate>Fri, 01 Apr 2011 21:17:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/04/01/changing-the-order-of-your-unittests/</guid><description>
+&lt;p>&lt;img src="toddler-shape-colour-sorting-puzzle.jpg" alt="">
+A few months ago we had a problem where Eclipse could not automatically run all jUnit unit tests in a package if that package references a class called &amp;quot;enum&amp;quot;, which is a reserved word in Java 1.6. I'll spare you the details, but we were forced to create a TestSuite. Normally we avoid this construction because it's easy to create a new unit test and forget to add it to the correct TestSuit. So as a workaround we wrote some code which could build and return a TestSuite dynamically. Right-click in eclipse, select &amp;quot;Run as Unittest&amp;quot;, sit back and enjoy.&lt;/p>
+&lt;p>Lately this piece of code came in handy while testing another application, which required the removal of data from a database. Yes I know, Unittests should maybe not depend on databases because it leans towards integration testing, but here we are, and I need to solve it. I used the old TestSuite code and changed it so that the TestCase I needed to run first was singled out, while still maintaining the functionality of auto-detecting testcases in the source folder.&lt;/p>
+&lt;!-- more -->I've cleaned up the code and made an example implementation which sorts the test cases in alpabetical order. It's a simple starting point and definetely not the prettiest code I've ever written but it works, it helped me and it might help you. Copy/paste, and adjust to your own needs.
+&lt;p>Have fun!&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; toolbar=&amp;quot;false&amp;quot; wraplines=&amp;quot;true&amp;quot; padlinenumbers=&amp;quot;true&amp;quot; gutter=&amp;quot;false&amp;quot; autolinks=&amp;quot;false&amp;quot;]
+package com.rolfje.example;&lt;/p>
+&lt;p>import java.io.File;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;&lt;/p>
+&lt;p>import junit.framework.Test;
+import junit.framework.TestSuite;&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Constructs a testsuite by dynamically scanning for&lt;/li>
+&lt;li>classes ending in &amp;quot;*Test&amp;quot;, and allows for re-ordering of&lt;/li>
+&lt;li>the Classes in the Suite.
+*/
+public class OrderedTestSuite {&lt;/li>
+&lt;/ul>
+&lt;p>public static Test suite() throws Exception {&lt;/p>
+&lt;pre>&lt;code>// Find all test classes
+List testClasses = findTestClasses();
+// Custom test ordering example: Sort test classes in
+// natural alphabetic order based on simple classname
+Collections.sort(testClasses, new Comparator() {
+@Override
+public int compare(Class o1, Class o2) {
+return o1.getSimpleName().compareTo(
+o2.getSimpleName());
+}
+});
+// Convert the Set to a TestSuite
+TestSuite suite = new TestSuite(
+&amp;quot;Custom ordered TestSuite&amp;quot;);
+for (Class testClass : testClasses) {
+suite.addTestSuite(testClass);
+}
+return suite;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>private static List findTestClasses()
+throws Exception {
+List testClasses = new ArrayList();&lt;/p>
+&lt;pre>&lt;code>File testDir = getRootOfTestTree();
+List files = new ArrayList();
+getTestFiles(files, testDir);
+int nameIdx = testDir.getAbsolutePath().length() + 1;
+for (Iterator iterator = files.iterator(); iterator
+.hasNext();) {
+File file = (File) iterator.next();
+String className = file.getAbsolutePath().substring(
+nameIdx);
+className = className
+.replace(File.separatorChar, '.');
+className = className.replaceAll(&amp;quot;.class&amp;quot;, &amp;quot;&amp;quot;);
+Class testClass = Class.forName(className);
+// Prevent recursion
+if (OrderedTestSuite.class.equals(testClass)) {
+continue;
+}
+if (isTestClass(testClass)) {
+testClasses.add(testClass);
+}
+}
+return testClasses;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**
+*&lt;/p>
+&lt;ul>
+&lt;li>@param clazz Class to check&lt;/li>
+&lt;li>@return &lt;code>true&lt;/code> if the given Class is a&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> usable implementation of {@link Test}
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static boolean isTestClass(Class clazz)
+throws Exception {
+int modifiers = clazz.getModifiers();
+if (Modifier.isAbstract(modifiers)
+|| Modifier.isInterface(modifiers)
+|| Modifier.isPrivate(modifiers)) {
+return false;
+}&lt;/p>
+&lt;pre>&lt;code>return Test.class.isInstance(clazz.newInstance());
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>@return The root directory of the Java Test sources.
+*/
+private static File getRootOfTestTree() {
+String meAsClasspathResource = OrderedTestSuite.class
+.getResource(
+OrderedTestSuite.class.getSimpleName()
++ &amp;quot;.class&amp;quot;).getFile()
+.replace('/', File.separatorChar);
+String myLocation = OrderedTestSuite.class
+.getCanonicalName();
+myLocation = myLocation
+.replace('.', File.separatorChar);&lt;/li>
+&lt;/ul>
+&lt;pre>&lt;code>if (meAsClasspathResource == null
+|| !meAsClasspathResource.contains(myLocation)) {
+throw new RuntimeException(
+&amp;quot;Can not find the class resource for &amp;quot;
++ OrderedTestSuite.class.getCanonicalName());
+}
+meAsClasspathResource = meAsClasspathResource
+.substring(0,
+meAsClasspathResource.indexOf(myLocation));
+File dir = new File(meAsClasspathResource);
+if (!dir.exists()) {
+throw new RuntimeException(&amp;quot;The directory &amp;quot;
++ dir.getAbsolutePath() + &amp;quot; does not exist.&amp;quot;);
+}
+if (!dir.isDirectory()) {
+throw new RuntimeException(dir.getAbsolutePath()
++ &amp;quot; is not a directory.&amp;quot;);
+}
+return dir;
+&lt;/code>&lt;/pre>
+&lt;p>}&lt;/p>
+&lt;p>/**&lt;/p>
+&lt;ul>
+&lt;li>Recursively iterates through the nextFiles array to&lt;/li>
+&lt;li>find all test files. which it subsequently returns.&lt;/li>
+&lt;li>&lt;/li>
+&lt;li>@param allTestFilesSoFar&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> new Files will be added to this List
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;li>@param nextDir&lt;/li>
+&lt;li>
+&lt;pre>&lt;code> The directory to scan for java Test files
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ul>
+&lt;p>*/
+private static void getTestFiles(
+List allTestFilesSoFar, File nextDir) {
+File[] files = nextDir.listFiles();
+for (int t = 0; t &amp;lt; files.length; t++) {
+File nextFile = files[t];
+if (nextFile.isDirectory()) {
+getTestFiles(allTestFilesSoFar, nextFile);
+} else if (nextFile.getName().endsWith(&amp;quot;Test.class&amp;quot;)
+|| nextFile.getName().endsWith(&amp;quot;Suite.class&amp;quot;)) {
+allTestFilesSoFar.add(nextFile);
+}
+}
+}
+}
+[/sourcecode]&lt;/p></description></item></channel></rss>

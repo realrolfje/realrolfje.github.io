@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SQL on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/sql/</link><description>Recent content in SQL on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 29 Dec 2008 23:00:38 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/sql/index.xml" rel="self" type="application/rss+xml"/><item><title>How to add drivers to SQuirreLSQL.app</title><link>https://realrolfje.github.io/rolfje.com/2008/12/30/how-to-add-drivers-to-squirrelsqlapp/</link><pubDate>Mon, 29 Dec 2008 23:00:38 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/30/how-to-add-drivers-to-squirrelsqlapp/</guid><description>
+&lt;p>&lt;img src="afbeelding-2-copy.png" alt="SQuireL SQL on OSX with Oracle drivers">
+If you're a SQuirreL SQL fan like me, and you use a Mac, you probably also want to know how to add a driver to the OSX version of the application. Most people just point to an external jar file, but you can also add drivers to the application bundle.  There's not much to it, but it took me some time to discover that I actually had to edit the plist file in the bundle after adding the driver.&lt;/p>
+&lt;p>As you can see on the left, my SQuireLSQL.app now comes with the Oracle OCI and Thin driver built in, and because they are part of the application bundle, I can't wreck my installation by misplacing jarfiles or reconfiguring classpaths. Nice.&lt;/p>
+&lt;p>If you want to drivers to your SQuireLSQL.app yourself, here's what you need to do:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Download  and unpack SQuirreL SQL for OSX.
+2. Verify that is starts up, and that your drivers are missing. Close SQuirreL again.
+3. Right-click on SQuireLSQL.app and select &amp;quot;show package contents&amp;quot;.
+4. Browse to the **Contents/Resources/Java/lib** folder. Copy the jar file of your driver into this folder (I used ojdbc14.jar in this example)
+5. Double-click the **Contents/Info.plist** file. The default plist editor will show up.
+6. In the plist editor, find the **&amp;quot;Information Property List&amp;quot;/ Java/ClassPath** property.
+7. At the end of the value in this property, add a colon, and a reference to your copied library. In our example (see step 4) I had to add **&amp;quot;:$JAVAROOT/lib/ojdbc14.jar&amp;quot;**, excluding quotes, but including the colon (see other libraries in the path and use them as examples.
+8. Save the plist file, and double-click SQuireLSQL.app. Your driver should now have a blue checkmark next to it.
+&lt;/code>&lt;/pre>
+&lt;p>Please note that now you've added proprietary drivers to the bundle, you can no longer freely distribute it. Usage and distribution of your version of SQuireLSQL.app is now &amp;quot;contaminated&amp;quot; by the licences of the driver(s) you installed.&lt;/p>
+&lt;p>Happy SQL-ing!&lt;/p></description></item></channel></rss>

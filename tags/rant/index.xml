@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>rant on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/rant/</link><description>Recent content in rant on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 24 Dec 2012 18:52:30 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/rant/index.xml" rel="self" type="application/rss+xml"/><item><title>Why you should not use SOAP Headers</title><link>https://realrolfje.github.io/rolfje.com/2012/12/24/why-you-should-not-use-soap-headers/</link><pubDate>Mon, 24 Dec 2012 18:52:30 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/12/24/why-you-should-not-use-soap-headers/</guid><description>
+&lt;p>&lt;img src="container1.png" alt="container">&lt;/p>
+&lt;p>In the project I am working on right now we use apache XCF and Spring to provide a SOAP service to our customers. As part of the messages, there is a userid/password combo telling the application which user sent the request. I struggled with that today because I think that userid/password info should actually be in the SOAP Header, cleaning up my API, enable me to implement different authentication techniques in the future and generally be more &amp;quot;compliant&amp;quot; to the SOAP standard. Boy was I wrong.&lt;/p>
+&lt;!-- more -->First I needed to figure out how to get the userid/password info into the Header. Apache has [some information](https://cxf.apache.org/docs/ws-security.html) on this which is supposed to be "very good" according to the web but I had quite a bit of trouble because it misses quite a bit of context.
+&lt;p>At first, it took me ages to find out that I need to add this to my maven pom.xml file to actually &amp;quot;get&amp;quot; the security stuff onto my classpath:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]
+&lt;dependency>
+&lt;groupId>org.apache.cxf&lt;/groupId>
+&lt;artifactId>cxf-rt-ws-security&lt;/artifactId>
+&lt;version>2.5.1&lt;/version>
+&lt;/dependency>
+[/sourcecode]&lt;/p>
+&lt;p>I could find NO tutorial online telling me this, so I guess I saved you a good 20 minutes of searching right there.&lt;/p>
+&lt;p>Then, I needed to change the Spring configuration to &lt;a href="http://www.benmccann.com/dev-blog/apache-cxf-tutorial-ws-security-with-spring/">include the mysterious &amp;quot;WSS4JInInterceptor&amp;quot;&lt;/a> of which nobody understands what it does because it is an overdesigned elephant which implements obscure standards nobody seems to be using:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;xml&amp;quot; gutter=&amp;quot;false&amp;quot;]
+&amp;lt;jaxws:endpoint id=&amp;quot;myCoolSOAPService&amp;quot; implementor=&amp;quot;#myCoolService&amp;quot; address=&amp;quot;/mycoolservice&amp;quot;&amp;gt;
+&lt;a href="jaxws:inInterceptors">jaxws:inInterceptors&lt;/a>
+&lt;ref bean="wss4jinterceptor"/>
+&amp;lt;/jaxws:inInterceptors&amp;gt;
+&amp;lt;/jaxws:endpoint&amp;gt;&lt;/p>
+&lt;bean id="wss4jinterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+&lt;constructor-arg>
+&lt;map>
+&lt;entry key="action" value="UsernameToken" />
+&lt;entry key="passwordType" value="PasswordDigest" />
+&lt;entry key="passwordCallbackRef">
+&lt;ref bean="myPasswordCallback" />
+&lt;/entry>
+&lt;/map>
+&lt;/constructor-arg>
+&lt;/bean>
+[/sourcecode]
+&lt;p>As you can see, the WSS4JInterceptor is configured to accept Usernames and passwords (albeit in deeply, convoluted nested elements adding humongous amounts of XML bloat to your Header).&lt;/p>
+&lt;p>To be able to take the userid/password combo I dutifully started writing my password handler:&lt;/p>
+&lt;p>[sourcecode type=&amp;quot;java&amp;quot; gutter=&amp;quot;false&amp;quot;]
+public class UseridPasswordCallback implements CallbackHandler {&lt;/p>
+&lt;pre>&lt;code> @Override
+public void handle(Callback[] arg0)
+throws IOException, UnsupportedCallbackException {
+// Not implemented yet
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+[/sourcecode]&lt;/p>
+&lt;p>You can see that my handle(Callback) method is not implemented. And there is a good reason for that.&lt;/p>
+&lt;p>Just before implementing all the code, I checked the wiring of all this stuff. The application started up beautifully, and I pointed SOAPUI to the WSDL to generate some example requests. To my horror, SOAPUI did not generate example headers. For some reason, the whole CXF stack just &amp;quot;forgets&amp;quot; to put that info in the WSDL, or maybe the specs don't leave room to have that information in the WSDL, I don't know.&lt;/p>
+&lt;p>So I set out to see how to build that Soap Security header. It was nuts. Not only did I need to figure this out from crude and incomplete examples, reverse engineer xsd's, and hand-craft it into the SOAPUI messages, I also had to deal with the awful error messages that gave me &amp;quot;Could not read XMReader&amp;quot; and the very helpful &amp;quot;ns1:InvalidSecurity&amp;quot;.&lt;/p>
+&lt;p>After an afternoon of absolute madness on something that should actually be infinitesimally simple, I gave up. I added the userid/password back into the functional calls (as part of my method signatures). And for a couple of very good reasons:&lt;/p>
+&lt;pre>&lt;code> 1. The first an most important one: If I as a developer have this much trouble wading to the poorly documented, underutilized, astrophysics-level complexity just to add a freakin' userid/password field to a SOAP message, how can I expect my users to ever accomplish this without rage-calling our helpline every 4 seconds?
+2. By making the fields part of the API, they become part of the WSDL, which immediately makes it clear what to add and where. SOAPUI even generates nice placeholders for it.
+3. I added an Aspect with an around advice intercepting the userid/password combo, use it to authenticate the user and immediately remove the password from memory. Simple, readable, effective and easily debuggable for any developer on the project.
+4. The pom.xml and the Spring configuration immediately become much simpler and gets rid of a few idiot acronyms in the process.
+&lt;/code>&lt;/pre>
+&lt;p>So there. Want to do SOAP Security as it was intended? Do yourself and your customers a favor: Don't.&lt;/p>
+&lt;p> &lt;/p></description></item></channel></rss>

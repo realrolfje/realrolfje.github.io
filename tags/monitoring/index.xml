@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>monitoring on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/monitoring/</link><description>Recent content in monitoring on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sun, 07 Jan 2018 18:18:59 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/monitoring/index.xml" rel="self" type="application/rss+xml"/><item><title>JSON alerts for Munin</title><link>https://realrolfje.github.io/rolfje.com/2018/01/07/json-alerts-for-munin/</link><pubDate>Sun, 07 Jan 2018 18:18:59 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2018/01/07/json-alerts-for-munin/</guid><description>
+&lt;p>&lt;a href="https://math.stackexchange.com/a/54568">&lt;img src="munin-log.png" alt="">
+&lt;/a>Munin is a great and easy way to monitor your servers. The documentation for Munin is kind of all over the place, and sometimes not all that clear.&lt;/p>
+&lt;pre>&lt;code> * There is the recent [&amp;quot;Munin Guide&amp;quot;](https://munin.readthedocs.io/en/latest/) which is quite informative and well laid out.
+&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>Sometimes additional info and background can be found on the &lt;a href="http://munin-monitoring.org/wiki/Documentation">old munin wiki&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;p>Getting the standard mail alerts working on munin is simplest, but as soon as you want custom layouts or send alerts as a push message to a phone, it can take quite some work. Here's what I figured out to get the Munin alert available to you as JSON inside your own Python script so you can do anything you want with it.&lt;/p>
+&lt;!-- more -->
+&lt;p>On the munin master, create the file &lt;code>/etc/munin/munin-conf.d/alerts.conf&lt;/code> with the following contents:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;text&amp;quot;]
+contact.python.command /etc/munin/scripts/alert.py
+contact.python.text { &amp;quot;group&amp;quot;:&amp;quot;${var:group}&amp;quot;, &amp;quot;host&amp;quot;:&amp;quot;${var:host}&amp;quot;,&lt;br>
+&amp;quot;graph_category&amp;quot;:&amp;quot;${var:graph_category}&amp;quot;,&lt;br>
+&amp;quot;graph_title&amp;quot;:&amp;quot;${var:graph_title}&amp;quot;,&lt;br>
+&amp;quot;warning&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:wfields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+],&lt;br>
+&amp;quot;critical&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:cfields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+],&lt;br>
+&amp;quot;unknown&amp;quot;:[ &lt;br>
+${loop&amp;lt;,&amp;gt;:ufields {&amp;quot;label&amp;quot;:&amp;quot;${var:label}&amp;quot;,&lt;br>
+&amp;quot;value&amp;quot;:&amp;quot;${var:value}&amp;quot;,&lt;br>
+&amp;quot;w&amp;quot;:&amp;quot;${var:wrange}&amp;quot;,&lt;br>
+&amp;quot;c&amp;quot;:&amp;quot;${var:crange}&amp;quot;,&lt;br>
+&amp;quot;extra&amp;quot;:&amp;quot;${var:extinfo}&amp;quot;} }&lt;br>
+]&lt;br>
+}
+[/sourcecode]&lt;/p>
+&lt;p>This will make Munin output JSON to the &amp;quot;python&amp;quot; user, you can chose another name if needed. After this, you can create a Python script looking somewhat like this:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;python&amp;quot;]
+#!/usr/bin/python&lt;/p>
+&lt;h1 id="heading">&lt;/h1>
+&lt;h1 id="save-as-etcmuninscriptsalertpy">Save as /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="chown-muninmunin-etcmuninscriptsalertpy">chown munin:munin /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="chmod-x-etcmuninscriptsalertpy">chmod +x /etc/munin/scripts/alert.py&lt;/h1>
+&lt;h1 id="heading-1">&lt;/h1>
+&lt;p>import sys
+import os
+import json&lt;/p>
+&lt;p>def humanreadable( jsonalert ):
+hascritical = (len(jsonalert['critical']) &amp;gt; 0)
+haswarning = (len(jsonalert['warning']) &amp;gt; 0)
+hasunknown = (len(jsonalert['unknown']) &amp;gt; 0)&lt;/p>
+&lt;p>report = &amp;quot;&amp;quot;&lt;/p>
+&lt;p>if hascritical:
+for i in jsonalert['critical']:
+report += &amp;quot;CRITICAL: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if haswarning:
+for i in jsonalert['warning']:
+report += &amp;quot;WARNING: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if hasunknown:
+for i in jsonalert['unknown']:
+report += &amp;quot;UNKNOWN: {0} {1}: {2}={3}&amp;quot;.format(jsonalert['host'],
+jsonalert['graph_title'], i['label'],i['value'])&lt;/p>
+&lt;p>if hascritical + haswarning + hasunknown == 0:
+report += &amp;quot;OK: {0} {1}&amp;quot;.format(jsonalert['host'],jsonalert['graph_title'])&lt;/p>
+&lt;p>return report&lt;/p>
+&lt;h1 id="get-the-output-from-munin-stdout-and-print-it">Get the output from Munin stdout and print it.&lt;/h1>
+&lt;p>for line in sys.stdin:
+j = json.loads(line)
+readable = humanreadable(j)
+print readable
+[/sourcecode]&lt;/p>
+&lt;p>There is no debugging without testruns. To see if this works, you can run this command:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;bash&amp;quot;]
+sudo -u munin /usr/share/munin/munin-limits --force
+[/sourcecode]&lt;/p>
+&lt;p>This should give you output which looks somewhat like this:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;text&amp;quot;]
+WARNING: monitor.local Logged in users: pts=4.00
+OK: monitor.local Inode usage in percent
+OK: monitor.local eth0 errors
+OK: monitor.local File table usage
+OK: monitor.local Disk usage in percent
+OK: monitor.local routerboard CPU usage
+OK: monitor.local Disk latency per device :: Average latency for /dev/mmcblk0
+[/sourcecode]&lt;/p>
+&lt;p>Bingo! Munin sends JSON to your Python script! Now you can use your awesome Pyhton skills to change this into whatever you want or send. To get you inspired, here's a piece of code I use to send alerts to a Mattermost server:&lt;/p>
+&lt;p>[sourcecode gutter=&amp;quot;false&amp;quot; language=&amp;quot;python&amp;quot;]
+import requests&lt;/p>
+&lt;p>mattermost_url = &amp;quot;https://&lt;your-server-here>/hooks/&lt;your-hook-here>&amp;quot;&lt;/p>
+&lt;p>def sendmattermost( alerts ):
+payload = '{&amp;quot;username&amp;quot;: &amp;quot;Monitor&amp;quot;, &amp;quot;text&amp;quot;: &amp;quot;'&lt;/p>
+&lt;p>if &amp;quot;WARNING:&amp;quot; in alerts or &amp;quot;CRITICAL:&amp;quot; in alerts:
+payload += ':rotating_light:\n'
+else:
+payload += &amp;quot;:pager:\n&amp;quot;&lt;/p>
+&lt;p>payload += alerts
+payload += '&amp;quot;}'&lt;/p>
+&lt;p>print &amp;quot;Sending payload: '&amp;quot; + payload +&amp;quot;'.&amp;quot;
+r = requests.post(mattermost_url, data=payload)
+if r.status_code != 200:
+print &amp;quot;PANIC &amp;quot; + r.reason +&amp;quot; : &amp;quot; + r.text
+[/sourcecode]&lt;/p>
+&lt;p>You can find this trick and other munin plugin stuff in my &lt;a href="https://github.com/realrolfje/munin-plugins">munin-plugins repository&lt;/a>.&lt;/p>
+&lt;p>Happy alerting!&lt;/p></description></item></channel></rss>

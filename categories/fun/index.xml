@@ -1,0 +1,857 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fun on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/categories/fun/</link><description>Recent content in Fun on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Thu, 15 May 2014 20:24:18 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/categories/fun/index.xml" rel="self" type="application/rss+xml"/><item><title>Print posters on a regular printer with Excel.</title><link>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</link><pubDate>Thu, 15 May 2014 20:24:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/15/print-posters-on-a-regular-printer-with-excel/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=_wwVRJ4_Ayk">&lt;img src="ts-50-rx-tx-board-banner.jpg" alt="TS-50-RX-TX-board-banner">
+&lt;/a>&lt;/p>
+&lt;p>I recently needed to print out a big schematic diagram of the RX/TX board of a Kenwood TS50 Transceiver. This did not fit on a single piece of paper. Instead of downloading all kinds of crappy tools or uploading the image to some &amp;quot;free&amp;quot; site which is going to use it for whatever they think justifies their definition of &amp;quot;free&amp;quot;, I found out you can do this in Excel. Here's how:&lt;/p>
+&lt;pre>&lt;code> 1. Make sure the image you want to print out as a poster has a decent resolution
+2. Open Excel (maybe this will work in LibreOffice too, I haven't tested, let me know)
+3. Drag the image into a new worksheet so that it is top-left of the sheet.
+4. Open the &amp;quot;Print preview&amp;quot; (the little icon in the bottom left of the window)
+5. Resize the image so that it covers more than one page, up to the number of pages you'd like the poster to be. Your screen should now look somewhat like this:
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="screen-shot-2014-05-15-at-21-58-23.png">&lt;img src="screen-shot-2014-05-15-at-21-58-23.png" alt="Screen Shot 2014-05-15 at 21.58.23">
+&lt;/a>
+6. Optional: Adjust the page margins.
+7. Print.&lt;/p>
+&lt;p>After this, you'll be gluing the pages together, but I think you already figured that out beforehand.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>iOS7 hidden features</title><link>https://realrolfje.github.io/rolfje.com/2013/09/28/ios7-hidden-features/</link><pubDate>Sat, 28 Sep 2013 21:03:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/09/28/ios7-hidden-features/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=QS4xIrTYDWU">&lt;img src="ios-7-logo.png" alt="ios-7-logo">
+&lt;/a>If you've just installed iOS7 and like it as much as I do, you are probably interested in all the new features of it, and where to find them. On behalf of Apple, I'll be happy to point out where all those neat new features are, and share my happiness about this wonderful new magical market-leading mobile OS.&lt;/p>
+&lt;!-- more -->**Easy-Steal (tm)**
+&lt;p>**&lt;a href="easy-steal-e284a2.png">&lt;img src="easy-steal-e284a2.png?w=113" alt="Easy-Steal (™)">
+&lt;/a>**Remember how in iOS6, you can not just steal an iphone because of the &amp;quot;find my iPhone&amp;quot; feature? Thieves had to put your iPhone in a metal container so it could not tell the owner where it is. Because thieves are people too, we now introduced &amp;quot;Easy-Steal (tm)&amp;quot;. When a thief wants to steal your phone, all he has to do is swipe up, press the little airplane button, and nobody will hear from your iPhone again. Want to disable that? Easy. Hand over your flashlight, calculator, timer, and iPod controls.&lt;/p>
+&lt;p>&lt;strong>Separate is the new Integrate&lt;/strong>
+Remember how we beautifully integrated FaceTime with the Phone app? How Podcasts could be played from within iTunes? Well we think that's not the future. So we created a separate FaceTime app, and a separate Podcasts app. So you can have more icons on more screens, making it harder to find stuff. We'll let you in on a little secret. Our next big thing? A Separate device for each function. It will be great! You can just take the device you need and leave all the other ones charging on your desk.&lt;/p>
+&lt;p>&lt;strong>New sounds. And Old Classic ones.&lt;/strong>
+Remember how software developers always say you should not use terms as &amp;quot;Old&amp;quot;, &amp;quot;New&amp;quot; or &amp;quot;Classic&amp;quot; in your software because putting a &amp;quot;New&amp;quot; sticker on a banana will not prevent it from going stale? Well we're not so sure about that. So now, in the old (sorry, new) sound settings, you will find all the same behavior of the old settings, but with new sounds. We've even changed all the sounds your phone makes right from the upgrade. If you would like to revert to the old sounds, don't bother searching in the sounds list. Scroll through the &amp;quot;classic&amp;quot; list. You know, because on the first screen, there is a list of sounds, and in the second list, there will be... err... a list of sounds. But old. Get it? Did we say it was completely new? We lied. Sorry.&lt;/p>
+&lt;p>&lt;strong>Camouflage&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="icon-rainbow.png">&lt;img src="icon-rainbow.png" alt="icon rainbow">
+&lt;/a>&lt;/p>
+&lt;p>All icons are now devoid of those pesky shading and lining that made them visible on all backgrounds. So now, no matter what background color you use, there will always be at least one icon which will blend into the background. We even removed the shading on the text, so you can make that disappear with a simple white background. And did you notice the gradients? Some are light-to-dark, and some are dark-to-light. Why? Because at the new Apple, we hate consistency.&lt;/p>
+&lt;p>&lt;strong>Square.&lt;/strong>
+A new picture mode. Because you want to make photos. videos, and... err... squares?&lt;/p>
+&lt;p>&lt;strong>Look-at-Me (tm)&lt;/strong>
+To make the phone look faster, we made the icons zoom and pan to show how the operating systems moves to help you complete your tasks. It was tested on 500 Dwarf Hamsters and we are pretty sure we made a good job of making people look at your screen while you're using your phone. At least half of those people will get &lt;a href="http://www.tech-recipes.com/rx/44165/how-do-i-prevent-motion-sickness-when-using-ios-7/">motion sickness within 15 seconds&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>New Applications&lt;/strong>&lt;/p>
+&lt;p>&lt;a href="new-apps.png">&lt;img src="new-apps.png" alt="New Apps">
+&lt;/a>
+The seasoned iOS6 user will have immediately spotted it: We've got new Applications! Get more accurate timing in your iPhone with the &lt;a href="https://en.wikipedia.org/wiki/Tourbillon">Tourbillon&lt;/a> app. Make your own weather predictions with the Barometer app, and create stunning graphics with the &lt;a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot&lt;/a> app.&lt;/p>
+&lt;p>&lt;strong>New Puzzles&lt;/strong>&lt;/p>
+&lt;p>_&lt;a href="clickable-puzzle.png">&lt;img src="clickable-puzzle.png?w=450" alt="Clickable Puzzle">
+&lt;/a>_&lt;/p>
+&lt;p>You can now have hours of fun trying to figure out what is tappable or slidable. Is it the text? Is it the color? Is it the icons? Who knows? We've put great care in removing all visual clues, so start taping and sliding!&lt;/p>
+&lt;p>The update process has also become more fun. Because we love our non-US iPhone users, we've made the &amp;quot;Purchased&amp;quot; icon a letter &amp;quot;P&amp;quot;. Level up! The dark arrow pointing down ads to the fun when you tap it and... it slides to the left, which reveals your purchases to the right.&lt;/p>
+&lt;p>&lt;a href="updates-puzzle.png">&lt;img src="updates-puzzle.png" alt="Updates Puzzle">
+&lt;/a>And did we say one update? We'll list all the past updates too, so you can have more useless info on the screen. For good measure, we even added fun blue dots next to the updated apps you did not open already. How useful is that?&lt;/p>
+&lt;p>&lt;a href="installing.png">&lt;img src="installing.png" alt="Installing..">
+&lt;/a>Progress indicators are now even more fun. During updates, your app is named &amp;quot;Installing...&amp;quot; Can you guess what this icon is? If you guessed the application was updating, can you tell if it is at 25% or 75%?&lt;/p>
+&lt;p>For the real advanced puzzlers, we've hidden some controls. Can you make the &amp;quot;Today&amp;quot; widget just display your calendar item without-arbitrary-text-around-it-which-makes-your-content-harder-to-view-at-a-glance? Can you slide your &amp;quot;Stock Options&amp;quot; widget below the &amp;quot;Tomorrow&amp;quot; widget?&lt;/p>
+&lt;p>&lt;a href="message-center-puzzle.png">&lt;img src="message-center-puzzle.png?w=169" alt="Message Center Puzzle">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>A new lock screen&lt;/strong>
+People like lock screens. So they can put functions on them for which you don't have to unlock. Smart, right? Now, people can start playing with your phone without unlocking it, weather you like it or not. Because there is no option to disable that. To make everything easier, we've put more icons on the lock screen, making gestures more finicky. Because we know what &lt;del>Android&lt;/del> iPhone users like.&lt;/p>
+&lt;p>&lt;a href="lockscreens.png">&lt;img src="lockscreens.png?w=450" alt="LockScreens">
+&lt;/a>&lt;/p>
+&lt;p>&lt;strong>And 6789 more features&lt;/strong>
+There is much more to discover. The camera app is on 2 locations in the home screen. The message center is as confusing and inconsistent as ever. The new &amp;quot;dots&amp;quot; signal strength indicator, the network operator name, the wifi icon and the new &amp;quot;gprs&amp;quot; icon are now even wider, so they'll never fit the top bar. Sliders switches look bulkier, slide less, but they do change colors as if they were a bulb. You decide what it's supposed to be, let your imagination run wild! A white dot? Is it a slider or just a dot? Who needs aluminum, Try it out!&lt;/p>
+&lt;p>And if you'll excuse us, we're going to sue Sony because they made their Xperia look like our market-leading mobile OS. See?&lt;/p>
+&lt;h2 id="ios7-because-when-you-paid-for-an-iphone-we-know-you-actually-wanted-android">&lt;strong>iOS7. Because when you paid for an iPhone, we know you actually wanted Android.&lt;/strong>&lt;/h2>
+&lt;p>&lt;strong>P.S.&lt;/strong> Jony, I'm not sure how much you're involved in the UI design, but if you need help, or a better sparring partner, or I need to come rescue you from the bozos that made you do this, the iPhone 5Cheap with it's non-right-angle old-school injection molded back and the gold iPhone, let me know. You're better than this, and maybe we can still fix things. You know how to contact me. Hang in there buddy.&lt;/p></description></item><item><title>Script: Text-to-NATO-spelling</title><link>https://realrolfje.github.io/rolfje.com/2013/05/27/script-text-to-nato-spelling/</link><pubDate>Mon, 27 May 2013 19:11:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2013/05/27/script-text-to-nato-spelling/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?v=dyWbu2y4QL4">&lt;img src="straight-key.jpg" alt="Straight Key">
+&lt;/a>In my morse training adventure on &lt;a href="http://lcwo.net/">lcwo.net&lt;/a>, I hit a slight bump in the road. At Koch lesson 33 (of 40 lessons total), I can't seem to copy with 90% accuracy, which is the criterea for moving to the next lesson. See my downward trend here. It is partly because of gradually speeding up the &lt;a href="http://www.justlearnmorsecode.com/farnsworth.html">Farnsworth timing&lt;/a> from 10wpm to 12wpm so I can be on 20wpm at lesson 40. It is also because of shorter, less focussed daily training sessions, I must confess.&lt;/p>
+&lt;p>&lt;a href="terrible-progress-lcwo.png">&lt;img src="terrible-progress-lcwo.png?w=450" alt="LCWO.net progress">
+&lt;/a>&lt;/p>
+&lt;p>I experimented a bit, and it seems I can recognize characters easily at &lt;a href="http://cgi2.lcwo.net/cgi-bin/cw.mp3?s=37&amp;amp;e=37&amp;amp;f=600&amp;amp;t=This%20is%2037wpm%20morse%20code%20%20%20%20%5E">37wpm&lt;/a>, but I can't form the words and recognize letters at the same time. More accurately: I can't seem to be able to remember 3 to 5 characters, form a word and listen to new characters at the same time.&lt;/p>
+&lt;!-- more -->To see if this was morse or memory related, I wrote a small program which spells out a text in speech, [NATO phonetic alphabet style](https://en.wikipedia.org/wiki/NATO_phonetic_alphabet). I converted some text with it, and proved that my analysis of my own morse problem was correct. This script can also be used to train "word building", so that's why I thought I'd share it with you.
+&lt;p>As for me, I am going to switch to morse word training on lcwo.net for a while, see if that helps. Here is the code for spelling out a text using Apple's built-in text-to-speech synthesizer. It takes a single argument as text file:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; wraplines=&amp;quot;true&amp;quot; gutter=&amp;quot;false&amp;quot;]
+#!/bin/bash&lt;/p>
+&lt;h1 id="the-input-text-file-to-parse-first-argument">The input text file to parse (first argument)&lt;/h1>
+&lt;p>inputfile=&amp;quot;${1}&amp;quot;&lt;/p>
+&lt;h1 id="temporary-files-to-write">(Temporary) files to write&lt;/h1>
+&lt;p>outputfile=&amp;quot;${1}.m4a&amp;quot;
+lowercase=&amp;quot;${1}.lowercase.txt&amp;quot;
+tempfile=&amp;quot;${1}.spelled.txt&amp;quot;&lt;/p>
+&lt;h1 id="clean-up-in-case-we-crashed-last-time">clean up in case we crashed last time&lt;/h1>
+&lt;p>rm ${tempfile}
+rm ${lowercase}
+rm ${outputfile}&lt;/p>
+&lt;h1 id="everything-to-lower-case">everything to lower case&lt;/h1>
+&lt;p>tr '[:upper:]' '[:lower:]' &amp;lt; &amp;quot;${inputfile}&amp;quot; &amp;gt; &amp;quot;${lowercase}&amp;quot;&lt;/p>
+&lt;h1 id="spell-all-the-letters-change-or-add-as-needed">spell all the letters (change or add as needed)&lt;/h1>
+&lt;p>spell=&amp;quot;&amp;quot;
+while IFS= read -n1 char; do
+case &amp;quot;${char}&amp;quot; in
+&amp;quot;a&amp;quot;) spell=&amp;quot;${spell}, alpha&amp;quot; ;;
+&amp;quot;b&amp;quot;) spell=&amp;quot;${spell}, bravo&amp;quot; ;;
+&amp;quot;c&amp;quot;) spell=&amp;quot;${spell}, Charley&amp;quot; ;;
+&amp;quot;d&amp;quot;) spell=&amp;quot;${spell}, delta&amp;quot; ;;
+&amp;quot;e&amp;quot;) spell=&amp;quot;${spell}, echo&amp;quot; ;;
+&amp;quot;f&amp;quot;) spell=&amp;quot;${spell}, foxtrot&amp;quot; ;;
+&amp;quot;g&amp;quot;) spell=&amp;quot;${spell}, golf&amp;quot; ;;
+&amp;quot;h&amp;quot;) spell=&amp;quot;${spell}, hotel&amp;quot; ;;
+&amp;quot;i&amp;quot;) spell=&amp;quot;${spell}, India&amp;quot; ;;
+&amp;quot;j&amp;quot;) spell=&amp;quot;${spell}, Juliet&amp;quot; ;;
+&amp;quot;k&amp;quot;) spell=&amp;quot;${spell}, kilo&amp;quot; ;;
+&amp;quot;l&amp;quot;) spell=&amp;quot;${spell}, leehma&amp;quot; ;;
+&amp;quot;m&amp;quot;) spell=&amp;quot;${spell}, Mike&amp;quot; ;;
+&amp;quot;n&amp;quot;) spell=&amp;quot;${spell}, November&amp;quot; ;;
+&amp;quot;o&amp;quot;) spell=&amp;quot;${spell}, Oscar&amp;quot; ;;
+&amp;quot;p&amp;quot;) spell=&amp;quot;${spell}, papa&amp;quot; ;;
+&amp;quot;q&amp;quot;) spell=&amp;quot;${spell}, Quebec&amp;quot; ;;
+&amp;quot;r&amp;quot;) spell=&amp;quot;${spell}, Romeo&amp;quot; ;;
+&amp;quot;s&amp;quot;) spell=&amp;quot;${spell}, Sierra&amp;quot; ;;
+&amp;quot;t&amp;quot;) spell=&amp;quot;${spell}, tango&amp;quot; ;;
+&amp;quot;u&amp;quot;) spell=&amp;quot;${spell}, uniform&amp;quot; ;;
+&amp;quot;v&amp;quot;) spell=&amp;quot;${spell}, Victor&amp;quot; ;;
+&amp;quot;w&amp;quot;) spell=&amp;quot;${spell}, whiskey&amp;quot; ;;
+&amp;quot;x&amp;quot;) spell=&amp;quot;${spell}, X-ray&amp;quot; ;;
+&amp;quot;y&amp;quot;) spell=&amp;quot;${spell}, Yankee&amp;quot; ;;
+&amp;quot;z&amp;quot;) spell=&amp;quot;${spell}, Zulu&amp;quot; ;;
+&amp;quot;0&amp;quot;) spell=&amp;quot;${spell}, zero&amp;quot; ;;
+&amp;quot;1&amp;quot;) spell=&amp;quot;${spell}, one&amp;quot; ;;
+&amp;quot;2&amp;quot;) spell=&amp;quot;${spell}, two&amp;quot; ;;
+&amp;quot;3&amp;quot;) spell=&amp;quot;${spell}, three&amp;quot; ;;
+&amp;quot;4&amp;quot;) spell=&amp;quot;${spell}, four&amp;quot; ;;
+&amp;quot;5&amp;quot;) spell=&amp;quot;${spell}, five&amp;quot; ;;
+&amp;quot;6&amp;quot;) spell=&amp;quot;${spell}, six&amp;quot; ;;
+&amp;quot;7&amp;quot;) spell=&amp;quot;${spell}, seven&amp;quot; ;;
+&amp;quot;8&amp;quot;) spell=&amp;quot;${spell}, eight&amp;quot; ;;
+&amp;quot;9&amp;quot;) spell=&amp;quot;${spell}, nine&amp;quot; ;;
+&amp;quot;.&amp;quot;) spell=&amp;quot;${spell}. period&amp;quot; ;;
+&amp;quot;,&amp;quot;) spell=&amp;quot;${spell}. comma&amp;quot; ;;
+&amp;quot;=&amp;quot;) spell=&amp;quot;${spell}, equals&amp;quot; ;;
+&amp;quot;/&amp;quot;) spell=&amp;quot;${spell}, slash&amp;quot; ;;
+&amp;quot;?&amp;quot;) spell=&amp;quot;${spell}. questionmark&amp;quot; ;;
+*) if [ -n &amp;quot;$spell&amp;quot; ]; then
+echo &amp;quot;${spell:2}.&amp;quot; &amp;gt;&amp;gt; &amp;quot;${tempfile}&amp;quot;;
+spell=&amp;quot;&amp;quot;;
+fi
+;;
+esac
+done &amp;lt; &amp;quot;${lowercase}&amp;quot;&lt;/p>
+&lt;h1 id="take-the-tempfile-convert-it-to-spoken-text">Take the tempfile, convert it to spoken text.&lt;/h1>
+&lt;p>say -r 250 -v Alex -f ${tempfile} -o ${outputfile}&lt;/p>
+&lt;h1 id="files-left-for-further-processing-if-you-like">Files left for further processing if you like.&lt;/h1>
+&lt;p>ls -l ${inputfile}*
+[/sourcecode]&lt;/p></description></item><item><title>Make your buildserver talk</title><link>https://realrolfje.github.io/rolfje.com/2012/12/16/make-your-buildserver-talk/</link><pubDate>Sun, 16 Dec 2012 16:52:50 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/12/16/make-your-buildserver-talk/</guid><description>
+&lt;p>&lt;img src="jenkins-bla.png" alt="Jenkins talking">
+Have you ever started a shell script which takes a while and you keep monitoring that window because you really need those results? If you are working on a Mac, you can use the Mac's power of speech to tell you a command is finished. Here's how:&lt;/p>
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; gutter=&amp;quot;false&amp;quot;]
+./yourreallyslowbuild.sh; say &amp;quot;really long build is finished&amp;quot;
+[/sourcecode]&lt;/p>
+&lt;p>With a little curl and shell scripting magic, I told my Mac to constantly monitor our Jenkins buildserver, and bug everybody in the office when the hourly build is failing:&lt;/p>
+&lt;!-- more -->
+&lt;p>[sourcecode language=&amp;quot;bash&amp;quot; gutter=&amp;quot;false&amp;quot;]
+#!/bin/sh&lt;/p>
+&lt;h1 id="configuration">Configuration&lt;/h1>
+&lt;p>jenkinsurl=http://my.jenkins.server/jenkins
+voice=Vicki&lt;/p>
+&lt;h1 id="the-function-that-does-the-trick">The function that does the trick&lt;/h1>
+&lt;p>fnReportFailure() {
+job=${1}
+message=${2}
+result=&lt;code>curl -s \ ${jenkinsurl}/job/${job}/lastBuild/api/xml?xpath=/*/result/text()&lt;/code>&lt;/p>
+&lt;p>if  [ &amp;quot;${result}&amp;quot; == &amp;quot;XPath /*/result didn't match&amp;quot; ] &lt;br>
+|| [ &amp;quot;${result}&amp;quot; == &amp;quot;ABORTED&amp;quot; ]; then
+# ignore aborted or in-progress build. Ignore.
+return 0
+elif [ &amp;quot;${result}&amp;quot; != &amp;quot;SUCCESS&amp;quot; ]; then
+echo &lt;code>date&lt;/code> ${job} : ${result}
+say -v &amp;quot;${voice}&amp;quot; &amp;quot;${message}&amp;quot;
+fi
+}&lt;/p>
+&lt;h1 id="loop-over-all-projects-and-shout-out-problems">Loop over all projects and shout out problems&lt;/h1>
+&lt;p>clear
+echo
+echo &amp;quot;Monitoring ${jenkinsurl}&amp;quot;
+echo
+printf &amp;quot;===== &amp;quot;&lt;/p>
+&lt;p>while [ true ]; do&lt;/p>
+&lt;h1 id="add-as-many-jobs-as-you-want-here">Add as many jobs as you want here:&lt;/h1>
+&lt;p>fnReportFailure &amp;quot;hourly_java_job&amp;quot; &amp;quot;The hourly java job is unstable.&amp;quot;
+fnReportFailure &amp;quot;hourly_deploy_job&amp;quot; &amp;quot;The hourly deploy failed.&amp;quot;&lt;/p>
+&lt;h1 id="tell-the-time-and-sleep-a-little">Tell the time and sleep a little&lt;/h1>
+&lt;p>now=&lt;code>date +%H:%M:%S&lt;/code>
+printf &amp;quot;\b\b\b\b\b\b\b\b\b${now} &amp;quot;
+sleep 60
+done
+[/sourcecode]&lt;/p>
+&lt;p>This script talks with the &amp;quot;Vicky&amp;quot; voice, because I let &amp;quot;Alex&amp;quot; read my iChat messages to me. Of course, the &amp;quot;Bad News&amp;quot; and &amp;quot;Zarvox&amp;quot; voices may be even more &amp;quot;motivating&amp;quot; to quickly fix the build. Now go and keep your eyes on youtube... err I mean your code.&lt;/p>
+&lt;p>Enjoy.&lt;/p></description></item><item><title>Shoot salt at flies</title><link>https://realrolfje.github.io/rolfje.com/2012/08/07/shoot-salt-at-flies/</link><pubDate>Tue, 07 Aug 2012 20:54:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2012/08/07/shoot-salt-at-flies/</guid><description>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=47cWewVcfE4">&lt;img src="screen-shot-2012-08-07-at-10-41-30-pm.png" alt="BUG-A-SALT">
+&lt;/a> Lorenzo had a great idea. In stead if being one of those &amp;quot;having fun at the bar&amp;quot; ideas that never actually see the light of day, Lorenzo followed through. Did you ever have that urge to just take a gun and shoot that fly that is constantly buzzing around your head or food? Well now you can. Check out his invention at &lt;a href="http://www.bugasalt.com">www.bugasalt.com&lt;/a>.&lt;/p>
+&lt;p>Seeing his gun, I remembered making pea-shooters at high school from a roll of tape and a party balloon. I adjusted the idea for flies (smaller nozzle), and it works beautifully. It only holds one shot, and it looks not nearly as cool as the shotgun idea of Lorenzo, but if you can't wait to start shooting those flies, here's how to make your own low-budget, one-shot salt shooter. Enjoy!&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=gjI9rTNCRqs]&lt;/p></description></item><item><title>The Useless Machine</title><link>https://realrolfje.github.io/rolfje.com/2011/12/18/the-useless-machine/</link><pubDate>Sun, 18 Dec 2011 09:56:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/12/18/the-useless-machine/</guid><description>
+&lt;p>The past year, you may have seen me tweeting some &amp;quot;#secretproject&amp;quot; tweets. Last week, the project was finally revealed, and here is the video, in case you've missed it:&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=7nkebVQL5zc]&lt;/p>
+&lt;p>This is what is known on the internet as a &lt;a href="http://www.youtube.com/watch?v=Z86V_ICUCD4">&amp;quot;Useless Machine&amp;quot;&lt;/a> or &lt;a href="http://www.leavemealonebox.com/">&amp;quot;Leave-me-alone Box&amp;quot;&lt;/a>. In case you want to make one, there are plenty of instructions online. I think you can build a basic version of this in about a weekend, and it will cost you less than ten euros. &lt;!-- more -->&lt;/p>
+&lt;p>&lt;a href="1-img_0272.jpg">&lt;img src="1-img_0272.jpg?w=225" alt="">
+&lt;/a>
+The tea box&lt;/p>
+&lt;p>&lt;a href="2-img_0268.jpg">&lt;img src="2-img_0268.jpg" alt="">
+&lt;/a>
+Servo, dismantled&lt;/p>
+&lt;p>&lt;a href="3-img_9316.jpg">&lt;img src="3-img_9316.jpg?w=300" alt="">
+&lt;/a>
+Servo mounted to switch&lt;/p>
+&lt;p>&lt;a href="4-img_0294.jpg">&lt;img src="4-img_0294.jpg?w=225" alt="">
+&lt;/a>
+Wooden arm on the sander&lt;/p>
+&lt;p>&lt;a href="4-img_9329.jpg">&lt;img src="4-img_9329.jpg?w=300" alt="">
+&lt;/a>
+Aluminum arm offset bushing in the lathe.&lt;/p>
+&lt;p>&lt;a href="5-img_9331.jpg">&lt;img src="5-img_9331.jpg" alt="">
+&lt;/a>
+Arm mounted on the servo&lt;/p>
+&lt;p>&lt;a href="6-img_9337.jpg">&lt;img src="6-img_9337.jpg?w=300" alt="">
+&lt;/a>
+Assembly in front of the tea box&lt;/p>
+&lt;p>&lt;a href="7-img_0314.jpg">&lt;img src="7-img_0314.jpg?w=225" alt="">
+&lt;/a>
+Cutting the decorative ventilation holes&lt;/p>
+&lt;p>&lt;a href="8-img_0381.jpg">&lt;img src="8-img_0381.jpg" alt="">
+&lt;/a>
+Painting sanding painting sanding painting sanding...&lt;/p>
+&lt;p>&lt;a href="8-img_3259.jpg">&lt;img src="8-img_3259.jpg" alt="">
+&lt;/a>
+Assembly painted black for cool looks&lt;/p>
+&lt;p>&lt;a href="9-img_3291.jpg">&lt;img src="9-img_3291.jpg?w=300" alt="">
+&lt;/a>
+Waiting for glue to set&lt;/p>
+&lt;p>&lt;a href="img_3288.jpg">&lt;img src="img_3288.jpg" alt="">
+&lt;/a>
+Last minute hack: on/off switch for transport&lt;/p>
+&lt;p>&lt;a href="img_3305.jpg">&lt;img src="img_3305.jpg" alt="">
+&lt;/a>
+The &amp;quot;Useless Machine&amp;quot; or &amp;quot;Leave me alone box&amp;quot;&lt;/p>
+&lt;p>Now go build your own. Have fun!&lt;/p></description></item><item><title>Catnip Watering System</title><link>https://realrolfje.github.io/rolfje.com/2011/12/04/catnip-watering-system/</link><pubDate>Sun, 04 Dec 2011 20:04:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2011/12/04/catnip-watering-system/</guid><description>
+&lt;p>Here's a one minute how-to on growing catnip without having to water your plants every day.&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=6jyqNzNeQeE]&lt;/p></description></item><item><title>Problem Solving for Dummies</title><link>https://realrolfje.github.io/rolfje.com/2010/07/15/problem-solving-for-dummies/</link><pubDate>Thu, 15 Jul 2010 20:12:06 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/07/15/problem-solving-for-dummies/</guid><description>
+&lt;p>Some people can not seperate cause and effect when solving problems, and every now and then you run into a great example.&lt;/p>
+&lt;table align="center" >
+&lt;tbody >
+&lt;tr >
+&lt;td >If this is your problem...
+&lt;/td>
+&lt;td >this is not your solution
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >[![Some people are still trying here...](img_8018.jpg?w=200)
+](img_8018.jpg)
+&lt;/td>
+&lt;td >[!["It is not allowed to throw paper towels into the toilet."](img_7048.jpg)
+](img_7048.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+The towel bin is next to the sink. Why would anyone walk all the way back to the toilet to throw their paper towel in there? Well maybe it's because they have nowhere to put it? There is a simple solution to solving problems with other people's behavior, without having to put up signs and making up silly rules:
+&lt;h2 id="make-the-right-thing-to-do">Make the right thing to do&lt;/h2>
+&lt;h2 id="the-easy-thing-to-do">the easy thing to do.&lt;/h2>
+&lt;p>spacing&lt;/p></description></item><item><title>The Car Buying Story</title><link>https://realrolfje.github.io/rolfje.com/2010/01/10/the-car-buying-story/</link><pubDate>Sat, 09 Jan 2010 22:50:48 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/01/10/the-car-buying-story/</guid><description>
+&lt;p>&lt;img src="schermafbeelding-2010-01-04-om-21-22-13.png" alt="">
+Stephen needs a new car. Being dilligent and a car lover, he takes the time to write down all criteria for a great car. When he finishes the list, he notices that the only car matching all his criteria is a Ferrari. Well, he always loved a Ferrari so that makes sense. To make things more realistic he adds another criteria, called &amp;quot;price&amp;quot;, and starts looking for alternatives.&lt;/p>
+&lt;!-- more -->The first car he looks at is practical, but hasn't got the speed of a Ferrari. The second car can carry a lot of stuff, but hasn't got the sound of a Ferrari. The third car is really modular, but hasn't got the looks of a Ferrari. The fourth car is very fast, but doesn't handle as a Ferrari. The fifth car is an independant brand, and can be repaired in any shop, but it breaks down much more often than a Ferrari. The sixth car has a cool design-flip-type-clock and integrated MP3 player, but the manual coming with it does not explain how to operate them.
+&lt;p>The seventh car looked too good to be true good in the advertisement. The images in the brochure look stunning. It has everything on his list, and also matches the price criteria. Stephen orders it immediately. But when delivered it does not live up to the whole Ferrari design, look and feel. By far.&lt;/p>
+&lt;p>Stephen is not really unhappy and has learned to live with the car's shortcomings. When asked about his new car, Stephen kindly shows it, but the first sentence he regretfuly utters is &lt;em>&amp;quot;but ofcourse, it's not a Ferrari&amp;quot;...&lt;/em>&lt;/p>
+&lt;p>The moral of this story is: If you don't buy a Ferrari, you'll never own a Ferrari.&lt;/p>
+&lt;p>search: car
+replace: mobile phone&lt;/p>
+&lt;p>search: Ferrari
+replace: iPhone&lt;/p>
+&lt;h6 id="the-events-in-this-story-are-fictitious-any-similarity-to-any-person-living-or-dead-is-merely-coincidental-i-cannot-emphasize-enough-how-coincidental-the-fictional-entities-are-to-any-real-life-individual-entity-or-character-for-more-disclaimers-id-like-to-refer-you-to-this-sites-about-pagehttprolfjewordpresscomabout">The events in this story are fictitious. Any similarity to any person living or dead is merely coincidental. I cannot emphasize enough how coincidental the fictional entities are to any real life individual, entity, or character. For more disclaimers I'd like to refer you to this site's &lt;a href="http://rolfje.wordpress.com/about/">about page&lt;/a>.&lt;/h6></description></item><item><title>T(w)inkering</title><link>https://realrolfje.github.io/rolfje.com/2009/06/07/twinkering/</link><pubDate>Sun, 07 Jun 2009 21:07:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/06/07/twinkering/</guid><description>
+&lt;p>Now that the twitter hype is cooling down, and companies tart to realize that it is, in fact, just CB radio in a new asynchronous form, only the &amp;quot;true tweeps&amp;quot; still hang around. And now, it's time to t(w)inker with it.&lt;/p>
+&lt;!-- more -->
+&lt;p>[caption id=&amp;quot;attachment_942&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;Early 2002, in my dad's old &amp;quot;shack&amp;quot;, we measured the accuracy of a delayed solonoid triggering device I made.&amp;quot;]&lt;a href="02020905.jpg">&lt;img src="02020905.jpg?w=150" alt="Early 2002, in my dad's old "shack", we measured the accuracy of a delayed solonoid triggering device I made.">
+&lt;/a>[/caption]&lt;/p>
+&lt;p>Some years ago, I did some playing around with CB radio. With my dad being an electronics engineer and a &lt;a href="http://en.wikipedia.org/wiki/Amateur_radio">HAM radio&lt;/a> operator, it didn't take long before I got my HAM radio license, and start taking apart and putting together all kinds of electronics to play with this medium. We had quite some fun doing this, and I got a lot of great stories out of it.&lt;/p>
+&lt;p>With the coming of Twitter as the &amp;quot;new CB radio&amp;quot;, a new kind of tinkering came along. Not so much with electronics, but more with the data of twitter itself. Here are some of the funny and/or interesting services I found:&lt;/p>
+&lt;p>&lt;strong>WARNING:&lt;/strong> Some of these services show you a very &amp;quot;Twitter like&amp;quot; login form, and ask you to sign in with your Twitter userid and password. Please think very careful about this. Giving somebody your twitter password can render your account useless, and exposes you to possible forms of identity theft. Except for twitpic, none of these services have ever seen my password.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitoaster.com/rolfje">Twitoaster&lt;/a>&lt;/strong>
+One of the problems with Twitter is that you don't always see your conversations. People might only see one half of it, or because of it's asynchronous character, miss essential tweets in a conversation. To solve this, Twitoaster searches your tweets, finds replies, and groups them together.&lt;/p>
+&lt;p>The downside is that you need to follow @twitoaster, which can ruin your &amp;quot;tweet stream&amp;quot;. Having said that, there are not much tweets coming from that account so maybe it won't bother you that much. Although twitoaster.com shows you a login form, you are not required to log in for this service to work.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://xefer.com/twitter/rolfje">Xefer&lt;/a>&lt;/strong>
+If you like cool pictures made from your tweeting habbits, Xefer can do that for you. It will display an activity graph which shows you which days of the week and which hours of those days you are most active on Twitter.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitterank.com/?u=rolfje">Twitterank&lt;/a>&lt;/strong>
+Some mysterious algorithm places people in a list in a certain order, and calls it a &amp;quot;rank&amp;quot;. Now all of a sudden, people want to be on top. Isn't that funny? The developer of this site had hacked some stuff together, and was soon overwhelmed by people wanting to know their &amp;quot;rank&amp;quot;. This is ofcourse just as silly as measuring your success by the number of followers you have.&lt;/p>
+&lt;p>At the time of this writing, my twitterrank is 14.26. According to twitterank, this score is higher than 37.68 of the other ranked twitterers. Not knowing what the algorithm is, and not knowing how to influence it, means this number is totally useless and silly. But hey, we like numbers... Yay twitterank!&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.twitteranalyzer.com/ms.aspx?userId=rolfje">Twitteranalyzer&lt;/a>&lt;/strong>
+Just another graphing thing to show you when you tweet the most, what words or hashtags you most commonly use, and what kind of clients you use. Nicely done, but not really compelling.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.tweetstats.com/status/rolfje">Tweetstats&lt;/a>&lt;/strong>
+One of my favourites, displays your usage info in nice simple colorful layout. While you are waiting, funny texts as &amp;quot;magic happening&amp;quot; and &amp;quot;there be feries&amp;quot; are shown on the progess bar.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twanalyst.com/status.php?search=rolfje">Twanalyst&lt;/a>&lt;/strong>
+&lt;a href="http://twanalyst.com/suggest.php">&lt;img src="hatter.png" alt="Twanalyst logo">
+&lt;/a>Always fun to read and always changing (if you keep tweeting), this service reads all your tweets and takes a shot at estimating your personality from their contents. At the time of this writing, it thinks of me as &amp;quot;likeable sociable fair&amp;quot; and &amp;quot;garrulous coherent&amp;quot;. It sums it up as &amp;quot;Poet&amp;quot;. Ahem.&lt;/p>
+&lt;p>I you're not tweeting enough, or there is something else this service thinks is wrong, it will give you some tweeting tips. Very funny. Don't forget to check out the &lt;a href="http://twanalyst.com/rolfje/suggest">&amp;quot;suggest&amp;quot;&lt;/a> feature, which will try to find people with a similar writing style youmight like following.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://hashtags.org/">Hashtags&lt;/a>&lt;/strong>
+Tracks hashtags in the global timeline. With this service you can see people's tweets grouped by tags. Very handy if you want to keep up with a particular subject. I personally use it to check &lt;a href="http://hashtags.org/tag/followfriday/messages">followfriday&lt;/a> tags every now and then.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitterposter.com/nl">Twitterposter&lt;/a>&lt;/strong>
+Shows you a cloud of twitter icons. The bigger the icon, the more followers this account has. The bad news is that it sometimes does not load all icons or avatars.&lt;/p>
+&lt;p>&lt;strong>Final thoughts&lt;/strong>
+There are many, many, many more twitter services out there, but you want to be careful with sharing your password. For example, &lt;em>Tweetmondo.com&lt;/em> needs your twitter account password, just to tell you if there are &amp;quot;tweeps&amp;quot; close to your location? No thank you, Tweetie on my iPhone already does that.&lt;/p>
+&lt;p>Same goes for &lt;em>Localtweeps.com&lt;/em>, which tries to match you and other local tweeps through your ZIP code. I never was even tempted to give them my password, because it's developers seem to think that the world only consists of US, Canada and UK. Nothing to see here, move along...&lt;/p>
+&lt;p>If you have a twitter account which has enough data to make these services work, you are one of the luck few. An &lt;a href="http://tech.yahoo.com/blogs/patterson/50591/study-top-10-of-twitter-users-do-90-of-the-tweeting/">article on tech.yahoo.com&lt;/a> shows that the top 10% of twitter users do 90% of the twittering. I hope they didn't count those dumb automated tweets, because there are a lot of those...&lt;/p>
+&lt;p>It's funny how companies still seem to think that they can just &amp;quot;connect to a network&amp;quot;, send us spam, and them expect we'll like them. These companies are either loaded, or doomed, because in a few months, they might have to connect to a different network. Like Scoble said: &lt;em>&amp;quot;Networks don't have people. People have networks.&amp;quot;&lt;/em>&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Javascript Window Shake</title><link>https://realrolfje.github.io/rolfje.com/2009/03/12/javascript-window-shake/</link><pubDate>Wed, 11 Mar 2009 22:54:53 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/03/12/javascript-window-shake/</guid><description>
+&lt;p>This evening I came accross the window.moveBy() JavaScript function and thought it would be cool to shake the browser window when a user fails to &lt;a href="http://rolfje.wordpress.com/2006/11/02/it-aint-what-you-do/">log in&lt;/a>. It turns out that I was not the only one thinking this, but none of the examples worked for me. Some had &lt;a href="http://javascript.internet.com/image-effects/shake-screen.html">no proper delays&lt;/a>, others only worked from the page header, and some were &lt;a href="http://www.permadi.com/tutorial/jsquake/index.html">plain unreadable&lt;/a>.&lt;/p>
+&lt;p>I'm no Javascript guru, but I hacked this together which is working pretty nicely. It is in fact almost undistinguishable from the Apple login window shake at a login failure:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;script type=&amp;quot;text/javascript&amp;quot;&amp;gt;
+if (window.moveBy) {
+delay = 70;
+shakes = 3;
+window.moveBy(-10, 0);
+for (j = shakes; j &amp;gt; 0; j--) {
+setTimeout( &amp;quot;window.moveBy(20, 0)&amp;quot;, j*delay );
+setTimeout( &amp;quot;window.moveBy(-20, 0)&amp;quot;,
+j*delay+(delay/2));
+}
+setTimeout( &amp;quot;window.moveBy(10, 0)&amp;quot;, (shakes+1)*delay );
+}
+&amp;lt;/script&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>In my case, I surrounded this code with a Tapestry @Conditional and made it into a reusable Tapestry component so that I can make any window shake as soon as it contains an error.&lt;/p>
+&lt;p>The code will work anywhere on your page, but I advise you to put it at the bottom of the HTML. This will make sure that the content is shown in the browser before you shake it.&lt;/p>
+&lt;p>It's visually much stronger than just adding an errortext to the page. If people log in a couple of times a day, they don't even notice extra text on the screen. This will &amp;quot;shake&amp;quot; them awake :-)&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Bill's Mosquitoes</title><link>https://realrolfje.github.io/rolfje.com/2009/02/06/bills-mosquitoes/</link><pubDate>Fri, 06 Feb 2009 21:17:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/02/06/bills-mosquitoes/</guid><description>
+&lt;p>&lt;a href="http://www.ted.com/talks/view/id/451">&lt;img src="afbeelding-4.png" alt="Bill Gates Releases Musquitoes">
+&lt;/a>Bill Gates found a very good way to get the news reporters to pay attention to the malaria problem. In his talk at the TED conference, he released a few mosquitoes, stating that malaria should not be just for poor people to experience. People who did not see the whole performance may react shocked, because when placed out of context it sounds like an outrageous thing to do.&lt;/p>
+&lt;p>If you think that's the case, you should maybe &lt;a href="http://www.ted.com/talks/view/id/451">have a look at his talk&lt;/a>, available (for free, without registering) at TED.com. You'll see that the audience is actually laughing when he releases the mosquitoes, and at the end of the talk Bill gets a standing ovation.&lt;/p>
+&lt;p>In addition to the malaria problem, Bill also makes a very good case about how important good teachers are, and what we can do to help teachers become just that.&lt;/p></description></item><item><title>Care vs Careless</title><link>https://realrolfje.github.io/rolfje.com/2009/02/03/care-vs-careless/</link><pubDate>Tue, 03 Feb 2009 21:21:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/02/03/care-vs-careless/</guid><description>
+&lt;p> &lt;/p>
+&lt;p>&lt;a href="http://stuffthathappens.com/blog/">&lt;img src="simplicity.png" alt="simplicity">
+&lt;/a>&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>It's frightening to realize how close to the truth Eric Burke is.&lt;/p></description></item><item><title>Wiimote Whiteboard</title><link>https://realrolfje.github.io/rolfje.com/2008/12/12/wiimote-whiteboard/</link><pubDate>Fri, 12 Dec 2008 21:28:39 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/12/wiimote-whiteboard/</guid><description>
+&lt;p>&lt;a href="http://www.uweschmidt.org/wiimote-whiteboard">&lt;img src="wiimotewhiteboard_128.png" alt="WiimoteWhiteboard">
+&lt;/a>For people wanting to have an interactive whiteboard but don't have the money, &lt;a href="http://www.cs.cmu.edu/~johnny/projects/wii/">Johnny Chung Lee&lt;/a> has found the solution. Using a Wiimote, he can track an infrared lightsource (like an LED) and use that to control the mousecursor. I tried some software on the Mac and the PC, and I actually got both to work without too much trouble.&lt;/p>
+&lt;!-- more -->
+&lt;p>&lt;strong>The infra-red pen&lt;/strong>
+Please note that you need some kind of Infra-Red emitting device. In my first tests to see if the software works, I used a TV remote. This is a bit clunky, so next on my list is to build a simple infra-red pen this weekend.&lt;/p>
+&lt;p>I noticed a lot of people building infra-red pens by directly connecting an LED to a battery, which will possibly ruin your LED very quickly because there's too much current running through it. An LED is a diode, and it needs to be limited in current. The only right way to do it is follow &lt;a href="http://www.cs.cmu.edu/~johnny/projects/wii/pen.jpg">Johnny's schematic&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Whiteboard app on the Mac:
+I was amazed about how well this worked. I was expecting a lot of experimental stuff, but instead, this is all you have to do:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. [![](afbeelding-21.png?w=47)
+&lt;/code>&lt;/pre>
+&lt;p>](afbeelding-21.png)Download &lt;a href="http://www.uweschmidt.org/files/WiimoteWhiteboard.dmg">WiimoteWhiteboard for the Mac&lt;/a> by Uwe Schmidt.
+2. Enable bluetooth on your mac.
+3. Start the WiimoteWhiteboard.app
+4. On the Wiimote, press buttons 1 and 2 simultaniously to put it in &amp;quot;detectable&amp;quot; mode. If the Wiimote was already on, you may need to press the red button in the battery compartment.
+5. After pairing is complete, press the &amp;quot;calibrate&amp;quot; button and follow the instructions.&lt;/p>
+&lt;p>I did these steps on an intel  Mac mini and it worked beautifully. You can pair up to 2 Wiimotes to increase reliability.&lt;/p>
+&lt;p>&lt;strong>Whiteboard app on the PC:
+This is slightly more work, but does not include steps which are strange to regular Windows users:&lt;/strong>&lt;/p>
+&lt;pre>&lt;code> 1. Download and install the [.Net framework version 3.5](http://www.microsoft.com/downloads/details.aspx?FamilyId=333325FD-AE52-4E35-B531-508D977D32A6&amp;amp;displaylang=en)
+2. Download Boon Jin's [Smoothboard](http://www.boonjin.com/wp/2008/08/14/wiimote-smoothboard-045-beta) for Windows.
+3. [![XP Bluetooth Wizard Screen 1](clipboard02.png)
+&lt;/code>&lt;/pre>
+&lt;p>](clipboard02.png)Install the .Net framework, and unpack the smoothboard zipfile in a convenient location. It has no setup.exe (thank god)
+4. In the system tray on your Windows, right-click the bluetooth icon, and choose &amp;quot;Add a Bluetooth Device&amp;quot;
+5. Click the &amp;quot;My device is set up and ready to be connected&amp;quot; checkbox.
+6. &lt;a href="clipboard03.png">&lt;img src="clipboard03.png?w=124" alt="XP Bluetooth Wizard Screen 2">
+&lt;/a>Press the red button of the Wiimote (in the battery compartement) to unpair it from anything else and get into &amp;quot;detecable&amp;quot; mode.
+7. Click the &amp;quot;Next&amp;quot; button in the Wizzard
+8. Select the &amp;quot;Nintendo RVL-CNT-01&amp;quot; device and click &amp;quot;Next&amp;quot;
+9. &lt;a href="clipboard04.png">&lt;img src="clipboard04.png?w=124" alt="XP Bluetooth Wizard Screen 3">
+&lt;/a>Select the &amp;quot;Don't use a passkey&amp;quot; radio button and DON'T press &amp;quot;Next&amp;quot;.
+10. Press the little red button on the Wiimote again, so that all blue lights start flashing, and then press &amp;quot;Next&amp;quot; on the wizard.
+11. In the tray, you should now see popups saying &amp;quot;Found new hardware&amp;quot; and something like &amp;quot;New HID device&amp;quot;. They will dissapear after a while. If the popups did not show, start the whole process again from step 4.
+12. Press &amp;quot;Finish&amp;quot; in the Wizard, notice that the Wiimote keeps flashing all the lights.
+13. Start Smoothboard. The Wiimote should stop flashing, and you can click on the &amp;quot;Calibrate&amp;quot; button to start the fun.&lt;/p>
+&lt;p>&lt;a href="clipboard05.png">&lt;img src="clipboard05.png?w=33" alt="Smoothboard Screenshot">
+&lt;/a>&lt;/p>
+&lt;p>I've tested the Windows setup on a Dell 530 laptop with the built-in bluetooth device, and it works fine, although I did have to reboot once because the bluetooth stack got confused and refused to detect my Wiimote. Smoothboard also allows you to pair 2 Wiimotes to improve reliability. It also has many features which are tailored to controling Powerpoint and other software, but I haven't tried that yet.&lt;/p></description></item><item><title>Brilliant TV</title><link>https://realrolfje.github.io/rolfje.com/2008/12/08/brilliant-tv/</link><pubDate>Sun, 07 Dec 2008 22:46:10 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/12/08/brilliant-tv/</guid><description>
+&lt;p>People who know me know that I'm not a big fan of commercial TV. It hasn't got any depth, it usually underproduced, overmarketed and makes an insulting assumption on the viewer's intelligence. (Wow, all in one sentence :-) )&lt;/p>
+&lt;p>So I usually get my information elsewhere. Most of the stuff I find interesting is provided through &lt;a href="http://antipattern.wordpress.com/2008/11/08/software-engineering-is-my-profession-programming-is-my-hobby/">RSS feeds&lt;/a>. Some of it is made available through &lt;a href="http://blog.stackoverflow.com/">audio podcasts&lt;/a>, which is brilliant when commuting. As for video, youtube looked promising, but the messy interface and sheer overload of people making silly movies with their mobile phones has made it hard for me to find actual interesting video there. The rating system with YouTube did improve the past week, but it's still hard to find stuff that interests me.&lt;/p>
+&lt;p>Enter the TED talks. These are brilliant video's mostly of a &lt;a href="http://www.ted.com/index.php/talks/raul_midon_plays_all_the_answers_and_tembererana.html">presentation&lt;/a>, or sometimes &lt;a href="http://www.ted.com/index.php/talks/raul_midon_plays_all_the_answers_and_tembererana.html">music&lt;/a>. But generally, the TED talks are just that tiny bit more interesting than TV, without commercials, and with real contents.&lt;/p>
+&lt;p>Just now I finished watching Mena Trott's entertaining presentation on &lt;a href="http://www.ted.com/index.php/talks/mena_trott_tours_her_blog_world.html">how blogs are building a friendlier world&lt;/a>. The &lt;a href="http://www.ted.com/">TED.com&lt;/a> site is really clean, easy to browse and contains tons of video's about remarkable people with very interesting stories to tell. If my TV died, the only way I'd notice is when I switch on my PS3 to play a video game.&lt;/p></description></item><item><title>Monkeys: How to get rich.</title><link>https://realrolfje.github.io/rolfje.com/2008/11/23/monkeys-how-to-get-rich/</link><pubDate>Sun, 23 Nov 2008 10:38:07 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/11/23/monkeys-how-to-get-rich/</guid><description>
+&lt;p>I recently got an email with a brilliant little fairytale about how to trick people into happily giving you all their money. I wanted to share with you, but it was in Dutch, and the origin was cleary not the original author.&lt;/p>
+&lt;p>Today I was &lt;a href="http://www.thefreedictionary.com/rummaging">rummaging&lt;/a> around the internet to see if I could find the original author, and I did. I found out that the Dutch story was freely translated from an English source. Here's the original story from that English source, unaltered (and with reference):&lt;/p>
+&lt;!-- more -->
+&lt;blockquote>**Monkeys**
+&lt;p>Once upon a time in a village, a man appeared and announced to the villagers that he would buy monkeys for $5 each. The villagers seeing that there were many monkeys around, went out to the forest and started catching them.&lt;/p>
+&lt;p>The man bought thousands at $5 and as supply started to diminish, the villagers stopped their effort.&lt;/p>
+&lt;p>He further announced that he would now buy at $10. This renewed the efforts of the villagers and they started catching monkeys again. Soon the supply diminished even further and people started going back to their farms.&lt;/p>
+&lt;p>The offer increased to $15 each and the supply of monkeys became so little that it was an effort to even see a monkey, let alone catch it.&lt;/p>
+&lt;p>The man now announced that he would buy monkeys at $50. However, since he had to go to the city on some business, his assistant would now buy on his behalf.&lt;/p>
+&lt;p>In the man’s absence, the assistant told the villagers “Look at all these monkeys in the big cage that the man has collected. I will sell them to you at $45 and when the man returns from the city, you can sell them to him for $50 each.”&lt;/p>
+&lt;p>The villagers rounded up with all their savings and bought all the monkeys. Then they never again saw the man nor his assistant, only monkeys everywhere!&lt;/p>
+&lt;p>And THAT ladies and gentleman is how the stock market works…&lt;/p>
+&lt;blockquote>
+&lt;p>(by John Sinteur,
+as published on October 25th, 2008
+on &lt;a href="http://weblog.sinteur.com/2008/10/monkeys-2/">&amp;quot;the Daily Irrelevant&amp;quot;&lt;/a>)&lt;/p>
+&lt;/blockquote>
+&lt;/blockquote></description></item><item><title>Let Me Google That For You</title><link>https://realrolfje.github.io/rolfje.com/2008/11/20/let-me-google-that-for-you/</link><pubDate>Thu, 20 Nov 2008 21:06:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/11/20/let-me-google-that-for-you/</guid><description>
+&lt;p>We've probably all had it. Just when you thought you found the right number of &lt;a href="http://projecteuler.net/index.php?section=problems&amp;amp;id=125">Palindromic Square Sums&lt;/a>, you receive a mail from somewhere up the chain of command with a cry for help. The rather lengthy mail contains 3 paragraphs on why this mail was so important, why it was sent to you and why you need to reply &amp;quot;immediately&amp;quot;. At the end of the mail, there is a fairly trivial question like &amp;quot;How many pounds is in one kilogram&amp;quot;?&lt;/p>
+&lt;p>So you search Google and find out that 1 kilogram is 2.20462262 pounds. Depending on your irritation, you mail the information, or a link to the &lt;a href="http://www.google.com/search?q=1+kilo+in+pounds">google results&lt;/a> (because it is a top hit). For people not taking the hint of your Google url, there's now another nice option, called &lt;a href="http://letmegooglethatforyou.com/?q=1+kg+in+pounds">&amp;quot;Let Me Google That For You&amp;quot;&lt;/a>. &lt;/p>
+&lt;p>It's a bit more obvious to the hard hearing, and less blunt than a &lt;a href="http://justfuckinggoogleit.com/">similar service&lt;/a> I used a few years ago. Here's the empty link so you can roll your own: &lt;a href="http://letmegooglethatforyou.com/">letmegooglethatforyou.com&lt;/a>&lt;/p></description></item><item><title>You are a pirate!</title><link>https://realrolfje.github.io/rolfje.com/2008/10/25/you-are-a-pirate/</link><pubDate>Fri, 24 Oct 2008 23:00:31 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/10/25/you-are-a-pirate/</guid><description>
+&lt;p>A briliant post on &lt;a href="http://xkcd.com">xkcd.com&lt;/a> today explains in one single cartoon why DRM is bad:&lt;/p>
+&lt;p>[caption id=&amp;quot;&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;400&amp;quot; caption=&amp;quot;Steal This Comic&amp;quot;]&lt;a href="http://xkcd.com/488/">&lt;img src="http://imgs.xkcd.com/comics/steal_this_comic.png" alt="Steal This Comic">
+&lt;/a>[/caption]&lt;/p>
+&lt;p>I couldn't have made it simpler (although &lt;a href="http://rolfje.wordpress.com/2007/05/04/the-digital-revolution/">I tried&lt;/a>).&lt;/p></description></item><item><title>The Three Great Virtues of a Programmer</title><link>https://realrolfje.github.io/rolfje.com/2008/10/05/the-three-great-virtues-of-a-programmer/</link><pubDate>Sun, 05 Oct 2008 11:02:31 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/10/05/the-three-great-virtues-of-a-programmer/</guid><description>
+&lt;p>I ran across &lt;a href="http://c2.com/cgi/wiki?LazinessImpatienceHubris">this wiki page&lt;/a> which has a nice piece on the virtues of a good programmer. I found it so recognizable that I decided to copy it over for you to enjoy:&lt;/p>
+&lt;blockquote>_**"We will encourage you to develop the three great virtues of a programmer: laziness, impatience, and hubris."**_** **-- Larry Wall, Programming Perl (1st edition), O'Reilly and Associates
+&lt;p>**Laziness
+**The quality that makes you go to great effort to reduce overall energy expenditure. It makes you write labor-saving programs that other people will find useful, and document what you wrote so you don't have to answer so many questions about it. Hence, the first great virtue of a programmer. Also hence, this book. See also impatience and hubris. (p.609)&lt;/p>
+&lt;p>**Impatience
+**The anger you feel when the computer is being lazy. This makes you write programs that don't just react to your needs, but actually anticipate them. Or at least pretend to. Hence, the second great virtue of a programmer. See also laziness and hubris. (p.608)&lt;/p>
+&lt;p>**Hubris
+**Excessive pride, the sort of thing Zeus zaps you for. Also the quality that makes you write (and maintain) programs that other people won't want to say bad things about. Hence, the third great virtue of a programmer. See also laziness and impatience. (p.607)&lt;/blockquote>&lt;/p>
+&lt;p>(The original context can be found at
+&lt;a href="http://c2.com/cgi/wiki?LazinessImpatienceHubris">http://c2.com/cgi/wiki?LazinessImpatienceHubris&lt;/a>)&lt;/p></description></item><item><title>A Weekend of Crashes</title><link>https://realrolfje.github.io/rolfje.com/2008/08/31/a-weekend-of-crashes/</link><pubDate>Sun, 31 Aug 2008 20:31:43 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/08/31/a-weekend-of-crashes/</guid><description>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/3413035">&lt;img src="http://www.23hq.com/23666/3413035_46466e31d22ffce53207f35d201971fb_thumb.jpg" alt="">
+&lt;/a>This weekend was a lot of fun. Saturday night I got to fly Leo's Walkera 60B electric helicopter. That's one piece of impressive (and scary) machinery. Although it feels easier to fly than my 4#3B, I still &amp;quot;managed&amp;quot; to crash it. Luckaly the blades can be easily replaced, and after tightening a bunch of screws and replacing a pin in the main gear, it was good to fly again. We flew 3 times, and had to repair the helicopter after each flight :-) I hope I can treat you with good shots of the Walkera 60B next time, there are not many high-quality images of it online.&lt;/p>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/3413033">&lt;!-- more -->&lt;img src="http://www.23hq.com/23666/3413033_ea62d55e9fd2d7bf2b3876f1780455d0_mblog.jpg" alt="">
+&lt;/a>After getting the hang of the big 60B, I got home and did some flying with my little &lt;a href="http://rolfje.wordpress.com/2008/08/10/new-helicopter-to-master/">Walkera 4#3B&lt;/a>. I can now seem to hover it slightly longer than last week, but I still &amp;quot;landed&amp;quot; the thing in the strangest places. Normally there's not much damage, but this time I broke the tail rotor axle. In the pictures, you can also see the crack in the canopy which I simply repaired with a piece of tape. After I repaired the tailrotor, I crashed it again, this time breaking the rear tail altogether.&lt;/p>
+&lt;p>The third crash this weekend was not mine, but &lt;a href="http://paddocktalk.com/news/html/modules/ew_filemanager/08content/motogp/ducati/gb/motogp-fri-stoner-quickest-641.jpg">Kacey Stoner&lt;/a>'s. In the MotoGP race at Misano, Rossi almost high-sided in the first lap, and that little mistake made the gap with Stoner about 3 seconds. As Rossi was trying to gain, Stoner went down in the hairpin in the 8th lap. I sure would have liked to see Rossi and Stoner battle for the win. All in all &lt;a href="http://www.motogp.com/en/news/2008/Rossi+takes+home+victory+and+75+point+advantage+at+Misano">it was a nice race&lt;/a>, won by Valentino Rossi.&lt;/p></description></item><item><title>Mine are real.</title><link>https://realrolfje.github.io/rolfje.com/2008/08/27/mine-are-real/</link><pubDate>Wed, 27 Aug 2008 20:15:58 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/08/27/mine-are-real/</guid><description>
+&lt;p>As &lt;a href="http://sethgodin.typepad.com/seths_blog/2008/08/the-first-law-o.html">Seth Godin pointed out&lt;/a>, &lt;em>&amp;quot;Organizations will work tirelessly to de-personalize every communication medium they encounter.&amp;quot;&lt;/em>&lt;/p>
+&lt;p>Just to let you know, all my mail is hand typed, including the _&amp;quot;Kind Regards&amp;quot; _and my name at the end. You may find it silly, but I think it shows that you care. I always think about my greetings, and I even try to vary them every now and then. Having a default greeting underneath every mail, wether the content of that mail requires it or not is just plain silly.&lt;/p>
+&lt;p>Almost just as &lt;a href="http://www.goldmark.org/jeff/stupid-disclaimers/">silly as the disclaimers&lt;/a> people put in the mail, thinking that it has any legal value, or even thinking somebody actually reads those.&lt;/p>
+&lt;p>Next time you receive a mail from me, keep in mind that my greetings are actual, meaningful, honest greetings, personally written from me to you. You may have noticed that I am never &lt;em>&amp;quot;yours&amp;quot;&lt;/em>, because then I would be &lt;em>&amp;quot;truly&amp;quot;&lt;/em> lying.&lt;/p>
+&lt;p>And yes, it als gives me an opportunity to leave them out, or tone them down. You're allowed to check your mail now. Go and feel special.&lt;/p></description></item><item><title>Cowbell++;</title><link>https://realrolfje.github.io/rolfje.com/2008/08/07/cowbell/</link><pubDate>Thu, 07 Aug 2008 06:00:27 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/08/07/cowbell/</guid><description>
+&lt;p>&lt;a href="http://www.pocketpicks.co.uk/latest/index.php/2008/07/17/iphone-app-of-the-day-3-more-cowbell/">&lt;img src="cowbell.jpg" alt="">
+&lt;/a>I just came across this great post about &lt;a href="http://www.copyblogger.com/more-cowbell/">creating captivating content&lt;/a>. The punchline: It's not about getting the scoop, it's about finding the cowbell and amplifying it.&lt;/p>
+&lt;p>More funny cowbell references:&lt;/p>
+&lt;pre>&lt;code> * Alex Johnson's version the popular [playstation game](http://i44.photobucket.com/albums/f14/AlexJohnson123/cowbell-hero.jpg).
+* The [wikipedia page](http://en.wikipedia.org/wiki/More_cowbell) on the cowbell sketch
+* The [Cowbell project](http://www.geekspeakweekly.com/cowbell/)
+* And... The More [Cowbell app for your iPhone](http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=285559215&amp;amp;mt=8) (rock on!)
+&lt;/code>&lt;/pre>
+&lt;p>If you'll excuse me, I'm going to &amp;quot;explore the studio space&amp;quot;. No, really. :-)&lt;/p></description></item><item><title>Apple I Basic Reconstructed</title><link>https://realrolfje.github.io/rolfje.com/2008/08/05/apple-i-basic-reconstructed/</link><pubDate>Tue, 05 Aug 2008 06:00:23 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/08/05/apple-i-basic-reconstructed/</guid><description>
+&lt;p>Feast your eyes on this:&lt;/p>
+&lt;pre>&lt;code>0000000 4c b0 e2 ad 11 d0 10 fb ad 10 d0 60 8a 29 20 f0
+0000010 23 a9 a0 85 e4 4c c9 e3 a9 20 c5 24 b0 0c a9 8d
+0000020 a0 07 20 c9 e3 a9 a0 88 d0 f8 a0 00 b1 e2 e6 e2
+0000030 d0 02 e6 e3 60 20 15 e7 20 76 e5 a5 e2 c5 e6 a5
+&lt;/code>&lt;/pre>
+&lt;p>&lt;img src="apple1basic.jpg" alt="">
+It is the first 64 bytes of the &lt;a href="http://en.wikipedia.org/wiki/Apple_I">Apple I&lt;/a> Basic, as reconstructed from tape by Michael Steil. You can read all about how he did this on his blog. A nice read for the people out there who can still remember putting tapes with strange sounds on it into the computer.&lt;/p></description></item><item><title>The Process</title><link>https://realrolfje.github.io/rolfje.com/2008/08/01/the-process/</link><pubDate>Fri, 01 Aug 2008 13:55:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/08/01/the-process/</guid><description>
+&lt;p>When working at a Software Company, every now and then you need to do requirements workshops. You can't imagine how close the following video comes to the truth. Thanks to &lt;a href="http://sethgodin.typepad.com/seths_blog/2008/07/weekend-reading.html">Seth's blog&lt;/a>.&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=kU9YeOQm3Y0]&lt;/p></description></item><item><title>The Manualist</title><link>https://realrolfje.github.io/rolfje.com/2008/07/25/the-manualist/</link><pubDate>Fri, 25 Jul 2008 21:31:44 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/07/25/the-manualist/</guid><description>
+&lt;p>There's a funny comercial on Dutch television which says that you should be paying too much for all the rubbish you download on the internet. Here's a nice example of stuff you don't want to pay too much for :-)&lt;/p>
+&lt;p>[youtube=http://www.youtube.com/watch?v=v0bKq3x74UE]&lt;/p>
+&lt;p>It may look silly, but this guy actually had to be practicing a lot to get to this (Mario) level.&lt;/p></description></item><item><title>New York online...</title><link>https://realrolfje.github.io/rolfje.com/2008/06/04/new-york-online/</link><pubDate>Wed, 04 Jun 2008 17:37:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/06/04/new-york-online/</guid><description>
+&lt;p>We have returned from our trip to New York. Actually, we've been staying in Weehawken, New Jersey to visit Manhattan. Today I maxed out my upload limit for this month to put the pictures online. You can see them at &lt;a href="http://www.23hq.com/rolfje/album/3167072">my 32hq account&lt;/a> (because &lt;a href="http://rolfje.wordpress.com/2007/10/12/23-kicks-flickrs-ass/">Flickr hurts my eyes&lt;/a>).&lt;/p>
+&lt;p>Enjoy the pictures. When the monthly upload limit expires I'll upload some more, so maybe it's wise to subscribe to &lt;a href="http://www.23hq.com/rss/rolfje">my photo feed&lt;/a>.&lt;/p></description></item><item><title>Again and Again</title><link>https://realrolfje.github.io/rolfje.com/2008/05/20/again-and-again/</link><pubDate>Tue, 20 May 2008 21:44:02 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/05/20/again-and-again/</guid><description>
+&lt;p>A while ago there was a bit of a hype on the net around the song &lt;a href="http://nl.youtube.com/watch?v=cOEKASLb4lM">&amp;quot;Again and Again&amp;quot;&lt;/a> by &amp;quot;the Bird and the Bee&amp;quot;. It's a great song, and the video is pretty okay. For &lt;a href="http://twit.tv/mbw">MacBreak Weekly&lt;/a> listeners this is old news, but actually there is a much better version of the video clip.&lt;/p>
+&lt;!-- more -->This version is done on a Mac, with a Mac, and it makes the song a lot more interesting. See if you can recognize all the programs used in this video (it's fast!):
+&lt;p>[youtube=http://nl.youtube.com/watch?v=6kxDxLAjkO8]&lt;/p>
+&lt;p>And sure enough, somebody also did an &lt;a href="http://nl.youtube.com/watch?v=cOEKASLb4lM">XP version&lt;/a> :-) .&lt;/p></description></item><item><title>Sell Car, Buy Helicopter</title><link>https://realrolfje.github.io/rolfje.com/2008/05/11/sell-car-buy-helicopter/</link><pubDate>Sun, 11 May 2008 18:37:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/05/11/sell-car-buy-helicopter/</guid><description>
+&lt;p>I really like my racing car, but it takes up so much time to get everything right and be competative, that I've decided to sell it. The plan is to use the money to buy a Helicopter. Yes that's right. An airborne lownmawer.&lt;/p>
+&lt;!-- more -->In the past, I have had much fun getting the [HPI Proceed](http://www.hpiracing.com/kits/proceed/proc-m.htm) 1:8 scale IC car to Europe, [driving](http://www.xs4all.nl/~rrolfje/reports/20020808/index.html) it, [promoting](http://www.xs4all.nl/~rrolfje/) it, and [talking about it](http://www.rc-racing.com/cgi-bin/backtalk/pistachio/confhome?conf=hpi) online. A few years ago I had to stop my hobby because it took too much time, and I didn't want to half-ass it. Because I had so much fun with it, and spent so much time with it, I couldn't really get myself into selling it. But now, I'm ready. [I'm selling the car.](http://www.23hq.com/rolfje/album/3102253)
+&lt;p>I think it's a nice time to switch hobbies, and go airborne. I have had lots of fun with my amazing Silverlit helicopter, and about a week ago one of my friends bought a &lt;a href="http://www.youtube.com/watch?v=3PYELAHulc8">Walkera 60B Electric helicopter&lt;/a>. It look's like fun, so I'm getting one as soon as I've raised enough funds. Selling the car will definetely help :-)&lt;/p>
+&lt;p>Good teaser huh, you didn't think I had a full-scale racing car and was getting a full-scale helicopter, now did you? :-)&lt;/p></description></item><item><title>Stretch pants...</title><link>https://realrolfje.github.io/rolfje.com/2008/04/26/stretch-pants/</link><pubDate>Sat, 26 Apr 2008 14:13:04 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/26/stretch-pants/</guid><description>
+&lt;p>... invented for people who order size 12 pants for their size 18 butts.&lt;/p></description></item><item><title>The vi religion</title><link>https://realrolfje.github.io/rolfje.com/2008/04/05/the-vi-religion/</link><pubDate>Fri, 04 Apr 2008 22:22:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/05/the-vi-religion/</guid><description>
+&lt;p>Every age has it's tools. Many, many years ago, in 1976 to be exact, &lt;a href="http://en.wikipedia.org/wiki/Bill_Joy">squinty-eyed nerds&lt;/a> with a social deficiency ruled the computer world. They talked to eachother in a secret code, wore geeky clothes and made sure that everybody thought that computers were magic. To make sure that nobody could ever use a computer to edit a file, they all swore to never ever use another editor than... &lt;scary music> &lt;a href="http://en.wikipedia.org/wiki/Vi">vi&lt;/a> &amp;lt;/scary music&amp;gt;.&lt;/p>
+&lt;!-- more -->To make sure nobody understood how to work with vi, they had the editor behave like 4 different programs. To switch between the modes, you had to ritually punch the right combination of keys while singing the imaginary theme song of [NetHack](http://en.wikipedia.org/wiki/Nethack). Backwards. To make it all look as a good thing, they even came up with a techy sounding term for all this: "modal editor"
+&lt;p>For good measure, the SONAU (Secret Organization of Nerds Against Usability) even came up with a devious name for the editor. With a reference to the world &amp;quot;visual&amp;quot;, nobody was going to believe you were using an editor even if they were looking at your screen full of green text.&lt;/p>
+&lt;p>Vi even has a&amp;quot;camouflage&amp;quot; mode where it starts up showing a column of &amp;quot;~&amp;quot; characters. Ha! Now the mortal user will be really lost! Nobody will be able to edit a file, ever again! &lt;em>MUHAHAHAHAAAAAA&lt;/em>&lt;/p>
+&lt;p>ok sorry. lost myself a bit there.&lt;/p>
+&lt;p>While the SONAU people were in charge,they made sure that every computer shipped with vi. No other editors were allowed. A few brave people at the University of Washington secretly wrote a nice editor called &lt;a href="http://en.wikipedia.org/wiki/Pico_%28text_editor%29">pico&lt;/a>. They had to come up with a way to get this editor onto many systems without the SONAU people noticing. So they wrapped pico into what probably is the first Trojan Horse on a computer: &lt;a href="http://en.wikipedia.org/wiki/Pine_%28e-mail_client%29">pine&lt;/a>. Cleverly disquised as a hard to use email client, pine was approved by the SONAU High Concil and before anybody realized, pico was on many computers around the world.&lt;/p>
+&lt;p>With pico, some people where actually able to edit documents and even programs, and the SONAU lost quite a bit of it's powers. Now, after 30+ years, computers are actually usable, and editors are actually &amp;quot;visual&amp;quot;. Because SONAU still has an active underground organization, the term &amp;quot;visual&amp;quot; is still being avoided, and the strange term &amp;quot;&lt;a href="http://en.wikipedia.org/wiki/WYSIWYG">WYSIWYG&lt;/a>&amp;quot; is used. Actually, the term WYSIWYG also applies to vi in combination with a 9-needle &lt;a href="http://en.wikipedia.org/wiki/Dot_matrix_printer">dot matrix printer&lt;/a>, but nobody dares to say that out loud. You also didn't read this on this blog, capiche?&lt;/p>
+&lt;p>Many SONAU members became infurtile by the green screen radiation. An even bigger group thought that women were creatures whose only purpose in life is yell (g)EEEK, turn around and run away. Still, some SONAU members managed to avoid getting a &lt;a href="http://en.wikipedia.org/wiki/Darwin_award">Darwin Award&lt;/a> and had children. These children were subtelly brainwashed, and are now scattered over the internet, posting messages about how good their life is with vi.&lt;/p>
+&lt;p>Painfully desoriented and unable to see the big picture, these children would rather count the atoms in the plastic molecules of their red bike helmet than see the big truck that's comming their way.&lt;/p>
+&lt;p>I had a collegue like this once. At first, he thought I had supernatural powers for being able to refactor multiple files with code within 5 seconds. In weeks of therapeutic talks, healing and training sessions, I finally got him to see that it was &lt;a href="http://www.eclipse.org/">Eclipse&lt;/a>, not me, who was doing the refactoring he could not get done in vi. Shortly after he realized I was a mere mortal, and not even exceptionally bright, it dawned: All the work he'd done in the past 10 years could have been done in 2 weeks with a better suited tool. He left the company, and nobody saw him since...&lt;/p>
+&lt;p>&lt;a href="http://blog.eleutian.com/2008/01/18/VimScreencast1.aspx">&lt;img src="afbeelding-3.png" alt="Example of a bad editor">
+&lt;/a>Today I found another poor soul. Even while doing a screencast, typing in vi and telling about what he is doing, he can't see that using the letters &amp;quot;h&amp;quot;,&amp;quot;j&amp;quot;,&amp;quot;k&amp;quot;, and &amp;quot;l&amp;quot; for navigation is very strange while your keyboard has had arrow keys for the past 20 years, and a mouse for the past 15 years or so. The flashing text in the film like &amp;quot;Esc is bad, Ctrl-[ is good&amp;quot; shows how big the psychiatric problems of vi users is. No sane persion today will press a cryptic 2-key combination while being able to use the much more intuitive &amp;quot;Esc&amp;quot; key to escape from a certain mode.&lt;/p>
+&lt;p>See &lt;a href="http://blog.eleutian.com/2008/01/18/VimScreencast1.aspx">the screencast&lt;/a> and by your reaction, I will tell if you are a SONAU member.&lt;/p>
+&lt;p>For people without patience, here are a few absolutely hilarious texts in the screencast which will make you wonder why people are still using vi:&lt;/p>
+&lt;pre>&lt;code> * Insert mode: don't use the arrow keys
+* Block cursor is &amp;quot;normal mode&amp;quot;, thin cursor is &amp;quot;insert mode&amp;quot;
+* Esc (bad) ^[ (good)
+* Visual mode is like holding &amp;quot;Shift&amp;quot; to select stuff
+* Arrow keys bad!
+&lt;/code>&lt;/pre>
+&lt;p>vi is the editor which in &amp;quot;normal mode&amp;quot; can not edit text, and uses a seperate &amp;quot;append&amp;quot; mode to add text to the &lt;em>end&lt;/em> of a line, while using &amp;quot;insert&amp;quot; mode to insert text &lt;em>inside&lt;/em> a line. It's users are misguided members of their own &lt;a href="http://en.wikipedia.org/wiki/Sect">sect&lt;/a>, firmly helping eachother to keep up vi's name, while ignoring reality and other people's belief or needs.&lt;/p></description></item><item><title>When "J" means ":-)"</title><link>https://realrolfje.github.io/rolfje.com/2008/02/27/when-j-means/</link><pubDate>Wed, 27 Feb 2008 13:14:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/02/27/when-j-means/</guid><description>
+&lt;p>Lately I've been recieving mails with the letter &amp;quot;J&amp;quot; in seemingly random places. At first I thought I had gotten old, the world around me changed and people were starting to replace the smileys with single letter J's. I thought it meant &amp;quot;Joke&amp;quot; and carried on.&lt;/p>
+&lt;p>Recently I noticed other people being puzzled by the J's aswell, so I thought I'd find out where the J's come from. It actually turns out to be a technical problem when using Microsoft Outlook to send smileys.&lt;/p>
+&lt;p>Microsoft translates a &amp;quot;:-)&amp;quot; into a smiley character from the wingdings font. When the mail is sent, the character encoding of the mail screws everything up and by the time that I recieve the mail in Thunderbird it has become a &amp;quot;J&amp;quot;.&lt;/p>
+&lt;p>Until Microsoft solves this, try to refrain from using smileys, or turn off the &amp;quot;show emoticons as icons&amp;quot; feature.&lt;/p></description></item><item><title>Google Maps Improved?</title><link>https://realrolfje.github.io/rolfje.com/2008/01/29/google-maps-improved/</link><pubDate>Mon, 28 Jan 2008 22:10:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/01/29/google-maps-improved/</guid><description>
+&lt;p>Just noticed a funny Google Maps parody video. Enjoy.&lt;/p>
+&lt;p>&lt;a href="http://www.youtube.com/watch?v=fPgV6-gnQaE">[youtube=http://www.youtube.com/watch?v=fPgV6-gnQaE&amp;amp;rel=1]&lt;/a>&lt;/p></description></item><item><title>Irritating "Features": Philips Matchline TV</title><link>https://realrolfje.github.io/rolfje.com/2008/01/17/irritating-features-phillips-matchline-tv/</link><pubDate>Wed, 16 Jan 2008 20:11:21 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/01/17/irritating-features-phillips-matchline-tv/</guid><description>
+&lt;p>Okay, I have to get this out of my system. It is something I've been complaining about for months, and it is really an example of the utter dumbness of some product designers. What am I talking about? Simply turning on my TV.&lt;/p>
+&lt;p>I have this very nice big heavy 100Hz 4:3 Phillips Matchline TV, which I bought 8 or so years ago. For that time, it was a feature-rich TV which could store all kinds of user settings through on-screen menus, and keep them stored even when the power went out. A few weeks ago I noticed a new TV at a friends house has the same &amp;quot;feature&amp;quot; as my old Matchline. You can't turn it on!&lt;/p>
+&lt;p>What happens? Monday evening, you are done watching TV and use the remote to switch it to &amp;quot;Stand By&amp;quot; mode. Before you go to bed, you walk by the TV and hit the power button to completely turn it off. Now on Tuesday, after dinner, you decide to watch TV. You walk to the TV, hit the power button, and what happens? The TV goes from &amp;quot;off&amp;quot; to &amp;quot;Standby&amp;quot;. What complete and utter IDIOT designs a TV which goes to &amp;quot;standby&amp;quot; after turning it on with the power button? It wouldn't surprise me that a junior programmer was showing off his l33t skills by remembering the state of the TV before it was turned off.&lt;/p>
+&lt;p>So, after 8 years of introducing the wierdest features to TV's, the usability labs in this world have still not found the most obvious feature to a TV: Turning it on.&lt;/p></description></item><item><title>Real guitar game: Guitar Wizzard</title><link>https://realrolfje.github.io/rolfje.com/2008/01/10/real-guitar-game-guitar-wizzard/</link><pubDate>Wed, 09 Jan 2008 21:35:31 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/01/10/real-guitar-game-guitar-wizzard/</guid><description>
+&lt;p>No, I'm not a guitar player, but I noticed this cool post on TUAW where the &amp;quot;Guitar Hero&amp;quot; game has been taken a notch up. &lt;a href="http://www.tuaw.com/2008/01/09/guitar-wizard-coming-for-mac/">TUAW reports&lt;/a> that the guys at &lt;a href="http://www.musicwizard.com">www.musicwizard.com&lt;/a> have built &lt;a href="http://www.musicwizard.com/guitar_wizard/updates.php">&amp;quot;Guitar Wizzard&amp;quot;&lt;/a>, a game with which you can learn to play popular songs on a &lt;em>real guitar&lt;/em>. From what I can see in the video, this looks way less frustrating than doing the same excersizes over and over to learn to play the guitar.&lt;/p>
+&lt;p>Okay, you might not turn in to Mark Knopfler in a week, but isn't it a much better feeling to hold a real guitar in your hand, in stead of that plasticky, toy-like mini quitar with the bright colored buttons? And the price is about right for a game including hardware aswell.&lt;/p></description></item><item><title>Karel de Kerstplant</title><link>https://realrolfje.github.io/rolfje.com/2007/12/20/karel-de-kerstplant/</link><pubDate>Thu, 20 Dec 2007 09:17:30 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/12/20/karel-de-kerstplant/</guid><description>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/2743373">&lt;img src="http://www.23hq.com/23666/2743373_9885c3a470afdf28292c76f4fde27244_mblog.jpg" alt="">
+&lt;/a>&amp;quot;Wat wil je later worden jongen?&amp;quot; vroeg papa plant aan kleine Kareltje.&lt;/p>
+&lt;p>&amp;quot;Een hele grote kerstboom papa&amp;quot; zei Kareltje.&lt;/p>
+&lt;p>Kareltjes vader durfde hem de harde realiteit niet te vertellen, en hielp Kareltje bij alles wat hij probeerde om in een grote, sterke kerstboom te veranderen. Kareltje probeerde met alle macht zijn blaadjes op te rollen tot naaldjes. Jaren lang bond hij zijn stengels bijelkaar in de hoop dat ze zouden samensmelten tot een dikke, stevige stam.&lt;/p>
+&lt;p>Jaren later is Kareltje een verbitterde kantoorplant geworden. Maar eens in het jaar, rond de kerst, haalt hij zijn lampjes tevoorschijn en droomt hij nog één keer zijn mooie droom. Dan staat hij in zijn mooiste pot, draagt hij de mooiste ballen en is hij een paar weken Karel de Kerstplant, het stralende middelpunt van de roze kamer.&lt;/p>
+&lt;p>Met dank aan Sidney voor de sfeerfotografie.&lt;/p></description></item><item><title>Helicopter fun</title><link>https://realrolfje.github.io/rolfje.com/2007/12/06/helicopter-fun/</link><pubDate>Wed, 05 Dec 2007 22:08:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/12/06/helicopter-fun/</guid><description>
+&lt;p>&lt;a href="http://www.23hq.com/rolfje/photo/2712718">&lt;img src="http://www.23hq.com/23666/2712718_1f0854705a31b7ebe38ea72e1c1f634d_thumb.jpg" alt="">
+&lt;/a>A couple of friends of mine bought me a great toy for my birthday: my very own personal Helicopter! It is an amazing piece of engineering, weighing only a couple of grams, and having a very simple remote with the usual &amp;quot;left/right/forward/reverse&amp;quot; type of remote.&lt;/p>
+&lt;!-- more -->After a bit of practice, it is actually pretty easy to fly. Once you get it to stop wiggling in the air (patience!), it will start flying forward at a slow pace, at which point you can steer it left or right. While turning, it will loose or pick up speed depending if you make a left or right turn. The least bit of draft in the house will "feel" like a storm, so keep the windos closed.
+&lt;p>See &lt;a href="http://www.23hq.com/rolfje/album/2712717">my photo's&lt;/a> of it taking off from my coffee table and flying into the kitchen. I only made still photo's, but if you want live video, you can find other people's PicooZ helicopter videos at &lt;a href="http://nl.youtube.com/watch?v=w12m1yprBwY">YouTube&lt;/a>.&lt;/p></description></item><item><title>Hidden "Get a Mac" ads</title><link>https://realrolfje.github.io/rolfje.com/2007/12/02/hidden-get-a-mac-ads/</link><pubDate>Sun, 02 Dec 2007 16:27:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/12/02/hidden-get-a-mac-ads/</guid><description>
+&lt;p>I was browsing YouTube the other day, and noticed that there are some &amp;quot;Get a Mac&amp;quot; commercials which are not on the usual &lt;a href="http://www.apple.com/getamac/">getamac&lt;/a> website. These commercials are in the original setting with &lt;a href="http://www.justinlong.net/">Justin Long&lt;/a> as the Mac and &lt;a href="http://en.wikipedia.org/wiki/John_Hodgman">John Hodgman&lt;/a> as the PC, but ony published through YouTube or as Flash commercials.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tr >
+&lt;td valign="top" >[![PC Hiding](afbeelding-6.png)
+](http://nl.youtube.com/watch?v=HdBB4ekspRg)
+&lt;/td>
+&lt;td valign="top" >A short commercial where PC is hiding from virusses and spyware.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >[![Drivers](afbeelding-71.png)
+](http://nl.youtube.com/watch?v=XrppvJcBo98)
+&lt;/td>
+&lt;td valign="top" >Wierd commercial where PC tries to get outside, because he urgently needs new drivers.The joke in this commercial is a bit lame, which is maybe the reason thatit didn't get posted on the getamac gallery.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >[![don’t give up on Vista](afbeelding-3.png)
+](http://nl.youtube.com/watch?v=ysHSDiiuWWE)
+&lt;/td>
+&lt;td valign="top" >By far the most funny commercial I found. It is also a remarkable one, becase Apple does not do these kind of "Flash integrated in website" commercials often.The PC tries to convince people not to giveup in Vista. Guess what happens...
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >[![David Pogue on Vista vs OSX](afbeelding-4.png)
+](http://nl.youtube.com/watch?v=TaIUkwPybtM)
+&lt;/td>
+&lt;td valign="top" >Vista got a lot of flac from Apple fans who claimed that Vista is just a bad copy of Apple's Tiger and Leopard. In this video, [David Pogue](http://www.davidpogue.com/) of the New York Times clearly demonstrates that this is not the case. Windows Vista is an operating system with a lot of new, innovative user interface improvements never seen before.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >[![Install Vista](afbeelding-5.png)
+](http://nl.youtube.com/watch?v=FVbf9tOGwno)
+&lt;/td>
+&lt;td valign="top" >And finally, if David convinced you, and you would like to install Vista on your PC, this guy shows you how simple it is to install Windows Vista in just 2 minutes onto your machine.
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+There are a lot of other funny Mac vs Windows videos to be found on YouTube. A lot of these are sometimes excelent copies or spoofs, and there are even [Linux versions](http://nl.youtube.com/watch?v=GVOnFdMf0RU) where Linux is played by a beautiful lady.
+&lt;p>Choose your poison.&lt;/p></description></item><item><title>What If Gmail Had Been Designed by Microsoft?</title><link>https://realrolfje.github.io/rolfje.com/2007/11/22/what-if-gmail-had-been-designed-by-microsoft/</link><pubDate>Wed, 21 Nov 2007 20:53:46 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/11/22/what-if-gmail-had-been-designed-by-microsoft/</guid><description>
+&lt;p>Philipp Lenssen from the Google Blogoscoped blog does some iterations on the Google Mail userinterface while he investigates the question &amp;quot;&lt;a href="http://blogoscoped.com/archive/2007-11-20-n35.html">What If Gmail Had Been Designed by Microsoft?&lt;/a>&amp;quot;. He ends up with a userinterface which is very much like the hotmail I knew before I replaced it with my current gmail account.&lt;/p>
+&lt;p>Have fun reading.&lt;/p>
+&lt;p>p.s. Did you notice that the gmail space has increased to around 5GB lately? Google continues to amaze (frighten?) me at how much data they can store.&lt;/p></description></item><item><title>Tips for European Apple customers</title><link>https://realrolfje.github.io/rolfje.com/2007/11/03/tips-for-european-apple-customers/</link><pubDate>Fri, 02 Nov 2007 22:06:05 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/11/03/tips-for-european-apple-customers/</guid><description>
+&lt;p>For me as a european consumer, the low Dollar (or: high Euro) is a good thing. Particularly when travelling to the U.S., or buying American consumer electronics.&lt;/p>
+&lt;p>For Apple, as a big company with complete control over it's retail prices, the low Dollar (or: high Euro) is a good thing. Particularly when the conversion rates sneak up on the consumers and you &amp;quot;forget&amp;quot; to adjust your 1-to-1 Euro-to-Dollar conversion in your stores. Time to wake up the European Apple consumers.&lt;/p>
+&lt;!-- more -->So how good is the Euro to Dollar converison rate for Apple? At the time of writing, €1.00 equals $1.4443. Comparing actual product prices between the online [U.S. Apple store](http://store.apple.com/) and the [Dutch Apple store](http://store.apple.com/Apple/WebObjects/nlstore.woa/), we can see how Apple's margin has increased with the exact 1.4443 conversion rate, baring the MacBook:
+&lt;table >
+&lt;tr >
+Product
+US Price
+Dutch price
+Difference
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mac Pro
+&lt;/td>
+&lt;td align="right" valign="top" >$2499.00
+&lt;/td>
+&lt;td align="right" valign="top" >€2499.00
+&lt;/td>
+&lt;td align="right" valign="top" >($3609.31)
+&lt;/td>
+&lt;td align="right" valign="top" >$1110.30
+&lt;/td>
+&lt;td align="right" valign="top" >(44%)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >20" iMac
+&lt;/td>
+&lt;td align="right" valign="top" >$1199.00
+&lt;/td>
+&lt;td align="right" valign="top" >€1199.00
+&lt;/td>
+&lt;td align="right" valign="top" >($1731.72)
+&lt;/td>
+&lt;td align="right" valign="top" >$532.72
+&lt;/td>
+&lt;td align="right" valign="top" >(44%)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >13" MacBook
+&lt;/td>
+&lt;td align="right" valign="top" >$1099.00
+&lt;/td>
+&lt;td align="right" valign="top" >€1049.00
+&lt;/td>
+&lt;td align="right" valign="top" >($1515.07)
+&lt;/td>
+&lt;td align="right" valign="top" >$416.07
+&lt;/td>
+&lt;td align="right" valign="top" >(38%)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >iPod touch 16GB
+&lt;/td>
+&lt;td align="right" valign="top" >$399.00
+&lt;/td>
+&lt;td align="right" valign="top" >€399.00
+&lt;/td>
+&lt;td align="right" valign="top" >($576.28)
+&lt;/td>
+&lt;td align="right" valign="top" >$177.28
+&lt;/td>
+&lt;td align="right" valign="top" >(44%)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >iPod nano 8GB
+&lt;/td>
+&lt;td align="right" valign="top" >$199.00
+&lt;/td>
+&lt;td align="right" valign="top" >€199.00
+&lt;/td>
+&lt;td align="right" valign="top" >($287.42)
+&lt;/td>
+&lt;td align="right" valign="top" >$88.00
+&lt;/td>
+&lt;td align="right" valign="top" >(44%)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Wireless keyboard
+&lt;/td>
+&lt;td align="right" valign="top" >$79.00
+&lt;/td>
+&lt;td align="right" valign="top" >€79.00
+&lt;/td>
+&lt;td align="right" valign="top" >($114.10)
+&lt;/td>
+&lt;td align="right" valign="top" >$35.10
+&lt;/td>
+&lt;td align="right" valign="top" >(44%)
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+This is nice for Apple, but how can we make this nice for us consumers? Apple certainly is not going to lower it's prices in Europe, because Steve is in it for the money (prove me wrong soon, will you, Steve)? As far as I see, the European Apple consumer has 4 options:
+&lt;p>&lt;strong>Option 1:&lt;/strong> Just buy the stuff you want, pay the Euro price and be happy with the value for money. Added bonus: you helped &lt;a href="http://en.wikipedia.org/wiki/Steve_Jobs">Steve&lt;/a> invest in future products, and maybe he'll &lt;a href="http://www.gadgetopia.com/post/2992">give away another mansion&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>Option 2:&lt;/strong> Wait for the € to drop. This is a nice option if you were planning on an Apple free diet anyway.&lt;/p>
+&lt;p>&lt;strong>Option 3:&lt;/strong> Order the product you want in the U.S., and see if they'll send it to Europe. Maybe you'll have to have your product sent to a friend living in the U.S., and have him send it to you. Sometimes a hotel in which you stayed recently can be tricked into receiving and forwarding your package, as long as it's not to big. They'll charge your creditcard, so be carefull.&lt;/p>
+&lt;p>&lt;strong>Option 4:&lt;/strong> Say you'd want the &lt;a href="http://www.apple.com/macpro/">Mac Pro double core duo&lt;/a> (the cheapest Mac Pro model). Say you would like to buy that in the &lt;a href="http://www.apple.com/retail/lincolnroad/week/20071028.html">Miami Apple Store&lt;/a> at Lincoln road. You could buy 2 oneway tickets at &lt;a href="http://www.exit-reizen.nl/reizen/vliegtickets/vliegtickets.html">exit-reizen&lt;/a>, which would set you back about €820.00 ($567.75). Because it's a long flight and you'd like to do some sight-seeing, you book 2 nights at the beautiful &lt;a href="http://www.secure-res.com/res/vn3/hchgs.aspx?hotelid=1599&amp;amp;roomid=6754&amp;amp;checkindate=11/10/2007&amp;amp;nights=2&amp;amp;rooms=1&amp;amp;trr=CFFFFFDA6F9EA1&amp;amp;adults=1&amp;amp;children=0&amp;amp;culture=1&amp;amp;culturename=nl-NL&amp;amp;site=SEO&amp;amp;wtpid=dcs5l6fkf00000omppulmk93o_3n3q">Clay hotel&lt;/a> at South Beach Miami at &amp;quot;Budget&amp;quot; rate, which totals to $172,89 including tax. During the trip, you spend about, say, $350.00 on cab fares, tips, food and souvenirs for the family. When you return home, you will have spent $1090.64 for the tip, including the purchase of your Mac Pro. At the current European price, &lt;em>you still have saved $19.66!&lt;/em>&lt;/p>
+&lt;p>For iPods and other gadgets, I'd say option 1 and 3 are the best options, because I know you can't wait once you are an Apple addict. If you're planning on buying anything more expensive than an iMac, I would seriously consider option 4. You can get away with flying from Europe to Miami and back, picking it up yourself and still spending the same amount of money as you would have spent just picking it up in Amsterdam.&lt;/p>
+&lt;p>How's that for Currency Market?&lt;/p></description></item><item><title>Happy Birthday!</title><link>https://realrolfje.github.io/rolfje.com/2007/10/24/happy-birthday/</link><pubDate>Tue, 23 Oct 2007 20:36:41 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/10/24/happy-birthday/</guid><description>
+&lt;p>I know you've been playing with your ultra-cool iPhones, but did you realize that it only is 6 years ago that Apple showed is the first iPod? It's amazing how fast technology advances nowadays. Today I read that 128GB flashdrives are not far away, so how about an 128GB iPhone, or even a MacBook with a solid state disk? We've got a nice future ahead...&lt;/p>
+&lt;!-- more -->Meanwhile, you can watch Steve announce the first ever iPod, and notice the difference with the existing devices at that time. It's not strange that the iPod changed the way people listen to music.
+&lt;p>[youtube=http://www.youtube.com/watch?v=kN0SVBCJqLs&amp;amp;rel=1]&lt;/p></description></item><item><title>Funny pricelists</title><link>https://realrolfje.github.io/rolfje.com/2007/09/01/funny-pricelists/</link><pubDate>Sat, 01 Sep 2007 10:19:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/09/01/funny-pricelists/</guid><description>
+&lt;p>Some bike repair shops have funny price lists on their walls:&lt;/p>
+&lt;table cellpadding="4" bgcolor="black" >
+&lt;tr >
+ENGINE REPAIR PRICE LIST
+&lt;/tr>
+&lt;tr >
+&lt;td colspan="3" >
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**PING-PING-PING**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**35.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**PLUNK-PING-PLUNK**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**55.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**CLUNK-PING-CLUNK**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**125.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**THUD-KLUNK-THUD**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**200.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**CLANG-THUD-KLANK **
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**325.00**
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+-
+&lt;table cellpadding="4" bgcolor="black" >
+&lt;tr >
+LABOR RATES PER HOUR
+&lt;/tr>
+&lt;tr >
+&lt;td colspan="3" >
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**IF YOU WATCH US**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**55.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**IF YOU GIVE US ADVICE**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**65.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**IF YOU HELP OR ASSIST US**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**85.00**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td >**IF YOU WORKED ON IT BEFORE**
+&lt;/td>
+&lt;td align="right" >**€**
+&lt;/td>
+&lt;td align="right" >**105.00**
+&lt;/td>
+&lt;/tr>
+&lt;/table></description></item><item><title>Phrack still in ASCII</title><link>https://realrolfje.github.io/rolfje.com/2007/08/04/phrack-still-in-ascii/</link><pubDate>Sat, 04 Aug 2007 17:43:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/08/04/phrack-still-in-ascii/</guid><description>
+&lt;p>It is a long time since I read this stuff, but I &lt;a href="http://www.phrack.org/issues.html?issue=64&amp;amp;id=11#article">stumbled upon a paper &lt;/a>discussing the non-executable stack on OSX (a trick to prevent buffer/stack overflow exploits). Ah, the good old days. And with all this markup, it's good to see that Phrack magazine stuck to their format. It's still the same as over 20 years ago... Well written articles, focussed on correctness and content, for the coders out there who are not afraid experimenting with some assembly. The amount of (nightly) hours that go into the research and proof of these articles are unbelievable, and it shows.&lt;!-- more -->&lt;/p>
+&lt;p>I'm afraid the years of Java have eroded my assembly knowledge, it's hard to keep up with the paper. But I loved to skim through the mov's, jne and jnz's, and the great comments. New young developers don't even learn how to write assembly anymore, the spoiled brats... :-)&lt;/p>
+&lt;p>For more trips down memory lane, also check the Dutch &lt;a href="http://www.hacktic.nl/">Hack-Tic magazine&lt;/a>. Someone actually scanned all the pages every written in Hacktic. See if you can find the first XS4ALL machine in there... Too bad that they didn't have photo's of te &amp;quot;Hacking at the end of the Universe&amp;quot; in 1993, I really liked that one. I did found the &lt;a href="http://www.well.com:70/0/hacking/hack-tic/galac.hac">invitation&lt;/a> online, and Fransisco wrote a &lt;a href="http://www.xs4all.nl/~fvjole/archief/artikelen/Volkskrant/1993/heu.html">nice article&lt;/a> for the Volkskrant. There are more links at the bottom of Fransisco's article if you like.&lt;/p>
+&lt;p>Now where did I leave my &lt;a href="http://nl.wikipedia.org/wiki/Jolt_Cola">Jolt&lt;/a>? Twice the energy, half the taste...&lt;/p></description></item><item><title>We need more lolcats!</title><link>https://realrolfje.github.io/rolfje.com/2007/07/29/we-need-more-lolcats/</link><pubDate>Sun, 29 Jul 2007 18:38:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/07/29/we-need-more-lolcats/</guid><description>
+&lt;p>&lt;a href="o_mc10417.jpg">&lt;img src="o_mc10417.thumbnail.jpg" alt="Woopdeefuckingdoo">
+&lt;/a>From &lt;a href="http://en.wikipedia.org/wiki/Lolcat">wikipedia&lt;/a>: &lt;em>&amp;quot;A lolcat is an image macro featuring a photograph of a cat with a humorous and idiosyncratic&lt;/em>_ caption&amp;quot;_.&lt;/p>
+&lt;p>You can find good lolcats all over the web, and I just found out that you don't even have to have photoshop to do this. Make your own lolcat with the &lt;a href="http://kscakes.com/LolCats/">lolcat builder&lt;/a>. Go with Impact and outline, this will give the best &amp;quot;real lolcat&amp;quot; feeling.&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>iChat saves the day</title><link>https://realrolfje.github.io/rolfje.com/2007/05/21/ichat-saves-the-day/</link><pubDate>Sun, 20 May 2007 20:32:25 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/05/21/ichat-saves-the-day/</guid><description>
+&lt;p>&lt;a href="o_bw2.jpg">&lt;img src="o_bw2.thumbnail.jpg" alt="Bruce Willis on iChat">
+&lt;/a>So you are on a nice forum, discussing stuff with people you don't even know, or even don't care to get to knowing. They're just there to exchange thoughts with, and you don't even care that he's called &amp;quot;g0d1s.4.f4g&amp;quot; (or worse), and you even don't know if he is a she. Then in comes this guy and actually uses a readable name, tells you who he is, and talks like he talks in real life. No shorthand, no l33t sp33k, just plain English with typo's, like any normal, sane person. Even worse, he claims to be a celebrity, wanting to talk to some of his fans without all the security, press and other stuff.It sounds too good to be true, but for Die Hard fans out there, &lt;a href="http://www.freezedriedmovies.com/blog/index.php?/archives/81-Is-Bruce-Willis-a-talkbacker.html">it has really happened!&lt;/a>. Complete with screenshots of a video iChat session where Bruce Willis prooves who he is to non-believers.&lt;/p>
+&lt;p>The &lt;a href="http://www.aintitcool.com/talkback_display/32511">thread itself&lt;/a> is rather lengthy (more than 1000 posts) and contains a lot of off-topic childish crap before the iCat moment, and after that contains even more crap with people posting useless &amp;quot;Oh my god&amp;quot; messages. But there are &lt;a href="http://www.aintitcool.com/talkback_display/32511#comment_1495231">some&lt;/a> &lt;a href="http://www.aintitcool.com/talkback_display/32511#comment_1496610">funny&lt;/a> &lt;a href="http://www.aintitcool.com/talkback_display/32511#comment_1500195">comments&lt;/a> if you have the time to skim through.&lt;/p></description></item><item><title>A-Team Quotes</title><link>https://realrolfje.github.io/rolfje.com/2007/03/05/a-team-quotes/</link><pubDate>Sun, 04 Mar 2007 21:21:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/03/05/a-team-quotes/</guid><description>
+&lt;p>As I'm recording A-Team episodes, stripping the commercials and transferring them to my PSP for later viewing on the plane, I came across some funy quotes:&lt;/p>
+&lt;table >
+&lt;tr >
+Hannibal:
+&lt;td valign="top" >Now. We can do this the hard way or the easy way. In about a minute, I and my three friends are gonna unleash on you your worst nightmare. You’re gonna wish the earth opened up underneath your feet and swallowed you whole.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+Bad Guy:
+&lt;td valign="top" >What's the easy way?
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+Hannibal:
+&lt;td valign="top" >That was the easy way.
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+Just after the tires of the Van are shot by a local gang, the Scorpions:
+&lt;table >
+&lt;tr >
+Scorpion:
+&lt;td valign="top" >Car trouble?
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+Hannibal:
+&lt;td valign="top" >No thanks. We got some.
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+&lt;table >
+&lt;tr >
+Bad Guy:
+&lt;td valign="top" >You’re all dead men.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+Face:
+&lt;td valign="top" >Really? Gee, I didn’t think I would feel this good after I was dead. I want to thank you all for coming to the funeral.
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+Almost Monty Python like quotes, and that for an American Television Series! Nice. You like it or you hate it.
+&lt;p>Pssst. If you haven't got the themesong yet, The A-Team soundtrack torrent is &lt;a href="http://torrents.thepiratebay.org/hashtorrent/3496737.torrent/The_A-team_Official_Soundtrack.3496737.TPB.torrent">here&lt;/a>...&lt;/p></description></item><item><title>Monokai</title><link>https://realrolfje.github.io/rolfje.com/2007/01/14/monokai/</link><pubDate>Sat, 13 Jan 2007 21:24:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2007/01/14/monokai/</guid><description>
+&lt;p>I just checked out the new &lt;a href="http://www.creativecommons.nl/dvd/">Dutch CC CD/DVD&lt;/a> released under the Creative Commons license. While I was there I found a great &lt;a href="http://www.creativecommons.nl/dvd/tracks/Monokai/Monokai-Mier.mp3">piece of music done by Monokai&lt;/a>. It's kind of old C64 game like music, you like it or hate it. I went to check out &lt;a href="http://www.monokai.nl/">Monokai's website&lt;/a> and I've spent a good 30 minutes playing with it.&lt;/p>
+&lt;p>The website is filled with music, photo's and electronic games, and is fun to play with. Go check it out! Nice quality!&lt;/p></description></item><item><title>X for Vista...</title><link>https://realrolfje.github.io/rolfje.com/2006/12/17/x-for-vista/</link><pubDate>Sun, 17 Dec 2006 15:35:42 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/12/17/x-for-vista/</guid><description>
+&lt;p>Hi, do you also think Windows Vista gets too much credit for stealing Apple's Mac OSX, a.k.a. Tiger? Here's a &lt;a href="http://video.on.nytimes.com/ifr_main.jsp?nsid=a718aabc2:10f910eed23:52c4&amp;amp;rf=bm&amp;amp;fr_story=d14603c1e23e6ce37920a8134a2e27b1405a4991&amp;amp;st=1166372773007&amp;amp;mp=FLV&amp;amp;cpf=false&amp;amp;fvn=8&amp;amp;fr=121706_112553_718aabc2x10f910eed23x52c5&amp;amp;rdm=749375.7441141073">funny little movie&lt;/a> on nytimes.com with proof that Windows is &amp;quot;not&amp;quot; an OSX ripoff. Very funny.&lt;/p></description></item><item><title>Stomwijzer</title><link>https://realrolfje.github.io/rolfje.com/2006/11/20/stomwijzer/</link><pubDate>Mon, 20 Nov 2006 19:51:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/11/20/stomwijzer/</guid><description>
+&lt;p>Weet je niet waarop je wilt stemmen? Het is nog niet te laat om even de &lt;a href="http://www.stomwijzer.nl/">www.stomwijzer.nl&lt;/a> raadplegen. Op eigen risico uiteraard :-)&lt;/p></description></item><item><title>"I have not actually read this book"</title><link>https://realrolfje.github.io/rolfje.com/2006/09/04/i-have-not-actually-read-this-book/</link><pubDate>Mon, 04 Sep 2006 14:48:52 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/09/04/i-have-not-actually-read-this-book/</guid><description>
+&lt;p>Funny overview of John Swift's reviews at Amazon.com...&lt;/p>
+&lt;p>&lt;a href="http://www.amazon.com/gp/cdp/member-reviews/A23664PX3VILKS/ref=cm_cr_auth/103-5626492-0754242?%5Fencoding=UTF8">I have not actually...&lt;/a>&lt;/p>
+&lt;p>Have fun...&lt;/p></description></item><item><title>Google Blogoscoped Monitor Chain</title><link>https://realrolfje.github.io/rolfje.com/2006/07/17/google-blogoscoped-monitor-chain/</link><pubDate>Mon, 17 Jul 2006 15:17:58 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/07/17/google-blogoscoped-monitor-chain/</guid><description>
+&lt;p>I noticed the start of a &amp;quot;Monitor Chain&amp;quot; on the &amp;quot;Google Blogoscoped&amp;quot; blog. I liked the idea, so here it goes:&lt;/p>
+&lt;p>&lt;a href="http://blog.outer-court.com/archive/2006-07-17-n48.html">&lt;img src="o_img_8623.jpg" alt="Monitor Chain">
+&lt;/a>&lt;/p>
+&lt;p>Please photograph this blog post (including your monitor and its immediate surroundings), and post the resulting pic on your blog. Then the next person photographs your blog post and posts it, and so on. Leave your post URL in the comments of the blog you photographed so people will be able to follow the chain back up (zoom out), and link your image to the post you photographed... this way people will be able to zoom into the monitors by clicking. (Use rel=&amp;quot;nofollow” on the links, this is for fun only.) Post these instructions in your blog post as well.&lt;/p>
+&lt;p>Have fun!&lt;/p>
+&lt;p>Note 11 November 2007: This post has been migrated from blogger.xs4all.nl, the original chain is probably now broken. Sorry.&lt;/p></description></item><item><title>Rolf in Chinese</title><link>https://realrolfje.github.io/rolfje.com/2006/07/13/rolf-in-chinese/</link><pubDate>Thu, 13 Jul 2006 15:25:00 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/07/13/rolf-in-chinese/</guid><description>
+&lt;p>According to &lt;a href="http://chineseculture.about.com/library/name/male/na_rolf.htm">about.com&lt;/a>, my name in chinese is spelled as:&lt;/p>
+&lt;p>&lt;img src="m_rolf.gif" alt="Rolf in Chinese">&lt;/p>
+&lt;p>Funny to see that in Chinese, my name is only 1 character shorter.&lt;/p></description></item><item><title>Great Read: The Graphing Calculator Story</title><link>https://realrolfje.github.io/rolfje.com/2006/04/29/great-read-the-graphing-calculator-story/</link><pubDate>Sat, 29 Apr 2006 16:06:09 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/04/29/great-read-the-graphing-calculator-story/</guid><description>
+&lt;p>On one of my Google quests, I stumbled upon a &lt;a href="http://www.nucalc.com/Story/">great story&lt;/a> about a few guys who got fired by Apple, but continued to sneak in and out of the building, finishing the software they had been working on. It is a great read, and I think it would make a nice adventure movie. It will probably will not be a box office hit, because the rest of the world does not know what programmers feel when &lt;a href="http://ezinearticles.com/?In-The-Zone&amp;amp;id=65850">being &amp;quot;in the zone&amp;quot;&lt;/a>. It will probably end up in DVD shelves next to &lt;a href="http://www.imdb.com/title/tt0151804/">Office Space&lt;/a>, one of my favourites.&lt;/p>
+&lt;p>I really enjoyed reading The Graphing Calculator Story, I hope you do too! Be sure to check out the screenshots :-)&lt;/p></description></item><item><title>Airbus 330 Entertainent system</title><link>https://realrolfje.github.io/rolfje.com/2006/03/31/airbus-330-entertainent-system/</link><pubDate>Fri, 31 Mar 2006 19:36:56 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/03/31/airbus-330-entertainent-system/</guid><description>
+&lt;p>I recently went to Vegas, which is a very long trip (about 20 hours including stopover). I don't like flying that much, my ears hurt and it is very boring to be crammed in a chair for 10 hours, with a headrest that makes your chin touch your chest no matter how you adjust it. However, on this flight (and the one back) there was a nice personal entertainment system installed in each chair.Below are some images of the personal entertainment system which is installed on the Airbus 330's of Northwest Airlines. These are a real treat on long distance flights. There is a fair selection of on-demand movies, music, some simple games and flight information. It lets you choose a movie, and you can pause and skip as much as you like. You can use your own 3.5mm jacked headphones, no more of that adapter-buying-if-you-are-lucky-you'll-get-stereo crap you see in the older planes. The menu even contained an item called &amp;quot;email&amp;quot;, but it was not functioning at the time I tried it. Besides you had to swipe your credit card for it, which I didn't find worth trying even if it would work.&lt;/p>
+&lt;table >
+&lt;tr >
+&lt;td >[![Bejeweled](r_img_3683.thumbnail.jpg)
+](r_img_3683.jpg)
+&lt;/td>
+&lt;td >[![Controller](r_img_3686.thumbnail.jpg)
+](r_img_3686.jpg)
+&lt;/td>
+&lt;td >[![Flight information](r_img_3692.thumbnail.jpg)
+](r_img_3692.jpg)
+&lt;/td>
+&lt;td >[![Movies](r_img_3688.thumbnail.jpg)
+](r_img_3688.jpg)
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Nice little game, Bejeweled
+&lt;/td>
+&lt;td valign="top" >The controller (has to be turned 90 degrees sometimes, confusing!)
+&lt;/td>
+&lt;td valign="top" >Guess where we are? Travelling at 950km/h there :-)
+&lt;/td>
+&lt;td valign="top" >Watched Chicken Little. It does not live up to it's commercial by a long shot.
+&lt;/td>
+&lt;/tr>
+&lt;/table>
+Funny thing is, that my wife's entertainent system actually crashed during flight. It got stuck for about 5 minutes, after which it automatically rebooted, and guess what? I saw a Tux! It is actually a Linux system. A bit of googling revealed that a few people even have seen the system crash on [all monitors at the same time](http://www.flickr.com/photos/milliped/116393699/). Good thing they aren't using this system for the flight controls yet. ;-)
+&lt;p>But it does make sense. It doesn't cost anything, and being open source, Panasonic (the manufacturer of the system) has full controll on getting all the glitches out. Now they actually do need to do that still, but I bet they got a nice (remote?) update procedure for that. After all, they also need to upload new movies every now and then. Maybe they use the same connection as they use for email? 100% remote update would be nice. No &amp;quot;downtime&amp;quot; for the planes!.&lt;/p>
+&lt;p>I for one liked the system very much. It actually has games which let you compete with other passengers, but that didn't seem to be popular on my flights to Las Vegas. I didn't even had to get my PSP out of my bag :-)&lt;/p>
+&lt;p>Now if they only could make those stupid headrests removable so I can put my head back when I want to sleep (like most normal people), flying wouldn't be all that bad.&lt;/p></description></item><item><title>Google Talk with your browser!</title><link>https://realrolfje.github.io/rolfje.com/2006/02/08/google-talk-with-your-browser/</link><pubDate>Tue, 07 Feb 2006 20:39:19 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/02/08/google-talk-with-your-browser/</guid><description>
+&lt;p>&lt;a href="o_googletalk-in-browser.gif">&lt;img src="o_googletalk-in-browser.thumbnail.gif" alt="Google talk in the browser">
+&lt;/a>For some reason I've been selected my the google company to have the new interface of gmail, where you can use google talk without even installing it! Yes you've read that right. When I log in to Google, I immediately see a quick contacts list of people who are online (on googletalk), and I can chat with them as if I was using the actual application! Only voice is missing, but I don't use that anyway (Skype fan), so I am really happy.Now I can google-talk with my friends on &lt;em>any&lt;/em> computer without having to install plugins, upgrading MSN otherwise contaminating the host's computer. I am really impressed and amazed (for the past 3 hours or so). Go Google! I feel like buying a t-shirt now :-)&lt;/p>
+&lt;p>Oh yeah, and it works in both FireFox and Microsoft Internet Explorer. And I am not kidding.&lt;/p>
+&lt;p>Auch, and I just missed the &lt;a href="http://slashdot.org/article.pl?sid=06/02/07/1327248">scoop on Slashdot...&lt;/a> I could have been a succesful submitter. so close, so close.&lt;/p></description></item><item><title>My movie rating</title><link>https://realrolfje.github.io/rolfje.com/2006/01/24/my-movie-rating/</link><pubDate>Mon, 23 Jan 2006 20:55:15 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/01/24/my-movie-rating/</guid><description>
+&lt;p>Found out about this link by accidentally browsing accros &lt;a href="http://blogger.xs4all.nl/ianlewis/">Ian Lewis's blog&lt;/a>. You can find out what your movie rating is. It seems I'm not for &amp;quot;all ages&amp;quot;. :-)&lt;/p>
+&lt;p>&lt;a href="http://www.bart666.com/projects/movierating/">&lt;img src="http://www.bart666.com/projects/movierating/img/12.gif" alt="Rating 12">
+&lt;/a>Suitable for 12 years or older. Starting to get interesting now, with more adult-themed storylines, but we're still talking in mild doses. You may find more colourful language, some human flesh, and maybe even some violence. Nothing creepy though.&lt;/p>
+&lt;p>Examples: Batman, Naked Gun 33 1/3&lt;/p>
+&lt;p>&lt;a href="http://www.bart666.com/projects/movierating/">See what your rating is.&lt;/a>&lt;/p></description></item><item><title>Pomphouders dupe van 'spookliters'</title><link>https://realrolfje.github.io/rolfje.com/2006/01/24/pomphouders-dupe-van-spookliters/</link><pubDate>Mon, 23 Jan 2006 20:52:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/01/24/pomphouders-dupe-van-spookliters/</guid><description>
+&lt;p>For those that can read Dutch. &lt;a href="http://www.nos.nl/nos/artikelen/2006/01/art00006006024D.html">This&lt;/a> is a nice example of Dutch gasstation owners wanting to be compensated for the fact that gasoline (or any other fluid you can sell) schrinks when cooled.&lt;/p>
+&lt;!-- more -->What happens is, that the delivery trucks cary the gasoline at the normal outside temperatures. When pumped into the underground tanks at the station, the number of liters is measured and the gasstation owner gets charged for those liters. Then, the gasoline cools down (and shrinks!) because it is stored underground. So when de car owners put the gas in their car, the cold ("smaller") liters get measured and the gasstation owner is "swindled by nature" because het can only sell say 99 liters of gasoline, while he bought 100 from the oil company!
+&lt;p>Now, things get better because the gassstation owner wants to be compensated for this law of nature! It's like wanting to be compensated for the fact that you get wet when you jump in the water.&lt;/p>
+&lt;p>Now, let's say this is &lt;em>really&lt;/em> a problem, because in my opinion it isn't, they make enough money and they could have known this upfront if they have had payed attention in first grade. You can basically do two things about this:&lt;/p>
+&lt;pre>&lt;code> 1. Insulate the underground tank, and maybe even heat it. You can actually now &amp;quot;swindle&amp;quot; the car owners, because you can sell them &amp;quot;more&amp;quot; petrol than you have bought from the oil company! Woopee!. You might want to check your heating bill at the end of the year though, I doubt it will do you any good.
+2. We can start selling petrol/gasoline by *kilograms*, which is actually allready standard in some forms of industry. It's a bit harder to measure, but absolutely independant of the temperature of the product
+&lt;/code>&lt;/pre>
+&lt;p>Just another fine example of people allways wanting to change the rules and be compensated for anything they &amp;quot;missed out&amp;quot; on. And we find it strange that the world becomes more burocratic. tsss.&lt;/p></description></item><item><title>Fun at "automatiseringsgids"</title><link>https://realrolfje.github.io/rolfje.com/2006/01/12/fun-at-automatiseringsgids/</link><pubDate>Wed, 11 Jan 2006 21:01:18 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2006/01/12/fun-at-automatiseringsgids/</guid><description>
+&lt;p>Even companies pretending to know about ICT, writing about companies doing it right or wrong, get it (very) wrong sometimes. People who have an account at &lt;a href="http://automatiseringgids.sdu.nl/ag/inlogpagina.jsp">De Automatiseringsgids&lt;/a> know the login screen. But have they also noticed how their username and password are sent to the server in plain text?&lt;/p>
+&lt;p>Another funny thing a colleque of mine discovered is the really wierd way of displaying error messages. The server returns the error message as part of a redirect. Yes, you've read that correctly. No serverside things here guys, must keep memory usage down. No sessions here, move along... A really funny thing you can do is display your own error messages, like so: &lt;a href="http://automatiseringgids.sdu.nl/ag/inlogpagina.jsp?message=%3Ch1%3EWie%20dit%20leest%20is%20gek%3C/h1%3E"> De automatiseringsgids with weird error&lt;/a>&lt;/p>
+&lt;p>&lt;a href="o_clipboard02.gif">&lt;img src="o_clipboard02.thumbnail.gif" alt="Wie dit leest is gek">
+&lt;/a>I think somebody will start playing with this, because you can do a lot more (very bad) things. Should they have it fixed allready when you are reading this, I saved a screenshot for you. You would have got something in the lines of this:&lt;/p>
+&lt;p>After discussing this wierd construction, we concluded that the programmers wanted to do a &amp;quot;post-by-redirect&amp;quot; construction, where you make the server return a redirect to the browser jsut after a post. This solves the &amp;quot;reload problem&amp;quot; where the browser asks if it can re-post the data for you. Since a redirect is a GET, the browser will just reload the page. Normally you solve this by storing thing in the session on the server and send a session reference to the browser. Combined with HTTP&lt;strong>S&lt;/strong>, this would give you a relatively strong, and still not to expensive protection against scripting and spoofing attacks.&lt;/p>
+&lt;p>A fine example of what happens if you trust an external company to build your web application, but you &amp;quot;forget&amp;quot; to check that they've delivered something that's up to your standards (or at least the standards you paid for). Have fun playing around with this, and let me know what interesting things you found. (hint: Iframes and javascript can do a lot on this page ;-)&lt;/p></description></item></channel></rss>

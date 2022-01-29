@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>firewall on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/firewall/</link><description>Recent content in firewall on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 10 May 2014 13:57:49 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/firewall/index.xml" rel="self" type="application/rss+xml"/><item><title>Open a port in OSX Mavericks' Firewall</title><link>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</link><pubDate>Sat, 10 May 2014 13:57:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/05/10/open-a-port-in-osx-mavericks-firewall/</guid><description>
+&lt;p>&lt;a href="https://www.youtube.com/watch?feature=player_embedded&amp;amp;v=at6HrV5CTo8">&lt;img src="security.png" alt="Firewall">
+&lt;/a>The new firewall in Mavericks is great. For the common user. For a developer, not so much. If you are a Java developer like me, and you just need to open one port (say, 8080) so that the web application you’re working on is accessable from another computer, you can’t. I disabled the Firewall altogether for a few days, but it didn't feel right.&lt;/p>
+&lt;p>I googled around and to make a long story short, here’s how to open port 8080 on any interface to any application on your OSX Mavericks installation in 3 steps:&lt;/p>
+&lt;p>&lt;code>sudo vim /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Then add the following lines at the end of the file:&lt;/p>
+&lt;p>&lt;code># Open port 8080 for TCP on all interfaces pass in proto tcp from any to any port 8080&lt;/code>&lt;/p>
+&lt;p>Test (and, according to the documentation, load) your edits with:&lt;/p>
+&lt;p>&lt;code>sudo pfctl -vnf /etc/pf.conf&lt;/code>&lt;/p>
+&lt;p>Reboot.&lt;/p>
+&lt;p>(I have found at least 5 pieces of voodoo to make the Firewall restart and reload, but none of them seemed to work reliably, so pardon the reboot)&lt;/p>
+&lt;p>You can close it by commenting out the lines in pf.conf and reboot again. If anybody knows of an easier way to do this, preferably in one terminal command, and without rebooting, let me know.&lt;/p>
+&lt;p>Hope this helps.&lt;/p></description></item></channel></rss>

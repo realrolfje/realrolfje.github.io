@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Twitter on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/twitter/</link><description>Recent content in Twitter on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 07 Mar 2014 22:41:13 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/twitter/index.xml" rel="self" type="application/rss+xml"/><item><title>There's life without Google. Or iCloud. Or Facebook.</title><link>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</link><pubDate>Fri, 07 Mar 2014 22:41:13 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2014/03/08/theres-life-without-google-or-icloud-or-facebook/</guid><description>
+&lt;p>&lt;a href="https://threema.ch/en/">&lt;img src="appicon128.png" alt="Threema, the secure Whatsapp alternative">
+&lt;/a>Regular readers of this blog already know that I am &lt;a href="http://rolfje.wordpress.com/2011/07/03/1355/">not using dropbox&lt;/a>, and I was an Evernote user, but recently decided it became to dangerous and &lt;a href="http://rolfje.wordpress.com/?s=evernote">replaced it with my own scripts&lt;/a>. I had an interesting discussion on Twitter which made me decide to show you how I run my digital life without the help of Google, Facebook, Dropbox, Whatsapp or iCloud, and still be able to have all the functionality these services offer.&lt;/p>
+&lt;p>The search was hard and sometimes I need to reconsider some of the choices, but the last few years the selection of products was very stable and the setup has worked flawlessly. Searching for a secure replacement for Whatsapp or Google? It's in here.&lt;/p>
+&lt;!-- more -->
+&lt;table >
+&lt;tbody >
+&lt;tr >
+Original
+The Safer Alternative:
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Whatsapp
+&lt;/td>
+&lt;td >[**Threema**](https://threema.ch/en/). Hands-down the best safe messaging service. Easy to use, group chats, image and video transfers. Under the hood it always uses true end-to-end encryption, and does not store any data about you or contacts your addressbook while still being able to find your friends. Threema costs a mere €1,70 for the iPhone and €1,60 for Android, and is very clear about their revenue model. Sending a message is free of charge. No I don't use Telegram.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Mail
+&lt;/td>
+&lt;td >**[Hushmail](https://www.hushmail.com/services/hushmail/)**. A Canadian email provider which at least claims it respects your privacy and is not bound to American legislation. I use their [Premium service](https://www.hushmail.com/premium/) which costs $35 a year. A bargain.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Search
+&lt;/td>
+&lt;td >**[DuckDuckGo](https://duckduckgo.com)**. Although there are some sceptics out there who argue that there is no way to verify how duckduckgo is any different than Google's search engine, I still think it is a better alternative. One of the most important ones is that they don't ["bubble"](http://dontbubble.us) you. Image searching is not possible yet. so I do fall back to Google for that every now and than, but only in a separate, private browser session with cleared cookies.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Google Maps
+&lt;/td>
+&lt;td >The Apple [**Maps**](http://appleinsider.com/articles/13/06/26/new-maps-app-in-os-x-mavericks-extends-tools-for-reporting-fixing-errors) app, or if you don't have a Mac or need to search online: [Mapquest](http://www.mapquest.com) provides a good alternative to Google maps. Not the prettiest interface, but any product other than a Google product gives them less data to harvest on me. Always remember: If you're not paying for the product, you're the product.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Calendar, Contacts
+&lt;/td>
+&lt;td >[**Owncloud**](http://owncloud.org). In my case, I have bought a $40 Raspberry Pi which is beautifully running Owncloud to sync Calendars over SSL between my iPhone and all my Macs. It requires a bit of Linux skills and isn't really safe "out of the box", but can be made pretty airtight. **Remember to close all ports and only access Owncloud over**** SSL** (most tutorials wrongly teach you otherwise), and don't expect high performance from the Raspberry when it comes to rendering browser pages. I've added a little script that sends backups to my file server via SMB.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >File synching (Dropbox)
+&lt;/td>
+&lt;td >[**SpiderOak**](https://spideroak.com/signup/referral/4b01a22f64d398afbd846637080bd2b4/). A true zero-knowledge encrypted file storage. With the new ["Hive" feature](https://spideroak.com/hive/) it behaves exactly like Dropbox, but has additional features like a backup service. Choose a safe password and store it somewhere secure, because Spideroak can not recover your password or your files if you loose it. I started with the 2GB free for life account, but it soon grew to a 50GB account. Great stuff, very reliable, safe.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Evernote
+&lt;/td>
+&lt;td >**[SpiderNote](http://rolfje.wordpress.com/2014/03/02/replace-evernote-with-spidernote/)**. It may be a bit cobbled together, but as an old Evernote fan I needed a good alternative and it should be able to sync between all my Macs. So I save my notes in a SpiderOak folder and search them with Spotlight. Not as fancy as Evernote, but the price (risk) of storing my data unencrypted on an American server became too high. **
+**
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Facebook
+&lt;/td>
+&lt;td >[**Twitter**](https://twitter.com/rolfje#). I hate to dissapoint you, but Facebook is free of charge and they store your entire digital life. What do you think is Facebook's product precisely? Also, I see that you have 86.355 "friends" on Facebook. I hate to disappoint you but those are called "random strangers". Even if your account is *cough* private (except for Mark $uckeberg). I like to talk to people too, that's why I have this blog, and for the smaller chit-chat I use Twitter. My real friends are on Threema, or, if need be, I talk to them. It's very old-fashioned. I drive over and meet them in person. And sometimes they even come to my house. I know, crazy right? Old school.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >LinkedIn
+&lt;/td>
+&lt;td >None. I could hold the same rant for Facebook and LinkedIn alike. They're not there for you. You're there for them. I did make the mistake of creating a LinkedIn account a long time ago because people said "you need this". After quite a few mails from LinkedIn requesting me to endorse people, update my profile or water their plants, I realized that I was working for them, not the other way around. I cancelled and deleted my account. Guess what? I'm still alive and well. If you're a developer, you're better off by gaining community based reputation on sites like **[Stackoverflow](https://stackoverflow.com/users/21134/rolf)**.
+&lt;/td>
+&lt;/tr>
+&lt;tr valign="top" >
+&lt;td >Local Backups
+&lt;/td>
+&lt;td >**[Encrypted TimeMachine](http://support.apple.com/kb/PH11102)** and Time Capsule volumes. My local drives are also full-disk encrypted using Apple's built-in [FileVault 2](http://support.apple.com/kb/HT4790?viewlocale=en_US&amp;locale=en_US). There is a Mac Mini file server in the house which holds all familiy photos  so that we can view them on the TV for example. The photos are on a read-only fileshare and are backed up using Time Machine locally.
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >Remote/Offsite Backups
+&lt;/td>
+&lt;td >[**Crashplan Free**](https://www.code42.com/store/), sending the data on the TimeMachine drive on the fileserver to another fileserver at my parents' house. His fileserver backs up on my machine and vice-versa. One house can completely burn down and we still have all data, without it ever being uploaded to some unencrypted company server.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+**Why not Telegram?**
+A few words of advice on using Telegram: Whatever they tell you, the data is *not* (properly) encrypted and it is easy to tell: The data is [stored in their "cloud"](http://unhandledexpression.com/2013/12/17/telegram-stand-back-we-know-maths/) and provided to you on all your devices. Even worse: They are [showing your data to "potential friends"](http://mcleaver.blogspot.nl/2014/02/telegram-verses-whatsapp.html?m=1) who [do not have you in their contact](https://twitter.com/GVerbaan/status/436909531625697280) lists or may have never heard of you. They upload your complete address book to their servers. They also know the [geolocation of your phone](http://blog.hackapp.com/2013/12/telegram-secret-chat-geolocation-leak.html). Unencrypted. They have your data, and show it by leaking it. They can fix the leaks and tell you it's safe, but they still have your data. It's also fishy that they clearly [have money to pimp their server farm](https://twitter.com/telegram/status/437745646007631872), even when the app and the messages are free of charge. Who do you think is the product here?
+&lt;p>&lt;a href="https://www.netmess.org/only-threema-rated-uncritical-telegram-rated-critical-for-privacy/">&lt;img src="telegram.png" alt=""Come in to the dark side. We have privacy"">
+&lt;/a>&lt;/p></description></item><item><title>T(w)inkering</title><link>https://realrolfje.github.io/rolfje.com/2009/06/07/twinkering/</link><pubDate>Sun, 07 Jun 2009 21:07:33 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/06/07/twinkering/</guid><description>
+&lt;p>Now that the twitter hype is cooling down, and companies tart to realize that it is, in fact, just CB radio in a new asynchronous form, only the &amp;quot;true tweeps&amp;quot; still hang around. And now, it's time to t(w)inker with it.&lt;/p>
+&lt;!-- more -->
+&lt;p>[caption id=&amp;quot;attachment_942&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;150&amp;quot; caption=&amp;quot;Early 2002, in my dad's old &amp;quot;shack&amp;quot;, we measured the accuracy of a delayed solonoid triggering device I made.&amp;quot;]&lt;a href="02020905.jpg">&lt;img src="02020905.jpg?w=150" alt="Early 2002, in my dad's old "shack", we measured the accuracy of a delayed solonoid triggering device I made.">
+&lt;/a>[/caption]&lt;/p>
+&lt;p>Some years ago, I did some playing around with CB radio. With my dad being an electronics engineer and a &lt;a href="http://en.wikipedia.org/wiki/Amateur_radio">HAM radio&lt;/a> operator, it didn't take long before I got my HAM radio license, and start taking apart and putting together all kinds of electronics to play with this medium. We had quite some fun doing this, and I got a lot of great stories out of it.&lt;/p>
+&lt;p>With the coming of Twitter as the &amp;quot;new CB radio&amp;quot;, a new kind of tinkering came along. Not so much with electronics, but more with the data of twitter itself. Here are some of the funny and/or interesting services I found:&lt;/p>
+&lt;p>&lt;strong>WARNING:&lt;/strong> Some of these services show you a very &amp;quot;Twitter like&amp;quot; login form, and ask you to sign in with your Twitter userid and password. Please think very careful about this. Giving somebody your twitter password can render your account useless, and exposes you to possible forms of identity theft. Except for twitpic, none of these services have ever seen my password.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitoaster.com/rolfje">Twitoaster&lt;/a>&lt;/strong>
+One of the problems with Twitter is that you don't always see your conversations. People might only see one half of it, or because of it's asynchronous character, miss essential tweets in a conversation. To solve this, Twitoaster searches your tweets, finds replies, and groups them together.&lt;/p>
+&lt;p>The downside is that you need to follow @twitoaster, which can ruin your &amp;quot;tweet stream&amp;quot;. Having said that, there are not much tweets coming from that account so maybe it won't bother you that much. Although twitoaster.com shows you a login form, you are not required to log in for this service to work.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://xefer.com/twitter/rolfje">Xefer&lt;/a>&lt;/strong>
+If you like cool pictures made from your tweeting habbits, Xefer can do that for you. It will display an activity graph which shows you which days of the week and which hours of those days you are most active on Twitter.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitterank.com/?u=rolfje">Twitterank&lt;/a>&lt;/strong>
+Some mysterious algorithm places people in a list in a certain order, and calls it a &amp;quot;rank&amp;quot;. Now all of a sudden, people want to be on top. Isn't that funny? The developer of this site had hacked some stuff together, and was soon overwhelmed by people wanting to know their &amp;quot;rank&amp;quot;. This is ofcourse just as silly as measuring your success by the number of followers you have.&lt;/p>
+&lt;p>At the time of this writing, my twitterrank is 14.26. According to twitterank, this score is higher than 37.68 of the other ranked twitterers. Not knowing what the algorithm is, and not knowing how to influence it, means this number is totally useless and silly. But hey, we like numbers... Yay twitterank!&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.twitteranalyzer.com/ms.aspx?userId=rolfje">Twitteranalyzer&lt;/a>&lt;/strong>
+Just another graphing thing to show you when you tweet the most, what words or hashtags you most commonly use, and what kind of clients you use. Nicely done, but not really compelling.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://www.tweetstats.com/status/rolfje">Tweetstats&lt;/a>&lt;/strong>
+One of my favourites, displays your usage info in nice simple colorful layout. While you are waiting, funny texts as &amp;quot;magic happening&amp;quot; and &amp;quot;there be feries&amp;quot; are shown on the progess bar.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twanalyst.com/status.php?search=rolfje">Twanalyst&lt;/a>&lt;/strong>
+&lt;a href="http://twanalyst.com/suggest.php">&lt;img src="hatter.png" alt="Twanalyst logo">
+&lt;/a>Always fun to read and always changing (if you keep tweeting), this service reads all your tweets and takes a shot at estimating your personality from their contents. At the time of this writing, it thinks of me as &amp;quot;likeable sociable fair&amp;quot; and &amp;quot;garrulous coherent&amp;quot;. It sums it up as &amp;quot;Poet&amp;quot;. Ahem.&lt;/p>
+&lt;p>I you're not tweeting enough, or there is something else this service thinks is wrong, it will give you some tweeting tips. Very funny. Don't forget to check out the &lt;a href="http://twanalyst.com/rolfje/suggest">&amp;quot;suggest&amp;quot;&lt;/a> feature, which will try to find people with a similar writing style youmight like following.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://hashtags.org/">Hashtags&lt;/a>&lt;/strong>
+Tracks hashtags in the global timeline. With this service you can see people's tweets grouped by tags. Very handy if you want to keep up with a particular subject. I personally use it to check &lt;a href="http://hashtags.org/tag/followfriday/messages">followfriday&lt;/a> tags every now and then.&lt;/p>
+&lt;p>&lt;strong>&lt;a href="http://twitterposter.com/nl">Twitterposter&lt;/a>&lt;/strong>
+Shows you a cloud of twitter icons. The bigger the icon, the more followers this account has. The bad news is that it sometimes does not load all icons or avatars.&lt;/p>
+&lt;p>&lt;strong>Final thoughts&lt;/strong>
+There are many, many, many more twitter services out there, but you want to be careful with sharing your password. For example, &lt;em>Tweetmondo.com&lt;/em> needs your twitter account password, just to tell you if there are &amp;quot;tweeps&amp;quot; close to your location? No thank you, Tweetie on my iPhone already does that.&lt;/p>
+&lt;p>Same goes for &lt;em>Localtweeps.com&lt;/em>, which tries to match you and other local tweeps through your ZIP code. I never was even tempted to give them my password, because it's developers seem to think that the world only consists of US, Canada and UK. Nothing to see here, move along...&lt;/p>
+&lt;p>If you have a twitter account which has enough data to make these services work, you are one of the luck few. An &lt;a href="http://tech.yahoo.com/blogs/patterson/50591/study-top-10-of-twitter-users-do-90-of-the-tweeting/">article on tech.yahoo.com&lt;/a> shows that the top 10% of twitter users do 90% of the twittering. I hope they didn't count those dumb automated tweets, because there are a lot of those...&lt;/p>
+&lt;p>It's funny how companies still seem to think that they can just &amp;quot;connect to a network&amp;quot;, send us spam, and them expect we'll like them. These companies are either loaded, or doomed, because in a few months, they might have to connect to a different network. Like Scoble said: &lt;em>&amp;quot;Networks don't have people. People have networks.&amp;quot;&lt;/em>&lt;/p>
+&lt;p>Have fun!&lt;/p></description></item><item><title>Tweet Week</title><link>https://realrolfje.github.io/rolfje.com/2009/02/15/tweet-week/</link><pubDate>Sun, 15 Feb 2009 10:55:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/02/15/tweet-week/</guid><description>
+&lt;p>&lt;a href="http://www.twitter.com/rolfje">&lt;img src="twitter-logo.png" alt="Twitter">
+&lt;/a>About a week ago, I was a bit bored and decided to see what Twitter is all about. I created an &lt;a href="https://twitter.com/rolfje">account&lt;/a>, and I Tweeted for a week. I tried to keep to the original idea, where a Tweet should answer the question &amp;quot;What are you doing&amp;quot;? Looking back, my tweets include &lt;a href="https://twitter.com/rolfje/statuses/1198486833">Coffee&lt;/a>, &lt;a href="https://twitter.com/rolfje/statuses/1199748992">Podcasts&lt;/a>, &lt;a href="https://twitter.com/rolfje/statuses/1200610213">Global frustration&lt;/a>, &lt;a href="https://twitter.com/rolfje/statuses/1203692363">Small joys&lt;/a>, &lt;a href="https://twitter.com/rolfje/statuses/1206502512">Small irritations&lt;/a>, &lt;a href="https://twitter.com/rolfje/statuses/1209317512">Re-tweets&lt;/a>, and &lt;a href="https://twitter.com/rolfje/statuses/1209634779">Replies&lt;/a>. &lt;/p>
+&lt;!-- more -->Twitter is a service were you can send short texts of 140 characters or less, called "tweets". These texts end up on a webpage, resulting in a micro-blog for all to read. Think of it as SMS-ing to your blog. One of the fun parts of Twitter is that people find really creative ways to express themselves in 140 characters or less. This allows you to follow an amazing amount of people, getting short messages about what they're doing, such as ["is relaxing with the wife and kids..... at home"](https://twitter.com/richard_hammond/statuses/1209417438)  or   ["Great meal at Michael Minna with my best gal"](https://twitter.com/ev/statuses/1211691640).
+&lt;table border="0" >
+&lt;tbody >
+&lt;tr >
+&lt;td valign="top" >!["at"](afbeelding-1.png)
+&lt;/td>
+&lt;td >Should you find a "Tweet" you think is interesting, you can reply to that person (not to the tweet directly) by starting your tweet with an "@" and the username of the person you want to reply to. 
+&lt;/td>
+&lt;/tr>
+&lt;tr >
+&lt;td valign="top" >!["hash"](afbeelding-2.png)
+&lt;/td>
+&lt;td >You can even "tag" your Tweets by using a "#" and a word. So for instance "#rolfje" would add the tag "rolfje" to my Tweet. You can then easily [search tweets with this tag](http://hashtags.org/tag/rolfje). Tags are sometimes used to create something of a "communications channel". For instance, the [#followfriday](http://hashtags.org/tag/followfriday) tag is used to tweet about people you think are worth following.
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>&lt;/table>
+Starting in the US, Twitter is becoming increasingly popular all over the world, now taking over Europe. [BBC had an item](http://news.bbc.co.uk/1/hi/technology/7287536.stm) on English television about twitter, massively increasing the number of English twitterers. 
+&lt;p>And ofcourse, where there are people, there are money-sharks to spoil the fun. Some companies are showing up, and are clearly not understanding what Twitter is about. They start a twitter account and twitter promotional messages, product releases, etc. The problem with this (for the company) is that for this to be succesful, people must follow you. If there's nothing interesting to read, people will not follow.&lt;/p>
+&lt;p>This same problem occurs with people who have their staff update their twitter accounts. This makes for really uninteresting, unpersonal tweets, and replying to them will almost never result in a nice conversation.&lt;/p>
+&lt;p>&lt;a href="http://pcweenies.com">&lt;img src="http://laikaspoetnik.files.wordpress.com/2008/06/twitter-addicts.jpg" alt="">
+&lt;/a>&lt;/p>
+&lt;p>**What I used:
+**During my Tweetweek, I tried different OSX and iPhone clients. There are a lot of clients out there, but none of them are good enough to be your &amp;quot;single client of choice&amp;quot;. Here's what I think of them, in short:&lt;/p>
+&lt;p>&lt;a href="http://www.twhirl.org/">Twhirl&lt;/a>: Done in Adobe AIR, multi-platform and consistent accross OS's. Good for a Windows app, terrible for an OSX app. Settings are in strange places, not clear what the &amp;quot;narrow&amp;quot; column mode is for. Ugly but probably the best twitter client out there, with twitpic and tinyurl integration all out of the box.&lt;/p>
+&lt;p>&lt;a href="http://www.tweetdeck.com/beta/">Tweetdeck&lt;/a>: Also done in Adobe AIR, mutli-platform and consistent. Works fine, has multiple columns for monitoring your tweets, search results and profiles. Feels a bit funny, for instance the same icon is used for &amp;quot;show input window&amp;quot; and &amp;quot;send tweet&amp;quot;. It works, but it doesn't fit the &amp;quot;clean and simple&amp;quot; design I think a twitter client needs.&lt;/p>
+&lt;p>&lt;a href="http://iconfactory.com/software/twitterrific">Twitterific&lt;/a>: Nice design, clean. Not much features, too overpriced. If Twitterific had tinyURL and twitpic integration, and sold for about $5, it would be a huge hit.&lt;/p>
+&lt;p>&lt;a href="http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=296415944&amp;amp;mt=8">Tweetie (iPhone)&lt;/a>: The funny thing is that &amp;quot;Tweetie&amp;quot;, the iPhone twitter client is way better than any of the clients I tried on a normal computer. Tweetie wins hands down. The best twitter client for the iPhone, simple and clean, camera integration, GPS integration. This also fits way better in the twitter philosophy, Tweeting whatever you are doing, wherever you are.&lt;/p>
+&lt;p>&lt;strong>What I learned:&lt;/strong>
+Twitter is for everyday people, like you and me, and feels like a mix between &lt;a href="http://en.wikipedia.org/wiki/Citizens'_Band_Radio">CB radio&lt;/a> and &lt;a href="http://en.wikipedia.org/wiki/Texting">texting&lt;/a>. Twitter is all about you and who you follow. It's definetely not about your followers. Ofcourse you can try to get as much followers as possible, but I think that does not guarantee a nice twitter experience. Some people think it's rude not to follow back if they're followed, and will tweet to let somebody know that they're being &amp;quot;un-followed&amp;quot;. I think that's not how the system is supposed to work. There's also no real relationship. Follow or unfollow, it's not like you're devorcing.&lt;/p>
+&lt;p>Just Tweet, and see what happens. There's no currency, only small text messages from people around the world for you to read and reply to. Or not.&lt;/p></description></item></channel></rss>

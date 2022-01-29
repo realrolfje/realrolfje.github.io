@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tip on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/tip/</link><description>Recent content in tip on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 07 Aug 2010 15:39:17 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/tip/index.xml" rel="self" type="application/rss+xml"/><item><title>A Brighter Prius Dashboard</title><link>https://realrolfje.github.io/rolfje.com/2010/08/07/a-brighter-prius-dashboard/</link><pubDate>Sat, 07 Aug 2010 15:39:17 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/08/07/a-brighter-prius-dashboard/</guid><description>
+&lt;p>When you drive a Prius (like me), and you always have your lights on (like me), you probably have been irritated by the dimmed speedometer and unreadable display in bright sunlight (like me). If you didn't read the owners manual (like me), you also probably didn't know about this trick to get the brightness back (like me). Here's how:&lt;/p>
+&lt;table >
+&lt;tbody >
+&lt;tr >
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1236&amp;quot; align=&amp;quot;alignleft&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Lights on, dark dashboard&amp;quot;]&lt;a href="img_0241.jpg">&lt;img src="img_0241.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1237&amp;quot; align=&amp;quot;aligncenter&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Hold for two seconds&amp;quot;]&lt;a href="img_0243.jpg">&lt;img src="img_0243.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;td width="33%" valign="top" >
+&lt;p>[caption id=&amp;quot;attachment_1238&amp;quot; align=&amp;quot;alignright&amp;quot; width=&amp;quot;100&amp;quot; caption=&amp;quot;Voila, full brightness.&amp;quot;]&lt;a href="img_0242.jpg">&lt;img src="img_0242.jpg?w=100" alt="">
+&lt;/a>[/caption]&lt;/p>
+&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+You need to do this every time you start the car or turn on/off the lights. Return to a dimmed dashboard while driving by pressing the brightness selector briefly.</description></item><item><title>OSX: Formatting a 1TB USB Drive</title><link>https://realrolfje.github.io/rolfje.com/2008/09/07/osx-format-1tb-usb-drive/</link><pubDate>Sun, 07 Sep 2008 11:50:20 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/09/07/osx-format-1tb-usb-drive/</guid><description>
+&lt;p>I just bought a Maxtor Basics 1TB drive, and found that I could not seem to format it using the Leopard Diskutility. Then, I found &lt;a href="http://en.kioskea.net/forum/affich-4848-wd-my-book-formattin">this page&lt;/a> which contained the golden tip. I'll save you some reading:&lt;/p>
+&lt;pre>&lt;code> 1. Open Apple's Disk Utility
+2. Click on the drive (not the partition in it, if there is any), and select &amp;quot;Partitioning&amp;quot;.
+3. Select &amp;quot;1 partition&amp;quot; and then press &amp;quot;Options&amp;quot;.
+4. You'll see that &amp;quot;MBR&amp;quot; is the default, which is what's causing the problem. Select the middle option &amp;quot;Apple Partition&amp;quot; and you're good to go.
+&lt;/code>&lt;/pre>
+&lt;p>&lt;a href="afbeelding-2.png">&lt;img src="afbeelding-2.png" alt="">
+&lt;/a>&lt;a href="afbeelding-3.png">&lt;img src="afbeelding-3.png" alt="">
+&lt;/a>&lt;/p>
+&lt;p>Screenshots included. It's in Dutch, but the location of the buttons are identical for all languages.&lt;/p></description></item></channel></rss>

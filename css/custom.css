@@ -1,0 +1,233 @@
+html {
+    font-size: 90%;
+}
+
+html.page {
+    all:unset;
+}
+
+body {
+    font-size: 1rem;
+    line-height: 1.4rem;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    margin-bottom: 0.1em;
+    padding-bottom: 0.01em;
+    border-bottom-style: solid;
+    border-bottom-color: lightgray;
+    border-bottom-width: 1px;
+}
+
+.twitter-timeline-box {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    height: 2rem !important;
+    scroll-behavior: smooth;
+    display: inline-block;
+}
+
+.nav_header {
+    background-color: #2e56ac;
+    background-image: url("/rolfje.com/images/sunset-clouds.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 0;
+}
+
+.color_mode {
+    margin:0;
+    margin-left:2rem;
+}
+
+.nav {
+    --maxWidth: 1000px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.nav_brand {
+    padding-left: 1rem;
+}
+
+.button {
+    background-color: #2e56ac;
+    border: 1px solid #2e56ac;
+}
+
+.button_translucent {
+    background-color: #2e56ac28;
+    color: #3562c4;
+}
+
+.page-link {
+    background-color: #2e56ac;
+}
+
+.excerpt_thumbnail {
+    display: block;
+    border-radius: 0.5rem;
+    width: 50px;
+    min-height: 0;
+    box-sizing: 0;
+}
+
+.excerpt_footer.partition {
+    grid-template-columns: 50px 1fr;
+    grid-gap: 1rem;
+}
+
+.excerpt_header, .excerpt_footer {
+    padding: 1.2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.author_header {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    grid-gap: rem;
+    padding: 0; 
+    margin: 0; 
+    pad: 0;
+}
+
+.button {
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.7rem;
+}
+
+.button_tally {
+    padding: 0 0.3rem;
+    border-radius: 0.3rem;
+    margin: 0.1rem 0 0.1rem 0.2rem;
+    font-size: 0.7rem;
+    background-color: #53086998;
+}
+
+.to_top {
+    display: none; /* Do not display to-top button */
+    width: 2rem;
+    height: 2rem;
+    opacity: 0.5;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.grid-inverse {
+    grid-template-columns: 1fr 15rem;
+    grid-column-gap: 1.2rem;
+    max-width: 1000px;
+}
+
+.sidebar_inner::before {
+    background: none ;
+}
+
+.footer {
+    background: var(--footer-bg);
+    margin-top: 0rem;
+    padding: 0rem;
+    font-size: 0.9rem;
+}
+
+.footer_inner {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 1000px;
+}
+
+.content {
+    padding-top: 3.2rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.posts {
+    margin-top: 0rem;
+}
+
+article.post_content {
+    padding: 1.2rem;
+    padding-top: 0.5rem;
+    background: var(--post-bg);
+    /* border-style: solid; */
+    border-radius: 0.5rem;
+}
+
+.post_meta, .post_meta span {
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.post_link, .post_title {
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+}
+
+.post_item {
+    margin-bottom: 1rem;
+    border-radius: 0.3rem;
+    background: var(--post-bg);
+}
+
+.highlight_wrap {
+    clear: both;
+    margin: 0.5rem auto 0.5rem auto;
+}
+
+.highlight pre {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+p {
+    padding: 0.2rem 0;
+}
+
+.float_right {
+    padding: 0;
+    margin:0.5rem;
+    float:right
+}
+
+.float_left {
+    padding: 0;
+    margin:0.5rem;
+    float:left
+}
+
+img {
+    padding:0;
+    margin:0;
+}
+
+code {
+    font-size: 0.9rem;
+}
+
+code.noClass {
+    line-break: unset;
+    word-break: unset;
+}
+
+.inline {
+        display: inline-block;
+}
+
+.search {
+    width: 10em;
+    border-radius: 1em;
+    border: none;
+    padding: 0.2em;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+    margin-right: 1em;
+    background-color: rgba(245, 250, 198, 0.548);
+}

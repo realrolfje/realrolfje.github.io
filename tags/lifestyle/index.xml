@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>lifestyle on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/lifestyle/</link><description>Recent content in lifestyle on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Sat, 03 May 2008 19:31:36 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/lifestyle/index.xml" rel="self" type="application/rss+xml"/><item><title>BusySync vs Spanning Sync</title><link>https://realrolfje.github.io/rolfje.com/2008/05/03/busysync-vs-spanning-sync/</link><pubDate>Sat, 03 May 2008 19:31:36 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/05/03/busysync-vs-spanning-sync/</guid><description>
+&lt;p>Google calendar is the new &amp;quot;Cool&amp;quot; in the calendar world. Or at least, the guys at work seem to think so. For me, a 100% online calendar is not always a good solution, because I can't take it with me. Getting Google calendar to sync with iCal would help, because that syncs to my phone and iPod. I tried BusySync and Spanning Sync to do this. One of them succeeded.&lt;/p>
+&lt;!-- more -->I've always been a FiloFax guy. My organizer is a typical one, it's rather big, and contains all business cards, papers, copies and notes I think are important enough to carry around. Every now and then (about every 2 years when I think about it) I try to migrate to a digital version. I've had a [Psion 3c](http://en.wikipedia.org/wiki/Psion_3), an [HP iPaq](http://en.wikipedia.org/wiki/Ipaq), I tried to do the "[Print](http://www.43folders.com/forum/2007/10/10/google-calendar-index-card)-a-[Google](http://www.google.com/support/calendar/bin/answer.py?hl=en&amp;answer=41067)-[Calendar](http://lifehacker.com/358308/convert-your-google-calendar-to-pdf)" trick, and even briefly used my [Sony Ericsson T610](http://en.wikipedia.org/wiki/Sony_Ericsson_T610) as my calendar.
+&lt;p>Every time, after a while, I find myself switching back to my trusty FiloFax. Usually because something happens to my calendar, or me not being able to access it. Failing backups, failing batteries, unreadable screens, awkward interfaces, and inability to scribble a simple drawing in there.&lt;/p>
+&lt;p>Last weekend I entered a new cycle of getting it all digital again. I've been digital for a complete week now, and it doesn't feel too awkward. Maybe this time it will work...&lt;/p>
+&lt;p>&lt;strong>Backing up&lt;/strong>&lt;/p>
+&lt;p>Before trying anything, I backed up my Google Calendars and iCal calendars. There wasn't much in them, but it's nice to be able to return to a known state. Yes, I have Time Machine but the trick of a backup system is not having to rely on it in your daily work. So here are 2 important links:&lt;/p>
+&lt;p>&lt;a href="http://www.google.com/support/calendar/bin/answer.py?hl=en&amp;amp;answer=37111">Backing up your Google Calendar&lt;/a> and &lt;a href="http://leopardtips.blogspot.com/2007/11/back-up-ical-and-address-book.html">Backing up your iCal Calendar&lt;/a>.&lt;/p>
+&lt;p>&lt;strong>The Problem&lt;/strong>&lt;/p>
+&lt;p>Get a usable solution to view and update my calendar online aswell as on the road, without manual actions to get everything synchronized.&lt;/p>
+&lt;p>&lt;strong>The Solution&lt;/strong>&lt;/p>
+&lt;p>Use Google Calendar for online editting, use iCal as central hub for synchronizing to all my devices, use my Nokia 6300 for viewing and editting on the road. My iPod nano is a nice extra for viewing my calendar when my phone dies on the road.&lt;/p>
+&lt;p>Apple has done a great job of synchronizing iCal to all my devices, so that's a no-brainer. iTunes and iSync take care of that flawlessly, even without me asking, for a couple of months already. It's just that I wasn't really using iCal.&lt;/p>
+&lt;p>The challenge is in getting Google Calendar to sync with iCal. There are a &lt;a href="http://www.twistermc.com/blog/2007/06/28/sync-ical-google">couple of solutions&lt;/a> to do this, and I choose to give BusySync and Spanning Sync a try, because these feel most suited to my wishes.&lt;/p>
+&lt;p>&lt;strong>BusySync&lt;/strong>&lt;/p>
+&lt;p>The first program I tried was &lt;a href="http://www.busymac.com/">BusySync&lt;/a>. It's a bit bloated for what I wanted to do with it, but it's pricing model is nice, $25 for a license. I downloaded the trail and without reading the manual (because I think good software does not really need one) I tried to sync 2 existing calendars, one in iCal and one in Google Calendar.&lt;/p>
+&lt;p>I immediately screwed up all my calendars, 3 times in a row. This did not feel good. BusySync has a way too complex user interface, too many features, and has one very big flaw: It can not sync an existing Google Calendar into an existing iCal calendar (at least, I didn't get how to do that). It is not clear about what it's doing and the whole &amp;quot;publish/subscribe&amp;quot; thing confuses me because I don't want to do either. I want to &lt;em>Synchronize both ways&lt;/em>.&lt;/p>
+&lt;p>BusySync is trying to be the all-in-one solution for sharing calendars with Google, your friends, the neighbours dog, and back. It's more like a &amp;quot;Calendar Server&amp;quot; kind of application which feels like it has to be online, all the time. This may be fun for the tweak-freaks out there, but it sure was not solving my problem in an easy and elegant way. So, BusySync was quickly uninstalled.&lt;/p>
+&lt;p>&lt;strong>SpanningSync&lt;/strong>&lt;/p>
+&lt;p>Much less bloated, &lt;a href="http://spanningsync.com/">Spanning Sync&lt;/a> is a piece of software that only tries to solve 1 problem, and tries to solve it good. Spannig Sync can only do one thing, and that is synchronize Google Calendars with iCal calendars.&lt;/p>
+&lt;p>Immediately after installing, I entered my Google acount data, and Spanning Sync fetches the Calendar list from Google. It then asks which iCal calendar I want to sync with which Google Calendar. Nice. Within 3 minutes, I had all (existing) Google Calendars synced with my (existing) iCal calendars. Flawlessly.&lt;/p>
+&lt;p>Then I tried turning on the &lt;a href="http://www.macobserver.com/tip/2007/01/29.1.shtml">birthday feature of iCal&lt;/a>, and sync that to a new Google calendar. Spanning Sync politely warns me that this Calendar is not editable, and changes in it's Google counter part will not result in changes in iCal. Great, that's the kind of warnings I can live with.&lt;/p>
+&lt;p>After synchronizing, I renamed my Google Birthday calendar to add the words &amp;quot;Read Only&amp;quot;, so I would not make the mistake of adding appointments there. Spanning Sync has no trouble with renamed Google Calendars. It recognizes them by a hidden unique identifier. Rename as you like.&lt;/p>
+&lt;p>You can see who has won the competition for me, hands down. Spanning Sync does a really nice job in synchronizing my calendars. The only downside is it's strange pricing strategy. You can use Spanning Sync for a year for $25. Or, you can buy an unlimited license, which will set you back $65.&lt;/p>
+&lt;p>Because I returned to my FiloFax nearly every time I tried to &amp;quot;go digital&amp;quot;, I think I'll pay for a yearly license en see where it all ends.&lt;/p>
+&lt;p>&lt;strong>The showdown&lt;/strong>&lt;/p>
+&lt;p>In my case Spanning Sync &amp;quot;just works&amp;quot; and in the end, that's what counts. I haven't touched the Spanning Sync preference pane for a few days, and it is still synchronizing nicely. My phone is also &lt;a href="http://rolfje.wordpress.com/2008/04/27/homezone-more-seemless-sync/">synchronizing nicely&lt;/a>, so I really feel that the calendar is there for me, in stead of the &lt;a href="http://rolfje.wordpress.com/2008/03/07/remember-the-milk-review/#more-263">other way around&lt;/a>.&lt;/p>
+&lt;p>From the top of my head, here are a few thoughts when comparing BusySync and Spanning Sync next to eachother:&lt;/p>
+&lt;table >
+&lt;tr >BusySyncSpanning Sync&lt;/tr>
+&lt;tr >
+&lt;td >Multi-purpose, all-in-one, lots of bells and whistles
+&lt;/td>
+&lt;td >Single purpose, simple user interface
+&lt;/td>&lt;/tr>
+&lt;tr >
+&lt;td >Publish/Subscribe model
+&lt;/td>
+&lt;td >Two-way synchronization
+&lt;/td>&lt;/tr>
+&lt;tr >
+&lt;td >Can not sync existing Calendars
+&lt;/td>
+&lt;td >Can sync existing Calendars
+&lt;/td>&lt;/tr>
+&lt;tr >
+&lt;td >Cheap, simple license
+&lt;/td>
+&lt;td >Strange yearly license
+&lt;/td>&lt;/tr>
+&lt;tr >
+&lt;td >$25
+&lt;/td>
+&lt;td >$25 a year, or $65 for an unlimited license
+&lt;/td>&lt;/tr>
+&lt;/table>
+&lt;p>For now, it's my Nokia 6300, iCal, Google Calendar and Spanning sync for me. But maybe, in a few weeks, you'll read hwo lovely my FiloFax really is. It doesn't need batteries, is crash-proof and allways-on. :-)&lt;/p></description></item></channel></rss>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Software on www.rolfje.com</title><link>https://realrolfje.github.io/rolfje.com/tags/software/</link><description>Recent content in Software on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 04 Sep 2015 21:16:29 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/rolfje.com/tags/software/index.xml" rel="self" type="application/rss+xml"/><item><title>How to get your users to install JCE</title><link>https://realrolfje.github.io/rolfje.com/2015/09/04/how-to-get-your-users-ton-install-jce/</link><pubDate>Fri, 04 Sep 2015 21:16:29 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2015/09/04/how-to-get-your-users-ton-install-jce/</guid><description>
+&lt;p>&lt;a href="https://en.wikipedia.org/wiki/Cryptography">&lt;img src="220px-lorenz-sz42-2.jpg" alt="220px-Lorenz-SZ42-2">
+&lt;/a>In every Java project where I need to do strong cryptography, I run into these dreaded unreadable stacktraces which send you into the woods. After a long search I usually discover that the Unlimited Strength &lt;a href="https://en.wikipedia.org/wiki/Java_Cryptography_Extension">Java Cryptography Extensions&lt;/a> are not installed. To prevent frustration of users of your software, you can simply add a bit of informative logging to help him/her solve it when the solution is known.&lt;/p>
+&lt;!-- more -->Add the following code to help your admins solve the limited cryptography problem without having to ask you:
+&lt;p>[sourcecode language=&amp;quot;java&amp;quot; padlinenumbers=&amp;quot;true&amp;quot;]
+public static void validateJCEUnlimited() {
+final int unlimited = 2_147_483_647; /* 32 bit max int */&lt;/p>
+&lt;p>// Ciphers to check for installation of the Java
+// Cryptography Extension (JCE) unlimited strength
+// jurisdiction policy files
+final String[] ciphers = {
+&amp;quot;AES&amp;quot;, &amp;quot;BouncyCastle&amp;quot;, &amp;quot;X.509&amp;quot;,
+&amp;quot;PKCS12&amp;quot;, &amp;quot;BCPKCS12&amp;quot;, &amp;quot;PKCS12-DEF&amp;quot;,
+&amp;quot;DES&amp;quot;, &amp;quot;DESEDE&amp;quot;, &amp;quot;RSA&amp;quot;, &amp;quot;DSA&amp;quot;,
+&amp;quot;SHA-1&amp;quot;, &amp;quot;SHA-256&amp;quot;, &amp;quot;SHA-512&amp;quot;
+};&lt;/p>
+&lt;p>for (String cipher : ciphers) {
+int keyLength = 0;
+try {
+keyLength = Cipher.getMaxAllowedKeyLength(cipher);
+} catch (NoSuchAlgorithmException e) {
+throw new RuntimeException(&amp;quot;Problem while checking the maximum key length of cipher &amp;quot; + cipher + &amp;quot;.&amp;quot;, e);
+}&lt;/p>
+&lt;pre>&lt;code>if (keyLength &amp;lt; unlimited) {
+String msg = String.format(&amp;quot;The maximum allowed key length for cipher %s was %d.\n&amp;quot; +
+&amp;quot;This indicates that you might not have installed the Java Cryptography \n&amp;quot; +
+&amp;quot;Extension (JCE) unlimited strength jurisdiction policy files in your JVM.\n&amp;quot; +
+&amp;quot;To do so, download these policy files at:\n\n&amp;quot; +
+&amp;quot;Java 6: http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html\n&amp;quot; +
+&amp;quot;Java 7: http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html\n&amp;quot; +
+&amp;quot;Java 8: http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html\n\n&amp;quot; +
+&amp;quot;Then, copy local_policy.jar and US_export_policy.jar extracted from above zip file to\n&amp;quot; +
+&amp;quot;the $JAVA_HOME/jre/lib/security directory.\n&amp;quot;, cipher, keyLength);
+throw new RuntimeException(msg);
+}
+&lt;/code>&lt;/pre>
+&lt;p>}
+}
+[/sourcecode]&lt;/p>
+&lt;p>Happy coding,
+Rolf&lt;/p></description></item><item><title>Ibatis Inline Parameter Maps</title><link>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</link><pubDate>Tue, 16 Feb 2010 15:19:16 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2010/02/16/ibatis-inline-parameter-maps/</guid><description>
+&lt;p>&lt;img src="box.jpg" alt="">
+Today I (re)discovered a feature in the Ibatis data mapper framework which was clearly documented, but for some reason was not being used in our project. The feature is called &amp;quot;inline parameter maps&amp;quot; and combined with a wrapper bean it can clean up a lot of clutter in the code and in the SqlMaps. Please feel free to share this example with your fellow Ibatis Data Mapper 2 framework users.&lt;/p>
+&lt;!-- more -->**The Case.**
+&lt;p>Suppose you are building software to interface with an old Oracle backoffice for a big parcel delivery company. One of the Classes you are using is the &amp;quot;Box&amp;quot; class, which is a basic Java Bean:&lt;/p>
+&lt;pre>&lt;code>public class Box {
+private int height;
+private int width;
+private int depth;
+private int weight;
+private String color;
+private String origin;
+private String destination;
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>You need to store a Box object using a stored procedure in the backoffice. The stored procedure, called &amp;quot;store_box&amp;quot;, returns the location code of the Box, but you do not want to store this location code in the Box object.&lt;/p>
+&lt;p>&lt;strong>The Parameter Class.&lt;/strong>
+To solve this problem in Ibatis, you can use an aggregating parameter object called &amp;quot;StoreBoxParameters&amp;quot; (or any name you like). This is a simple bean which aggregates the Box object you want to store, and has extra fields for the data returned by the &amp;quot;store_box&amp;quot; stored procedure:&lt;/p>
+&lt;pre>&lt;code>public class StoreBoxParameters {
+private Box box;
+private String locationCode;
+public StoreBoxParameters(Box aBox){
+this.box = aBox;
+}
+&amp;lt;span style=&amp;quot;color:#888888;&amp;quot;&amp;gt;[... getters and setters here...]&amp;lt;/span&amp;gt;
+}
+&lt;/code>&lt;/pre>
+&lt;p>To store the Box object, you write an SqlMap which calls the stored procedure with a parameter map:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;parameterMap id=&amp;quot;storeBoxParameterMap&amp;quot; class=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.height&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.width&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.depth&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.weight&amp;quot; jdbcType=&amp;quot;NUMERIC&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.color&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.origin&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;box.destination&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;IN&amp;quot; /&amp;gt;
+&amp;lt;parameter property=&amp;quot;locationCode&amp;quot; jdbcType=&amp;quot;VARCHAR&amp;quot; mode=&amp;quot;OUT&amp;quot; /&amp;gt;
+&amp;lt;/parameterMap&amp;gt;
+&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterMap=&amp;quot;storeBoxParameterMap&amp;quot;&amp;gt;
+{call store_box (?,?,?,?,?,?,?,?)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>And in the DAO, you can now fetch the locationcode seperate from the Box object:&lt;/p>
+&lt;pre>&lt;code>public String storeBox (Box aBox) {
+StoreBoxParameters boxParameters = new StoreBoxParameters(aBox);
+getSqlMapClientTemplate().update(&amp;quot;store_box&amp;quot;, boxParameters);
+return boxParameters.getLocationCode();
+}
+&lt;/code>&lt;/pre>
+&lt;p>Please note that this solution becomes even nicer when you have to call a stored procedure with multiple IN and OUT parameters and you want to separate these your business objects.&lt;/p>
+&lt;p>In the solution for the first problem, you may have noticed the stored procedure call in the Ibatis SQL map being written as &lt;em>&amp;quot;{call store_box (?,?,?,?,?,?,?,?)}&amp;quot;&lt;/em>. This is not exactly elegant, particularly when you have a long list of parameters. When bug fixing, it is hard to see which value gets passed into which parameter.&lt;/p>
+&lt;p>&lt;strong>The Inline Parameter Map.&lt;/strong>
+In the Ibatis data mapper documentation, I found a beautiful solution for this, called inline parameter maps. First, you delete the parameter map from the SqlMap. Then, you replace the question marks with an inline version of these fields. You should get something like this:&lt;/p>
+&lt;pre>&lt;code>&amp;lt;procedure id=&amp;quot;store_box&amp;quot; parameterClass=&amp;quot;com.rolfje.StoreBoxParameters&amp;quot;&amp;gt;
+{call store_box (
+#box.height,jdbcType=NUMERIC,mode=IN#,
+#box.width,jdbcType=NUMERIC,mode=IN#,
+#box.depth,jdbcType=NUMERIC,mode=IN#,
+#box.weight,jdbcType=NUMERIC,mode=IN#,
+#box.color,jdbcType=VARCHAR,mode=IN#,
+#box.origin,jdbcType=VARCHAR,mode=IN#,
+#box.destination,jdbcType=VARCHAR,mode=IN#,
+#locationCode,jdbcType=VARCHAR,mode=OUT#
+)}
+&amp;lt;/procedure&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>This cleans up your SqlMaps and improves their readability. Note that for OUT parameters to work, the fields you map them to may not be primitives.&lt;/p>
+&lt;p>Happy coding.&lt;/p>
+&lt;pre>&lt;code>StoreBoxParameters
+&lt;/code>&lt;/pre></description></item><item><title>Migrate from Password Gorilla to KeePass</title><link>https://realrolfje.github.io/rolfje.com/2009/05/12/migrate-from-password-gorilla-to-keepass/</link><pubDate>Tue, 12 May 2009 09:36:49 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/05/12/migrate-from-password-gorilla-to-keepass/</guid><description>
+&lt;p>&lt;a href="http://keepass.info/">&lt;img src="keepass.png" alt="KeePass logo">
+&lt;/a>I used to use &lt;a href="http://fpx.de/fp/Software/Gorilla/">Password Gorilla&lt;/a> to store my passwords, because it can run on both Mac and Windows. Because my password database keeps growing, Password Gorilla is becomming a very slow starter, even on my new solid state disk. A few weeks ago I learned that KeePass is a much more modern application, and is available for both Mac and Windows. Here's what I did to get all my passwords into KeePass:&lt;/p>
+&lt;!-- more -->
+&lt;pre>&lt;code> 1. Download [KeePass 1.05](http://sourceforge.net/project/downloading.php?group_id=95013&amp;amp;filename=KeePass-1.05.zip&amp;amp;a=41072444) (this is an older version, but required by the following plugin)
+2. Download the [PwSafeDbImport ](http://keepass.info/plugins.html#pwsafedbimport)plugin.
+3. Unzip both zipfiles.
+4. Put the PwSafeDbImport.dll file in the directory where KeePass.exe is.
+5. Start KeePass.exe
+6. Click on &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Plugins&amp;quot; and right-click on the PwSafeDbImport plugin, select &amp;quot;enable&amp;quot;
+7. Stop KeePass, and start it again.
+8. Create a new KeePass password file (Ctrl-N)
+9. Select &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;Import from&amp;quot; -&amp;gt; &amp;quot;PwSafe database&amp;quot;
+10. Select the Password Gorilla database you want to import from
+11. Enter your Password Gorilla database password
+12. Check (some of) the new entries in KeePass to verify the import went smoothly
+13. Save the KeePass file.
+&lt;/code>&lt;/pre>
+&lt;p>Now that you're done, you can upgrade to the &lt;a href="http://keepass.info/download.html">latest KeePass version&lt;/a>. The KeePass database stays compatible between versions, information on that is on the KeePass website.&lt;/p></description></item><item><title>Care vs Careless</title><link>https://realrolfje.github.io/rolfje.com/2009/02/03/care-vs-careless/</link><pubDate>Tue, 03 Feb 2009 21:21:26 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/02/03/care-vs-careless/</guid><description>
+&lt;p> &lt;/p>
+&lt;p>&lt;a href="http://stuffthathappens.com/blog/">&lt;img src="simplicity.png" alt="simplicity">
+&lt;/a>&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>It's frightening to realize how close to the truth Eric Burke is.&lt;/p></description></item><item><title>Choose: AFP or SMB</title><link>https://realrolfje.github.io/rolfje.com/2009/01/11/choose-afp-or-smb/</link><pubDate>Sun, 11 Jan 2009 01:00:34 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2009/01/11/choose-afp-or-smb/</guid><description>
+&lt;p>&lt;a href="afp-or-smb.png">&lt;img src="afp-or-smb.png" alt="Choose AFP or SMB, not both.">
+&lt;/a>&lt;/p>
+&lt;p>I recently upgraded the operating system on my trusty &lt;a href="http://rolfje.wordpress.com/2006/09/20/tryout-mac-mini-as-fileserver/">Mac Mini G4 home fileserver&lt;/a> from Tiger to Leopard. In addition to the &lt;a href="http://en.wikipedia.org/wiki/Time_Machine_%28Apple_software%29">out-of-the-box backup&lt;/a>, I no longer have to use &lt;a href="http://www.hornware.com/sharepoints/">SharePoints&lt;/a> to manage my network shares. In Leopard, I can just right-click them and arrange the sharing.&lt;/p>
+&lt;p>In doing so, I decided to switch on both SMB and AFP sharing for all shares. The idea was that my Macs all would use AFP automatically, and all Windows machines would see the SMB mounts. After a few hours, iTunes began acting up on me, because it decided to switch between the SMB and AFP protocol (or so it seemed). Finder also seems to have some trouble listing network shares if the exact same name on the same server is shared with two different protocols.&lt;/p>
+&lt;p>Because there are people on my network with Windows machines, I decided to switch off the AFP protocol and only go with SMB. I haven't had problems since.&lt;/p>
+&lt;p>If you're sharing drives like I'm doing, go for SMB. It may not be the technically superior solution, but it will &amp;quot;just work&amp;quot;. You can easily switch to AFP when the world is freed of Windows machines. ;-)&lt;/p></description></item><item><title>The vi religion</title><link>https://realrolfje.github.io/rolfje.com/2008/04/05/the-vi-religion/</link><pubDate>Fri, 04 Apr 2008 22:22:32 +0000</pubDate><guid>https://realrolfje.github.io/rolfje.com/2008/04/05/the-vi-religion/</guid><description>
+&lt;p>Every age has it's tools. Many, many years ago, in 1976 to be exact, &lt;a href="http://en.wikipedia.org/wiki/Bill_Joy">squinty-eyed nerds&lt;/a> with a social deficiency ruled the computer world. They talked to eachother in a secret code, wore geeky clothes and made sure that everybody thought that computers were magic. To make sure that nobody could ever use a computer to edit a file, they all swore to never ever use another editor than... &lt;scary music> &lt;a href="http://en.wikipedia.org/wiki/Vi">vi&lt;/a> &amp;lt;/scary music&amp;gt;.&lt;/p>
+&lt;!-- more -->To make sure nobody understood how to work with vi, they had the editor behave like 4 different programs. To switch between the modes, you had to ritually punch the right combination of keys while singing the imaginary theme song of [NetHack](http://en.wikipedia.org/wiki/Nethack). Backwards. To make it all look as a good thing, they even came up with a techy sounding term for all this: "modal editor"
+&lt;p>For good measure, the SONAU (Secret Organization of Nerds Against Usability) even came up with a devious name for the editor. With a reference to the world &amp;quot;visual&amp;quot;, nobody was going to believe you were using an editor even if they were looking at your screen full of green text.&lt;/p>
+&lt;p>Vi even has a&amp;quot;camouflage&amp;quot; mode where it starts up showing a column of &amp;quot;~&amp;quot; characters. Ha! Now the mortal user will be really lost! Nobody will be able to edit a file, ever again! &lt;em>MUHAHAHAHAAAAAA&lt;/em>&lt;/p>
+&lt;p>ok sorry. lost myself a bit there.&lt;/p>
+&lt;p>While the SONAU people were in charge,they made sure that every computer shipped with vi. No other editors were allowed. A few brave people at the University of Washington secretly wrote a nice editor called &lt;a href="http://en.wikipedia.org/wiki/Pico_%28text_editor%29">pico&lt;/a>. They had to come up with a way to get this editor onto many systems without the SONAU people noticing. So they wrapped pico into what probably is the first Trojan Horse on a computer: &lt;a href="http://en.wikipedia.org/wiki/Pine_%28e-mail_client%29">pine&lt;/a>. Cleverly disquised as a hard to use email client, pine was approved by the SONAU High Concil and before anybody realized, pico was on many computers around the world.&lt;/p>
+&lt;p>With pico, some people where actually able to edit documents and even programs, and the SONAU lost quite a bit of it's powers. Now, after 30+ years, computers are actually usable, and editors are actually &amp;quot;visual&amp;quot;. Because SONAU still has an active underground organization, the term &amp;quot;visual&amp;quot; is still being avoided, and the strange term &amp;quot;&lt;a href="http://en.wikipedia.org/wiki/WYSIWYG">WYSIWYG&lt;/a>&amp;quot; is used. Actually, the term WYSIWYG also applies to vi in combination with a 9-needle &lt;a href="http://en.wikipedia.org/wiki/Dot_matrix_printer">dot matrix printer&lt;/a>, but nobody dares to say that out loud. You also didn't read this on this blog, capiche?&lt;/p>
+&lt;p>Many SONAU members became infurtile by the green screen radiation. An even bigger group thought that women were creatures whose only purpose in life is yell (g)EEEK, turn around and run away. Still, some SONAU members managed to avoid getting a &lt;a href="http://en.wikipedia.org/wiki/Darwin_award">Darwin Award&lt;/a> and had children. These children were subtelly brainwashed, and are now scattered over the internet, posting messages about how good their life is with vi.&lt;/p>
+&lt;p>Painfully desoriented and unable to see the big picture, these children would rather count the atoms in the plastic molecules of their red bike helmet than see the big truck that's comming their way.&lt;/p>
+&lt;p>I had a collegue like this once. At first, he thought I had supernatural powers for being able to refactor multiple files with code within 5 seconds. In weeks of therapeutic talks, healing and training sessions, I finally got him to see that it was &lt;a href="http://www.eclipse.org/">Eclipse&lt;/a>, not me, who was doing the refactoring he could not get done in vi. Shortly after he realized I was a mere mortal, and not even exceptionally bright, it dawned: All the work he'd done in the past 10 years could have been done in 2 weeks with a better suited tool. He left the company, and nobody saw him since...&lt;/p>
+&lt;p>&lt;a href="http://blog.eleutian.com/2008/01/18/VimScreencast1.aspx">&lt;img src="afbeelding-3.png" alt="Example of a bad editor">
+&lt;/a>Today I found another poor soul. Even while doing a screencast, typing in vi and telling about what he is doing, he can't see that using the letters &amp;quot;h&amp;quot;,&amp;quot;j&amp;quot;,&amp;quot;k&amp;quot;, and &amp;quot;l&amp;quot; for navigation is very strange while your keyboard has had arrow keys for the past 20 years, and a mouse for the past 15 years or so. The flashing text in the film like &amp;quot;Esc is bad, Ctrl-[ is good&amp;quot; shows how big the psychiatric problems of vi users is. No sane persion today will press a cryptic 2-key combination while being able to use the much more intuitive &amp;quot;Esc&amp;quot; key to escape from a certain mode.&lt;/p>
+&lt;p>See &lt;a href="http://blog.eleutian.com/2008/01/18/VimScreencast1.aspx">the screencast&lt;/a> and by your reaction, I will tell if you are a SONAU member.&lt;/p>
+&lt;p>For people without patience, here are a few absolutely hilarious texts in the screencast which will make you wonder why people are still using vi:&lt;/p>
+&lt;pre>&lt;code> * Insert mode: don't use the arrow keys
+* Block cursor is &amp;quot;normal mode&amp;quot;, thin cursor is &amp;quot;insert mode&amp;quot;
+* Esc (bad) ^[ (good)
+* Visual mode is like holding &amp;quot;Shift&amp;quot; to select stuff
+* Arrow keys bad!
+&lt;/code>&lt;/pre>
+&lt;p>vi is the editor which in &amp;quot;normal mode&amp;quot; can not edit text, and uses a seperate &amp;quot;append&amp;quot; mode to add text to the &lt;em>end&lt;/em> of a line, while using &amp;quot;insert&amp;quot; mode to insert text &lt;em>inside&lt;/em> a line. It's users are misguided members of their own &lt;a href="http://en.wikipedia.org/wiki/Sect">sect&lt;/a>, firmly helping eachother to keep up vi's name, while ignoring reality and other people's belief or needs.&lt;/p></description></item></channel></rss>
