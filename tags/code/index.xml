@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>code on www.rolfje.com</title><link>https://realrolfje.github.io/tags/code/</link><description>Recent content in code on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Fri, 01 Aug 2008 21:36:58 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/tags/code/index.xml" rel="self" type="application/rss+xml"/><item><title>No Exclamation Please</title><link>https://realrolfje.github.io/2008/08/01/no-exclamation-please/</link><pubDate>Fri, 01 Aug 2008 21:36:58 +0000</pubDate><guid>https://realrolfje.github.io/2008/08/01/no-exclamation-please/</guid><description>
-&lt;p>&lt;a href="http://en.wikipedia.org/wiki/Exclamation_mark">&lt;img src="no-exclamation.png" alt="">
-&lt;/a>&lt;/p>
-&lt;p>Some developers nowadays still think that putting an exclamation mark in their log entries adds to the visibility of their entry. When other developers notice this, they will add even more exclamation marks so their log entries are even more visible. I compiled a few examples of bad log entries and some pointers for you to improve your log entries.&lt;/p>
-&lt;!-- more -->In my current project, I've seen log lines like:
-&lt;pre>&lt;code>Logger.warn(&amp;quot;No null allowed here !!!&amp;quot;);
-&lt;/code>&lt;/pre>
-&lt;p>Or the &amp;quot;I really stand out&amp;quot; tricks like:&lt;/p>
-&lt;pre>&lt;code>Logger.debug(&amp;quot;-&amp;gt;-&amp;gt;-&amp;gt;-&amp;gt; Reached this line !&amp;quot;);
-&lt;/code>&lt;/pre>
-&lt;p>Writing log entries like this really show your inability to use your &lt;a href="http://en.wikipedia.org/wiki/Integrated_development_environment">IDE&lt;/a> for setting breakpoints and stepping through code,  while also showing your poor comunication skills. If I encounter these kind of log entries, I try to see if I can improve them, and/or adjust their level. Here are some pointers I use for writing log entries:&lt;/p>
-&lt;pre>&lt;code> * **Be informative.** Try to include all information in the log entry which could help the reader determine the reason or cause for this log entry.
-* **Use full sentences.** Write your log entries like a novel. It will make them easier to read, and will also allow system administrators to litteraly copy/paste the text into a mail when sharing information about problem analysis. They will thank you for it.
-* **Refrain from using &amp;quot;search strings&amp;quot;.** Lots of stars, dashes or quotes do not improve readability of the log file, and it will make it look unprofessional. Searching for a bunch of stars is just as fast as searching for a word, given the right tools.
-* **Don't overdo it.** Try to have at most 1 log statement per method. Don't spoil it on trivial information, it will devaluate the rest of the entries in the logfile.
-&lt;/code>&lt;/pre>
+&lt;p>&lt;figure class="float_left">&lt;a href="http://en.wikipedia.org/wiki/Exclamation_mark">&lt;img src="no-exclamation.png" width="80"/>&lt;/a>
+&lt;/figure>
+Some developers nowadays still think that putting an exclamation mark in their log entries adds to the visibility of their entry. When other developers notice this, they will add even more exclamation marks so their log entries are even more visible. I compiled a few examples of bad log entries and some pointers for you to improve your log entries.&lt;/p>
+&lt;!-- more -->
+&lt;p>In my current project, I've seen log lines like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="ln">1&lt;/span>&lt;span class="n">Logger&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">warn&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;No null allowed here !!!&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Or the &amp;quot;I really stand out&amp;quot; tricks like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="ln">1&lt;/span>&lt;span class="n">Logger&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">debug&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s">&amp;#34;-&amp;gt;-&amp;gt;-&amp;gt;-&amp;gt; Reached this line !&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Writing log entries like this really show your inability to use your &lt;a href="http://en.wikipedia.org/wiki/Integrated_development_environment">IDE&lt;/a> for setting breakpoints and stepping through code,  while also showing your poor comunication skills. If I encounter these kind of log entries, I try to see if I can improve them, and/or adjust their level. Here are some pointers I use for writing log entries:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Be informative.&lt;/strong> Try to include all information in the log entry which could help the reader determine the reason or cause for this log entry.&lt;/li>
+&lt;li>&lt;strong>Use full sentences.&lt;/strong> Write your log entries like a novel. It will make them easier to read, and will also allow system administrators to litteraly copy/paste the text into a mail when sharing information about problem analysis. They will thank you for it.&lt;/li>
+&lt;li>&lt;strong>Refrain from using &amp;quot;search strings&amp;quot;.&lt;/strong> Lots of stars, dashes or quotes do not improve readability of the log file, and it will make it look unprofessional. Searching for a bunch of stars is just as fast as searching for a word, given the right tools.&lt;/li>
+&lt;li>&lt;strong>Don't overdo it.&lt;/strong> Try to have at most 1 log statement per method. Don't spoil it on trivial information, it will devaluate the rest of the entries in the logfile.&lt;/li>
+&lt;/ul>
 &lt;p>Using these guidelines, the log entries I showed you could be rewritten as:&lt;/p>
-&lt;pre>&lt;code>Logger.warn(
-&amp;quot;The method 'storeUser' doesn't accept 'null' as it's parameter.&amp;quot;);
-&lt;/code>&lt;/pre>
-&lt;p>and&lt;/p>
-&lt;pre>&lt;code>Logger.debug(
-&amp;quot;The user with id &amp;quot;+user.getId()+&amp;quot; was stored in the database.&amp;quot;);
-&lt;/code>&lt;/pre>
-&lt;p>Comparing these new versions with the earlier examples, I think you will find that there is much more information in these, and you can now even guess that these entries are from a storage method in a &lt;a href="http://en.wikipedia.org/wiki/Data_Access_Object">DAO&lt;/a> for storing users.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="ln">1&lt;/span>&lt;span class="n">Logger&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">warn&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;span class="ln">2&lt;/span> &lt;span class="s">&amp;#34;The method &amp;#39;storeUser&amp;#39; doesn&amp;#39;t accept &amp;#39;null&amp;#39; as it&amp;#39;s parameter.&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>and&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="ln">1&lt;/span>&lt;span class="n">Logger&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">debug&lt;/span>&lt;span class="o">(&lt;/span>
+&lt;span class="ln">2&lt;/span> &lt;span class="s">&amp;#34;The user with id &amp;#34;&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">user&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">getId&lt;/span>&lt;span class="o">()+&lt;/span>&lt;span class="s">&amp;#34; was stored in the database.&amp;#34;&lt;/span>&lt;span class="o">);&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Comparing these new versions with the earlier examples, I think you will find that there is much more information in these, and you can now even guess that these entries are from a storage method in a &lt;a href="http://en.wikipedia.org/wiki/Data_Access_Object">DAO&lt;/a> for storing users.&lt;/p>
 &lt;p>Another important thing to think about when writing log entries is the level at which you log. For Log4J log messages, I use the following definitions to choose log levels:&lt;/p>
-&lt;pre>&lt;code> * **FATAL** - The system has encountered such a severe error that it needs to shut down completely. No user can access the system after this log message. &amp;quot;[Core dump](http://en.wikipedia.org/wiki/Core_dump)&amp;quot; and &amp;quot;[Crash](http://en.wikipedia.org/wiki/Crash_%28computing%29)&amp;quot; come to mind.
-* **ERROR** - A serious error prevented the action from completing. Although the application is still running, the user session is probably terminated or in an awkward state. Examples of ERROR are temporarily inaccessable databases or remote systems which prevent the current action from completing succesfuly. A few error messages should be enough to call second level support in the middle of the night.
-* **WARN** - The user session is still usable, and the system encountered an abnormality which should possibly be analyzed by a system administrator or level 1 support guy to see if corrective actions need to be planned.
-* **INFO** - Info to the system administrator about interesting events. These events are &amp;quot;The application started up and is now ready for use&amp;quot; or &amp;quot;The application will use server XYZ for database access&amp;quot;. Informative or confirmative messages.
-* **DEBUG** - Everything else. Stuff you don't really need to see in a production environment. In some rare cases, you can set the visibility of the log levels to &amp;quot;debug&amp;quot; in a production environment if you have a really strange problem and are willing to sacrifice some system speed and storage to analyze. System administrators will (should) not want to see this information.
-&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>&lt;strong>FATAL&lt;/strong> - The system has encountered such a severe error that it needs to shut down completely. No user can access the system after this log message. &amp;quot;&lt;a href="http://en.wikipedia.org/wiki/Core_dump">Core dump&lt;/a>&amp;quot; and &amp;quot;&lt;a href="http://en.wikipedia.org/wiki/Crash_%28computing%29">Crash&lt;/a>&amp;quot; come to mind.&lt;/li>
+&lt;li>&lt;strong>ERROR&lt;/strong> - A serious error prevented the action from completing. Although the application is still running, the user session is probably terminated or in an awkward state. Examples of ERROR are temporarily inaccessable databases or remote systems which prevent the current action from completing succesfuly. A few error messages should be enough to call second level support in the middle of the night.&lt;/li>
+&lt;li>&lt;strong>WARN&lt;/strong> - The user session is still usable, and the system encountered an abnormality which should possibly be analyzed by a system administrator or level 1 support guy to see if corrective actions need to be planned.&lt;/li>
+&lt;li>&lt;strong>INFO&lt;/strong> - Info to the system administrator about interesting events. These events are &amp;quot;The application started up and is now ready for use&amp;quot; or &amp;quot;The application will use server XYZ for database access&amp;quot;. Informative or confirmative messages.&lt;/li>
+&lt;li>&lt;strong>DEBUG&lt;/strong> - Everything else. Stuff you don't really need to see in a production environment. In some rare cases, you can set the visibility of the log levels to &amp;quot;debug&amp;quot; in a production environment if you have a really strange problem and are willing to sacrifice some system speed and storage to analyze. System administrators will (should) not want to see this information.&lt;/li>
+&lt;/ul>
 &lt;p>The last tip I am going to give you, which does not only apply to coding, but also writing mails and documentation in general:&lt;/p>
-&lt;h2 id="never-ever-use-exclamation-marks-in-professional-texts">Never, ever use exclamation marks in professional texts!&lt;/h2>
+&lt;center>&lt;br/>&lt;span style="font-weight: bold; font-size: 1.5rem;">Never, ever use exclamation marks in professional texts!&lt;/span>&lt;br/>&lt;br/>&lt;/center>
 &lt;p>Exclamation marks are a poor mans way of expressing the inability to indicate the importance of a sentence, while at the same time insulting the reader. Why do you assume that the reader does not get the importance of your words?&lt;/p>
 &lt;p>If you ever wonder why I didn't answer your mail immediately, see if there are exclamation marks in there. And no, adding some will not help.&lt;/p></description></item></channel></rss>

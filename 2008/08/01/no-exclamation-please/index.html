@@ -85,39 +85,37 @@ Share on:
 </div>
 </span>
 </div>
-<p><a href=http://en.wikipedia.org/wiki/Exclamation_mark><img src=no-exclamation.png alt>
-</a></p>
-<p>Some developers nowadays still think that putting an exclamation mark in their log entries adds to the visibility of their entry. When other developers notice this, they will add even more exclamation marks so their log entries are even more visible. I compiled a few examples of bad log entries and some pointers for you to improve your log entries.</p>
-In my current project, I've seen log lines like:
-<pre><code>Logger.warn(&quot;No null allowed here !!!&quot;);
-</code></pre>
-<p>Or the "I really stand out" tricks like:</p>
-<pre><code>Logger.debug(&quot;-&gt;-&gt;-&gt;-&gt; Reached this line !&quot;);
-</code></pre>
-<p>Writing log entries like this really show your inability to use your <a href=http://en.wikipedia.org/wiki/Integrated_development_environment>IDE</a> for setting breakpoints and stepping through code,  while also showing your poor comunication skills. If I encounter these kind of log entries, I try to see if I can improve them, and/or adjust their level. Here are some pointers I use for writing log entries:</p>
-<pre><code>  * **Be informative.** Try to include all information in the log entry which could help the reader determine the reason or cause for this log entry.
-  * **Use full sentences.** Write your log entries like a novel. It will make them easier to read, and will also allow system administrators to litteraly copy/paste the text into a mail when sharing information about problem analysis. They will thank you for it.
-  * **Refrain from using &quot;search strings&quot;.** Lots of stars, dashes or quotes do not improve readability of the log file, and it will make it look unprofessional. Searching for a bunch of stars is just as fast as searching for a word, given the right tools.
-  * **Don't overdo it.** Try to have at most 1 log statement per method. Don't spoil it on trivial information, it will devaluate the rest of the entries in the logfile.
-</code></pre>
+<p><figure class=float_left><a href=http://en.wikipedia.org/wiki/Exclamation_mark><img src=no-exclamation.png width=80></a>
+</figure>
+Some developers nowadays still think that putting an exclamation mark in their log entries adds to the visibility of their entry. When other developers notice this, they will add even more exclamation marks so their log entries are even more visible. I compiled a few examples of bad log entries and some pointers for you to improve your log entries.</p>
+<p>In my current project, I've seen log lines like:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=ln>1</span><span class=n>Logger</span><span class=o>.</span><span class=na>warn</span><span class=o>(</span><span class=s>&#34;No null allowed here !!!&#34;</span><span class=o>);</span>
+</code></pre></div><p>Or the "I really stand out" tricks like:</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=ln>1</span><span class=n>Logger</span><span class=o>.</span><span class=na>debug</span><span class=o>(</span><span class=s>&#34;-&gt;-&gt;-&gt;-&gt; Reached this line !&#34;</span><span class=o>);</span>
+</code></pre></div><p>Writing log entries like this really show your inability to use your <a href=http://en.wikipedia.org/wiki/Integrated_development_environment>IDE</a> for setting breakpoints and stepping through code,  while also showing your poor comunication skills. If I encounter these kind of log entries, I try to see if I can improve them, and/or adjust their level. Here are some pointers I use for writing log entries:</p>
+<ul>
+<li><strong>Be informative.</strong> Try to include all information in the log entry which could help the reader determine the reason or cause for this log entry.</li>
+<li><strong>Use full sentences.</strong> Write your log entries like a novel. It will make them easier to read, and will also allow system administrators to litteraly copy/paste the text into a mail when sharing information about problem analysis. They will thank you for it.</li>
+<li><strong>Refrain from using "search strings".</strong> Lots of stars, dashes or quotes do not improve readability of the log file, and it will make it look unprofessional. Searching for a bunch of stars is just as fast as searching for a word, given the right tools.</li>
+<li><strong>Don't overdo it.</strong> Try to have at most 1 log statement per method. Don't spoil it on trivial information, it will devaluate the rest of the entries in the logfile.</li>
+</ul>
 <p>Using these guidelines, the log entries I showed you could be rewritten as:</p>
-<pre><code>Logger.warn(
-  &quot;The method 'storeUser' doesn't accept 'null' as it's parameter.&quot;);
-</code></pre>
-<p>and</p>
-<pre><code>Logger.debug(
-  &quot;The user with id &quot;+user.getId()+&quot; was stored in the database.&quot;);
-</code></pre>
-<p>Comparing these new versions with the earlier examples, I think you will find that there is much more information in these, and you can now even guess that these entries are from a storage method in a <a href=http://en.wikipedia.org/wiki/Data_Access_Object>DAO</a> for storing users.</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=ln>1</span><span class=n>Logger</span><span class=o>.</span><span class=na>warn</span><span class=o>(</span>
+<span class=ln>2</span>	<span class=s>&#34;The method &#39;storeUser&#39; doesn&#39;t accept &#39;null&#39; as it&#39;s parameter.&#34;</span><span class=o>);</span>
+</code></pre></div><p>and</p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=ln>1</span><span class=n>Logger</span><span class=o>.</span><span class=na>debug</span><span class=o>(</span>
+<span class=ln>2</span>	<span class=s>&#34;The user with id &#34;</span><span class=o>+</span><span class=n>user</span><span class=o>.</span><span class=na>getId</span><span class=o>()+</span><span class=s>&#34; was stored in the database.&#34;</span><span class=o>);</span>
+</code></pre></div><p>Comparing these new versions with the earlier examples, I think you will find that there is much more information in these, and you can now even guess that these entries are from a storage method in a <a href=http://en.wikipedia.org/wiki/Data_Access_Object>DAO</a> for storing users.</p>
 <p>Another important thing to think about when writing log entries is the level at which you log. For Log4J log messages, I use the following definitions to choose log levels:</p>
-<pre><code>  * **FATAL** - The system has encountered such a severe error that it needs to shut down completely. No user can access the system after this log message. &quot;[Core dump](http://en.wikipedia.org/wiki/Core_dump)&quot; and &quot;[Crash](http://en.wikipedia.org/wiki/Crash_%28computing%29)&quot; come to mind.
-  * **ERROR** - A serious error prevented the action from completing. Although the application is still running, the user session is probably terminated or in an awkward state. Examples of ERROR are temporarily inaccessable databases or remote systems which prevent the current action from completing succesfuly. A few error messages should be enough to call second level support in the middle of the night.
-  * **WARN** - The user session is still usable, and the system encountered an abnormality which should possibly be analyzed by a system administrator or level 1 support guy to see if corrective actions need to be planned.
-  * **INFO** - Info to the system administrator about interesting events. These events are &quot;The application started up and is now ready for use&quot; or &quot;The application will use server XYZ for database access&quot;. Informative or confirmative messages.
-  * **DEBUG** - Everything else. Stuff you don't really need to see in a production environment. In some rare cases, you can set the visibility of the log levels to &quot;debug&quot; in a production environment if you have a really strange problem and are willing to sacrifice some system speed and storage to analyze. System administrators will (should) not want to see this information.
-</code></pre>
+<ul>
+<li><strong>FATAL</strong> - The system has encountered such a severe error that it needs to shut down completely. No user can access the system after this log message. "<a href=http://en.wikipedia.org/wiki/Core_dump>Core dump</a>" and "<a href=http://en.wikipedia.org/wiki/Crash_%28computing%29>Crash</a>" come to mind.</li>
+<li><strong>ERROR</strong> - A serious error prevented the action from completing. Although the application is still running, the user session is probably terminated or in an awkward state. Examples of ERROR are temporarily inaccessable databases or remote systems which prevent the current action from completing succesfuly. A few error messages should be enough to call second level support in the middle of the night.</li>
+<li><strong>WARN</strong> - The user session is still usable, and the system encountered an abnormality which should possibly be analyzed by a system administrator or level 1 support guy to see if corrective actions need to be planned.</li>
+<li><strong>INFO</strong> - Info to the system administrator about interesting events. These events are "The application started up and is now ready for use" or "The application will use server XYZ for database access". Informative or confirmative messages.</li>
+<li><strong>DEBUG</strong> - Everything else. Stuff you don't really need to see in a production environment. In some rare cases, you can set the visibility of the log levels to "debug" in a production environment if you have a really strange problem and are willing to sacrifice some system speed and storage to analyze. System administrators will (should) not want to see this information.</li>
+</ul>
 <p>The last tip I am going to give you, which does not only apply to coding, but also writing mails and documentation in general:</p>
-<h2 id=never-ever-use-exclamation-marks-in-professional-texts>Never, ever use exclamation marks in professional texts!</h2>
+<center><br><span style=font-weight:700;font-size:1.5rem>Never, ever use exclamation marks in professional texts!</span><br><br></center>
 <p>Exclamation marks are a poor mans way of expressing the inability to indicate the importance of a sentence, while at the same time insulting the reader. Why do you assume that the reader does not get the importance of your words?</p>
 <p>If you ever wonder why I didn't answer your mail immediately, see if there are exclamation marks in there. And no, adding some will not help.</p>
 </article>
@@ -135,6 +133,9 @@ In my current project, I've seen log lines like:
 </a>
 <h2 class=mt-4>Recent Posts</h2>
 <ul class=flex-column>
+<li>
+<a href=https://realrolfje.github.io/2022/01/30/exit-wordpress/ class=nav-link title="Exit WordPress">Exit WordPress</a>
+</li>
 <li>
 <a href=https://realrolfje.github.io/2021/05/23/when-munin-df-does-not-list-all-disks/ class=nav-link title="When munin df does not list all disks">When munin df does not list all disks</a>
 </li>
@@ -155,9 +156,6 @@ In my current project, I've seen log lines like:
 </li>
 <li>
 <a href=https://realrolfje.github.io/2019/06/18/logging-in-with-ssh-certificates/ class=nav-link title="Logging in with SSH certificates">Logging in with SSH certificates</a>
-</li>
-<li>
-<a href=https://realrolfje.github.io/2018/04/26/travis-ci-and-dependabot-added-to-anonimatron/ class=nav-link title="Travis CI and Dependabot added to Anonimatron">Travis CI and Dependabot added to Anonimatron</a>
 </li>
 </ul>
 <div>
