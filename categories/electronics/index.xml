@@ -32,47 +32,39 @@ Although I am the guy with a soldering iron and a bit of software development ex
 &lt;p>This nice graph also shows one of the problems with smart meters: Given enough resolution, you can see at which times devices and lights are switched on. This can provide some interesting patterns, and enables anybody with access to your meter data to determine when you are home or on vacation. Of course there are some tricks to create constant or confusing usage patterns, I'm sure you'll come up with something smart now that you can see the graphs.&lt;/p>
 &lt;p>You can find all three munin plugins in my &lt;a href="https://github.com/realrolfje/munin-plugins">munin-plugin repository&lt;/a>, in the &amp;quot;plugin&amp;quot; folder. There may also be other interesting stuff there for you munin enthausiasts.&lt;/p>
 &lt;p>Have fun!&lt;/p></description></item><item><title>1N4148 diode as RF switch</title><link>https://realrolfje.github.io/2018/02/24/1n4148-diode-as-rf-switch/</link><pubDate>Sat, 24 Feb 2018 12:00:41 +0000</pubDate><guid>https://realrolfje.github.io/2018/02/24/1n4148-diode-as-rf-switch/</guid><description>
-&lt;p>&lt;a href="https://youtu.be/hgll-XTqcS4">&lt;img src="1n4148.jpg" alt="1N4148.jpg">
-&lt;/a>For a recent experiment I was using &lt;a href="http://www.datasheetarchive.com/BA389-datasheet.html">BA389 PIN diodes&lt;/a> to switch low power RF signals. I was asked why I didn't use an ordinary &lt;a href="https://en.wikipedia.org/wiki/1N4148_signal_diode">1N4148&lt;/a> for that. Since I didn't know what an 1N4148 would do when used like that, and I also didn't really know what a BA389 actually does, I decided to do some measurements.&lt;!-- more -->&lt;/p>
-&lt;p>&lt;strong>Aren't diodes rectifiers?&lt;/strong>
+&lt;p>&lt;figure class="float_left">&lt;a href="https://youtu.be/hgll-XTqcS4">&lt;img src="1n4148.jpg" width="50"/>&lt;/a>
+&lt;/figure>
+For a recent experiment I was using &lt;a href="http://www.datasheetarchive.com/BA389-datasheet.html">BA389 PIN diodes&lt;/a> to switch low power RF signals. I was asked why I didn't use an ordinary &lt;a href="https://en.wikipedia.org/wiki/1N4148_signal_diode">1N4148&lt;/a> for that. Since I didn't know what an 1N4148 would do when used like that, and I also didn't really know what a BA389 actually does, I decided to do some measurements.&lt;!-- more -->&lt;/p>
+&lt;p>&lt;strong>Aren't diodes rectifiers?&lt;/strong>&lt;br>
 Yes and no. The most basic operation of a diode is to pass current in one way, and block it in the other. But when the diode passes DC current, the internal capacitance lowers, and RF resistance will drop to around 1 Ohm. If you can separate the DC and RF currents, you can switch RF with DC. Most, if not all modern transceivers use PIN diodes to switch the antenna between the internal transmitter and receiver components.&lt;/p>
-&lt;p>&lt;strong>PIN or PN diode?&lt;/strong>
+&lt;p>&lt;strong>PIN or PN diode?&lt;/strong>&lt;br>
 A &lt;a href="https://en.wikipedia.org/wiki/P%E2%80%93n_diode">P/N diode&lt;/a> like the 1N4148 only has P and N doped regions. A &lt;a href="https://en.wikipedia.org/wiki/PIN_diode">P/I/N diode&lt;/a> has three semiconductor regions with different doping. The I region in a PIN diode makes it a bad/slow rectifier but it a great RF switch, see the provided wikipedia link for more info.&lt;/p>
 &lt;p>Enough talk. Let's go. In this case I want to know how a PIN diode like the BA389 compares to an 1N4148 when used for switching RF signals on 145 MHz and 435 MHz. I decided to use my &lt;a href="http://miniradiosolutions.com/54-2/">MiniVNA Tiny&lt;/a> and the following circuit to do the measurements:&lt;/p>
-&lt;p>&lt;img src="screen-shot-2018-02-23-at-17-31-36.png" alt="Screen Shot 2018-02-23 at 17.31.36">&lt;/p>
+&lt;p>&lt;img src="screen-shot-2018-02-23-at-17-31-36.png" alt="">&lt;/p>
 &lt;p>The output of the MiniVNA Tiny is connected to a 10 dB attenuator, reducing the -6 dBm (0.251 mW) output of the VNA to -16 dBm (0.025 mW) hoping to reduce signal leaking around the diode (less signal, less leakage). The output of the attenuator is connected to the AC input on the left side of the schematic.&lt;/p>
 &lt;p>The input of the MiniVNA Tiny is connected to the output of the schematic. Yes, the RF travels through the diode the &amp;quot;wrong way&amp;quot;, against the DC current. This is not an error.&lt;/p>
 &lt;p>The DC input of the circuit is connected to a variable resistor, a multimeter and a power supply to be able to vary the current through the diode (DUT) from 0.001 mA to 20 mA.&lt;/p>
-&lt;table >
-&lt;tbody >
-&lt;tr >
-&lt;td >[![Test setup](img_6758.jpg?w=250)
-](img_6758.jpg)
-&lt;/td>
-&lt;td >[![test circuit](img_6767.jpg?w=150)
-](img_6767.jpg)
-&lt;/td>
+&lt;table>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;img src="img_6758.jpg"/>&lt;/td>
+&lt;td>&lt;img src="img_6767.jpg"/>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
 The coils are 0.35 mm copper wound 15 turns around a 3 mm drillbit. The capacitors are SMD to keep everything as short as possible. I also added some extra shielding to separate the in and outputs better.
 &lt;p>Before measuring diodes I callibrated the whole setup by having vnaJ measure the &amp;quot;OPEN&amp;quot; characteristics with everything connected but with the diode removed. Then, I soldered a wire in place of the diode and had vnaJ measure the &amp;quot;CLOSED&amp;quot; characteristics. I saved this callibration dataset and used it throughout all other measurements.&lt;/p>
 &lt;p>Then, I soldered a 1N4148 in place and measured RF Transmission Loss for a number of currents between 0 and 15 mA. Then I did the same for the BA389. After a bit of fiddling with Excel I produced the following graph of the results:&lt;/p>
-&lt;p>[&lt;img src="screen-shot-2018-02-23-at-21-39-15.png" alt="Screen Shot 2018-02-23 at 21.39.15 .png">&lt;/p>
-&lt;p>](screen-shot-2018-02-23-at-21-39-15.png)&lt;/p>
-&lt;p>&lt;strong>The verdict:&lt;/strong>
+&lt;p>&lt;img src="screen-shot-2018-02-23-at-21-39-15.png" alt="">&lt;/p>
+&lt;p>&lt;strong>The verdict:&lt;/strong>&lt;br>
 The results are actually not that bad for the 1N4148. It shows behaviour and comparable linearity to the BA389 PIN diode. The attenuation of the 1N4148 leaves to be desired: -25,5 dB attenuation compared to -30.3 dB of the BA389 on 145 MHz. On 435 MHz the difference is a bit bigger: -14.1 dB vs -20.1 dB for the BA389. All in all, the 1N4148 is roughly 6 dB more &amp;quot;leaky&amp;quot; than the BA389.&lt;/p>
 &lt;p>So a 1N4148 actually works as an RF switch, if you are on lower frequencies and don't mind that it only attenuates -25,5 dB. If you need high performance RF switching with high isolation, particularly at frequencies above 200 MHz or so I think you're better off selecting a proper PIN diode.&lt;/p>
 &lt;p>Here are the 1N4148 and the BA389 graphs from the MiniVNA Tiny. The graph for the 1N4148 is an earlier one where I didn't have the extra shields. The dip in the 200MHz range is caused by the measurement jig itself. Mind the vertical scales, they don't match. Blue line is Transmission Loss:&lt;/p>
 &lt;table >
 &lt;tbody >
 &lt;tr >
-&lt;td >[![VNA_180222_174935.jpg](vna_180222_174935.jpg)
-](vna_180222_174935.jpg)
-&lt;/td>
-&lt;td >[![VNA_180223_150657.jpg](vna_180223_150657.jpg)
-](vna_180223_150657.jpg)
-&lt;/td>
+&lt;td>&lt;img src="VNA_180222_174935.jpg"/>&lt;/td>
+&lt;td>&lt;img src="VNA_180223_150657.jpg"/>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table></description></item></channel></rss>
