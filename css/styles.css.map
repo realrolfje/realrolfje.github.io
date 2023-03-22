@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "styles.css",
-	"sourceRoot": "/Users/rolf/GitHub/rolfje.com-src/src",
+	"sourceRoot": "/Users/rolf/github/rolfje.com-src/src",
 	"sources": [
 		"themes/hugo-clarity/assets/sass/main.sass",
 		"src/themes/hugo-clarity/assets/sass/_variables.sass",
