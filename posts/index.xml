@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on www.rolfje.com</title><link>https://realrolfje.github.io/posts/</link><description>Recent content in Posts on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Mon, 12 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Apple Watch 8 Uninstalled</title><link>https://realrolfje.github.io/2023/06/12/apple-watch-8-uninstalled/</link><pubDate>Mon, 12 Jun 2023 00:00:00 +0000</pubDate><guid>https://realrolfje.github.io/2023/06/12/apple-watch-8-uninstalled/</guid><description>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on www.rolfje.com</title><link>https://realrolfje.github.io/posts/</link><description>Recent content in Posts on www.rolfje.com</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Copyright © rolfje.com</copyright><lastBuildDate>Tue, 09 Jan 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://realrolfje.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Uninstall DataTool Alarm</title><link>https://realrolfje.github.io/2024/01/09/uninstall-datatool-alarm/</link><pubDate>Tue, 09 Jan 2024 00:00:00 +0000</pubDate><guid>https://realrolfje.github.io/2024/01/09/uninstall-datatool-alarm/</guid><description>
+&lt;figure class="float_right">&lt;img src="datatool_s4_triumph.png" width="150"/>
+&lt;/figure>
+&lt;p>If you have a Triumph Motorcycle and the Datatool evo, S3 or S4 alarm gives you headaches, there are two things to know:&lt;/p>
+&lt;ol>
+&lt;li>The alarm is virtually irrepairable because it is filled with silicone&lt;/li>
+&lt;li>There is an easy trick to remove/disable it without permanent damage to the bike or the alarm.&lt;/li>
+&lt;/ol>
+&lt;p>The trick is to unplug the alarm, ask your Triumph dealer for the datatool override plug and plug that into the cable that comes out of the bike.&lt;/p>
+&lt;p>Here is the picture of the plug that is on the loom of the bike:&lt;/p>
+&lt;figure>&lt;a href="bike-plug.png">&lt;img src="bike-plug.png"/>&lt;/a>
+&lt;/figure>
+&lt;p>And this is the shorting plug, same orientation.&lt;/p>
+&lt;figure>&lt;a href="short-plug.png">&lt;img src="short-plug.png"/>&lt;/a>
+&lt;/figure>
+&lt;p>An even easier trick is to cut the plug off of the alarm (since it was not working anyway) and reusing that plug to short the terminals shown above.&lt;/p>
+&lt;p>After that you can safely ride the bike and install a different alarm or tracker in the space that used to hold the datatool alarm.&lt;/p>
+&lt;p>Happy riding!&lt;/p></description></item><item><title>Apple Watch 8 Uninstalled</title><link>https://realrolfje.github.io/2023/06/12/apple-watch-8-uninstalled/</link><pubDate>Mon, 12 Jun 2023 00:00:00 +0000</pubDate><guid>https://realrolfje.github.io/2023/06/12/apple-watch-8-uninstalled/</guid><description>
 &lt;figure class="float_left">&lt;a href="https://www.youtube.com/watch?v=yioL7MRQvHM">&lt;img src="uninstalled.png" width="150"/>&lt;/a>
 &lt;/figure>
 &lt;p>After wearing a simple Pulsar analog watch for years, and then not wearing a watch at all, I convinced myself a month ago that an Apple Watch 8 would be an improvement. Part of that decision was based on my hipster IT colleagues being surprised I was not wearing a smartwatch. I also noticed my girlfriend practically can't live without hers, and then I saw this endless stream of youtube videos with raving reviews of (lets be honest) pretty biased people.&lt;/p>
@@ -17,7 +34,7 @@
 &lt;figure class="float_right">&lt;a href="nightstand.png">&lt;img src="nightstand.png" width="150"/>&lt;/a>
 &lt;/figure>
 &lt;p>If you have configured focus modes like I have, the iPhone and the Apple Watch go into &amp;quot;Nightstand&amp;quot; mode between 22:00 and 08:00. Only contacts in my favourites list can call or ping me at those times. The Apple Watch shows a really nice watch face that looks like a classic alarm clock. A nice green color, nice font, no frills. It is surprising that this watch face is not selectable as a default watch face on the Apple Watch. Some watch faces are &amp;quot;more special than others&amp;quot; I guess.&lt;/p>
-&lt;h2 id="the-dissapearing-workouts">The dissapearing workouts&lt;/h2>
+&lt;h2 id="the-disappearing-workouts">The disappearing workouts&lt;/h2>
 &lt;p>The Apple watch knows when you are working out. It can detect and start recording a workout for different sports. You can switch off the autodetect and manually start a workout recording, which I preferred. A little downside is that I wasn't able to create a &amp;quot;Padel&amp;quot; workout type so I used &amp;quot;Tennis&amp;quot; for that.&lt;/p>
 &lt;p>After the workout, when you open the Health app on your iPhone, you'll notice that... the workout is not there. You need to open a special separate app to view the heartrate data during your workout, for some strange reason. The workout app on the iPhone is very limited, there is no pinch and zoom to see your data in the detail you'd like.&lt;/p>
 &lt;p>Nice for casual hipster sporting, but not for serious athletes or data nerds.&lt;/p>
